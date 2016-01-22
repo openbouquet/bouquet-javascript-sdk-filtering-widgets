@@ -22,6 +22,7 @@
         ignoredFacets : null,
         mandatory : null,
         popup : null,
+        onChange : null,
 
         initialize : function(options) {
             var me = this;
@@ -70,6 +71,9 @@
             }
             if (options.popup) {
                 this.popup = options.popup;
+            }
+            if (options.onChange) {
+                this.onChange = options.onChange;
             }
             if (options.status) {
             	this.status = options.status;
@@ -314,7 +318,8 @@
                 model: this.filterStore,
                 filters: this.currentModel,
                 noFiltersMessage : this.noFiltersMessage,
-                singleSelect : this.singleSelect
+                singleSelect : this.singleSelect,
+                onChange : this.onChange
             });
 
             view3 = new squid_api.view.CategoricalPagingView({

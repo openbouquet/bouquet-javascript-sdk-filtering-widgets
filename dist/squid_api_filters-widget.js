@@ -597,6 +597,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         noFiltersMessage : null,
         singleSelect : false,
         disabled : false,
+        onChange : null,
 
         initialize : function(options) {
             if (options.format) {
@@ -623,7 +624,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
             if (options.singleSelect) {
                 this.singleSelect = options.singleSelect;
             }
-            
+            if (options.onChange) {
+                this.onChange = options.onChange;
+            }            
+ 
             this.listenTo(this.model, "change:pageIndex", this.render);
             this.listenTo(this.model, "change:facet", this.render);
             this.listenTo(this.status, "change", this.widgetState);
@@ -691,10 +695,16 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         }
                         // Remove selected items from children
                         squid_api.controller.facetjob.unSelectChildren(facets, selectedFacet, false);
+                        
+                        //Handle callback when selection changed
+                        if (this.onChange) {
+                        	this.onChange(facets, selectedFacet);
+                        }
                     }
 
                     // Set the updated filters model
                     squid_api.model.config.set("selection", squid_api.utils.buildCleanSelection(selectionClone));
+                    
                 }
             },
         },
@@ -1162,6 +1172,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         ignoredFacets : null,
         mandatory : null,
         popup : null,
+        onChange : null,
 
         initialize : function(options) {
             var me = this;
@@ -1210,6 +1221,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
             if (options.popup) {
                 this.popup = options.popup;
+            }
+            if (options.onChange) {
+                this.onChange = options.onChange;
             }
             if (options.status) {
             	this.status = options.status;
@@ -1454,7 +1468,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 model: this.filterStore,
                 filters: this.currentModel,
                 noFiltersMessage : this.noFiltersMessage,
-                singleSelect : this.singleSelect
+                singleSelect : this.singleSelect,
+                onChange : this.onChange
             });
 
             view3 = new squid_api.view.CategoricalPagingView({
