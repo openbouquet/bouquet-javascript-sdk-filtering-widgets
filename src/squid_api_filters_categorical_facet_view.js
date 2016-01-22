@@ -10,6 +10,7 @@
         noFiltersMessage : null,
         singleSelect : false,
         disabled : false,
+        onChange : null,
 
         initialize : function(options) {
             if (options.format) {
@@ -36,7 +37,10 @@
             if (options.singleSelect) {
                 this.singleSelect = options.singleSelect;
             }
-            
+            if (options.onChange) {
+                this.onChange = options.onChange;
+            }            
+ 
             this.listenTo(this.model, "change:pageIndex", this.render);
             this.listenTo(this.model, "change:facet", this.render);
             this.listenTo(this.status, "change", this.widgetState);
@@ -104,10 +108,16 @@
                         }
                         // Remove selected items from children
                         squid_api.controller.facetjob.unSelectChildren(facets, selectedFacet, false);
+                        
+                        //Handle callback when selection changed
+                        if (this.onChange) {
+                        	this.onChange(facets, selectedFacet);
+                        }
                     }
 
                     // Set the updated filters model
                     squid_api.model.config.set("selection", squid_api.utils.buildCleanSelection(selectionClone));
+                    
                 }
             },
         },
