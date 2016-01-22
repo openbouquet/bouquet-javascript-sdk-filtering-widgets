@@ -10,15 +10,6 @@ module.exports = function(grunt) {
                 clean : {
                     all : "dist/"
                 },
-                bower_concat : {
-                    all : {
-                        dest : 'build/_bower.js',
-                        exclude : [ 'squid_api'],
-                        bowerOptions : {
-                            relative : false
-                        }
-                    }
-                },
                 sass: {
                     dist: {
                         files: {
