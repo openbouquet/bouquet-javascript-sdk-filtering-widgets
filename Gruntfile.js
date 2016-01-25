@@ -10,15 +10,6 @@ module.exports = function(grunt) {
                 clean : {
                     all : "dist/"
                 },
-                bower_concat : {
-                    all : {
-                        dest : 'build/_bower.js',
-                        exclude : [ 'squid_api'],
-                        bowerOptions : {
-                            relative : false
-                        }
-                    }
-                },
                 sass: {
                     dist: {
                         files: {
@@ -69,8 +60,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-handlebars');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-bower-concat');
     grunt.loadNpmTasks('grunt-contrib-clean');
 
-    grunt.registerTask('default', [ 'jshint', 'clean', 'handlebars', 'concat', 'sass']);
+    grunt.registerTask('dev', [ 'jshint', 'handlebars', 'sass' ]);
+
+    grunt.registerTask('default', [ 'jshint', 'clean', 'handlebars', 'concat:css', 'concat:js', 'sass']);
 };
