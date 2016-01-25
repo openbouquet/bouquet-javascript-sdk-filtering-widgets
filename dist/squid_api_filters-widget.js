@@ -597,6 +597,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         noFiltersMessage : null,
         singleSelect : false,
         disabled : false,
+        onChange : null,
 
         initialize : function(options) {
             if (options.format) {
@@ -623,7 +624,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
             if (options.singleSelect) {
                 this.singleSelect = options.singleSelect;
             }
-            
+            if (options.onChange) {
+                this.onChange = options.onChange;
+            }            
+ 
             this.listenTo(this.model, "change:pageIndex", this.render);
             this.listenTo(this.model, "change:facet", this.render);
             this.listenTo(this.status, "change", this.widgetState);
@@ -691,10 +695,16 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         }
                         // Remove selected items from children
                         squid_api.controller.facetjob.unSelectChildren(facets, selectedFacet, false);
+                        
+                        //Handle callback when selection changed
+                        if (this.onChange) {
+                        	this.onChange(facets, selectedFacet);
+                        }
                     }
 
                     // Set the updated filters model
                     squid_api.model.config.set("selection", squid_api.utils.buildCleanSelection(selectionClone));
+                    
                 }
             },
         },
@@ -971,57 +981,58 @@ $.widget( "ui.dialog", $.ui.dialog, {
             var noData = true;
 
             if (selection) {
-                 if (selection.facets) {
+                if (selection.facets) {
                     var facets = selection.facets;
                     for (i=0; i<facets.length; i++) {
-                        var selectedItems = facets[i].selectedItems;
-                            if (facets[i].dimension.type == "CATEGORICAL" || facets[i].dimension.type == "SEGMENTS") {
-                                for (ix=0; ix<selectedItems.length; ix++) {
-                                    if (this.initialFacet == facets[i].id || (!this.initialFacet && !this.initialDimension)) {
-                                        noData = false;
-                                        var obj = {};
-                                        obj.facetItem = selectedItems[ix].value;
-                                        obj.facetItemId = selectedItems[ix].id;
-                                        if (facets[i].name) {
-                                            obj.facetName = facets[i].name;
-                                        } else {
-                                            obj.facetName = facets[i].dimension.name;
-                                        }
-                                        obj.facetNameId = facets[i].id;
-                                        selFacets.push(obj);
+                        var facet = facets[i];
+                        if (facet.dimension.type == "CATEGORICAL" || facet.dimension.type == "SEGMENTS") {
+                            var selectedItems = facet.selectedItems;
+                            for (ix=0; ix<selectedItems.length; ix++) {
+                                if (this.initialFacet == facet.id || (!this.initialFacet && !this.initialDimension)) {
+                                    noData = false;
+                                    var obj = {};
+                                    obj.facetItem = selectedItems[ix].value;
+                                    obj.facetItemId = selectedItems[ix].id;
+                                    if (facet.name) {
+                                        obj.facetName = facet.name;
+                                    } else {
+                                        obj.facetName = facet.dimension.name;
                                     }
-                                }
-                            }
-                        }
-                    }
-                    if (this.facetList) {
-                        var updatedFacets = [];
-                        for (i=0; i<selFacets.length; i++) {
-                            for (ix=0; ix<this.facetList.length; ix++) {
-                                if (this.facetList[ix] === selFacets[i].facetNameId) {
-                                    updatedFacets.push(selFacets[i]);
-                                }
-                            }
-                        }
-                        if (updatedFacets.length === 0) {
-                            noData = true;
-                        } else {
-                            selFacets = updatedFacets;
-                        }
-                    }
-                    if (this.avoidFacets) {
-                        for (i=0; i<this.avoidFacets.length; i++) {
-                            for (ix=0; ix<selFacets.length; ix++) {
-                                if (this.avoidFacets[i] === selFacets[ix].facetNameId) {
-                                    selFacets.splice(ix, 1);
+                                    obj.facetNameId = facet.id;
+                                    selFacets.push(obj);
                                 }
                             }
                         }
                     }
                 }
-                this.$el.html(this.filterPanelTemplate({facets: selFacets, noData: noData, noDataMessage: this.noDataMessage, mandatory: this.mandatory}));
+                if (this.facetList) {
+                    var updatedFacets = [];
+                    for (i=0; i<selFacets.length; i++) {
+                        for (ix=0; ix<this.facetList.length; ix++) {
+                            if (this.facetList[ix] === selFacets[i].facetNameId) {
+                                updatedFacets.push(selFacets[i]);
+                            }
+                        }
+                    }
+                    if (updatedFacets.length === 0) {
+                        noData = true;
+                    } else {
+                        selFacets = updatedFacets;
+                    }
+                }
+                if (this.avoidFacets) {
+                    for (i=0; i<this.avoidFacets.length; i++) {
+                        for (ix=0; ix<selFacets.length; ix++) {
+                            if (this.avoidFacets[i] === selFacets[ix].facetNameId) {
+                                selFacets.splice(ix, 1);
+                            }
+                        }
+                    }
+                }
             }
-        });
+            this.$el.html(this.filterPanelTemplate({facets: selFacets, noData: noData, noDataMessage: this.noDataMessage, mandatory: this.mandatory}));
+        }
+    });
 
     return View;
 }));
@@ -1161,6 +1172,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         ignoredFacets : null,
         mandatory : null,
         popup : null,
+        onChange : null,
 
         initialize : function(options) {
             var me = this;
@@ -1209,6 +1221,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
             if (options.popup) {
                 this.popup = options.popup;
+            }
+            if (options.onChange) {
+                this.onChange = options.onChange;
             }
             if (options.status) {
             	this.status = options.status;
@@ -1453,7 +1468,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 model: this.filterStore,
                 filters: this.currentModel,
                 noFiltersMessage : this.noFiltersMessage,
-                singleSelect : this.singleSelect
+                singleSelect : this.singleSelect,
+                onChange : this.onChange
             });
 
             view3 = new squid_api.view.CategoricalPagingView({
@@ -1578,84 +1594,81 @@ $.widget( "ui.dialog", $.ui.dialog, {
          */
         renderFacet : function(fetch) {
             var me = this;
+            if (this.currentModel.get("selection")) {
+                var selectedFacetId = this.filterStore.get("selectedFilter");
+                var pageIndex = this.filterStore.get("pageIndex");
+                var pageSize = this.filterStore.get("pageSize");
+                var facet = this.filterStore.get("facet");
+                var nbPages = this.filterStore.get("nbPages");
 
-            if (this.currentModel.get("status") === "DONE") {
-                if (this.currentModel.get("selection")) {
-                    var selectedFacetId = this.filterStore.get("selectedFilter");
-                    var pageIndex = this.filterStore.get("pageIndex");
-                    var pageSize = this.filterStore.get("pageSize");
-                    var facet = this.filterStore.get("facet");
-                    var nbPages = this.filterStore.get("nbPages");
+                // compute required index range
+                var startIndex = pageIndex * pageSize;
+                var endIndex = startIndex + pageSize;
 
-                    // compute required index range
-                    var startIndex = pageIndex * pageSize;
-                    var endIndex = startIndex + pageSize;
+                // check if we need to fetch more items
+                var searchStale =  false;
+                var searchPrevious = this.filterStore.get("searchPrevious");
+                var search = this.filterStore.get("search");
+                if ((search !== null) && (search != searchPrevious)) {
+                    searchStale = true;
+                }
+                if ((facet) && (facet.get("id") == selectedFacetId) && (!searchStale)) {
+                    var itemIndex = this.filterStore.get("itemIndex");
 
-                    // check if we need to fetch more items
-                    var searchStale =  false;
-                    var searchPrevious = this.filterStore.get("searchPrevious");
-                    var search = this.filterStore.get("search");
-                    if ((search !== null) && (search != searchPrevious)) {
-                        searchStale = true;
-                    }
-                    if ((facet) && (facet.get("id") == selectedFacetId) && (!searchStale)) {
-                        var itemIndex = this.filterStore.get("itemIndex");
-
-                        // compute what's the max index
-                        var maxItem = itemIndex + facet.get("items").length;
-                        if (startIndex < itemIndex) {
-                            fetch = true;
-                        }
-                        if ((endIndex > maxItem) && (facet.get("hasMore") === true)) {
-                            fetch = true;
-                        }
-                    } else {
+                    // compute what's the max index
+                    var maxItem = itemIndex + facet.get("items").length;
+                    if (startIndex < itemIndex) {
                         fetch = true;
                     }
+                    if ((endIndex > maxItem) && (facet.get("hasMore") === true)) {
+                        fetch = true;
+                    }
+                } else {
+                    fetch = true;
+                }
 
-                    if ((fetch === true) && (selectedFacetId) && (this.currentModel.get("id").facetJobId)) {
-                        // pre-fetch some pages of facet members
-                        var facetJob = new squid_api.model.ProjectFacetJobFacet();
-                        facetJob.set("id",this.currentModel.get("id"));
-                        facetJob.set("oid", selectedFacetId);
-                        if (startIndex) {
-                            facetJob.addParameter("startIndex", startIndex);
-                        }
-                        if (pageSize) {
-                            facetJob.addParameter("maxResults", (nbPages * pageSize));
-                        }
-                        if (search) {
-                            facetJob.addParameter("filter", search);
-                            this.filterStore.set("searchPrevious", search);
-                        }
-                        // get the results from API
-                        facetJob.fetch({
-                            error: function(model, response) {
-                                console.error(response);
-                            },
-                            success: function(model, response) {
-                                if (model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) {
-                                    // set a fake facet
-                                    var f = new squid_api.model.ProjectFacetJobFacet();
-                                    f.set("items", []);
-                                    me.filterStore.set("facet", f);
-                                } else {
-                                    me.filterStore.set("itemIndex", startIndex);
-                                    me.filterStore.set("facet", model);
-                                }
-                                // set error message if exists
-                                var errorMessage = model.get("errorMessage");
-                                if (model.get("error")) {
-                                    if (errorMessage) {
-                                        squid_api.model.status.set("message", errorMessage);
-                                    }
+                if ((fetch === true) && (selectedFacetId) && (this.currentModel.get("id").facetJobId)) {
+                    // pre-fetch some pages of facet members
+                    var facetJob = new squid_api.model.ProjectFacetJobFacet();
+                    facetJob.set("id",this.currentModel.get("id"));
+                    facetJob.set("oid", selectedFacetId);
+                    if (startIndex) {
+                        facetJob.addParameter("startIndex", startIndex);
+                    }
+                    if (pageSize) {
+                        facetJob.addParameter("maxResults", (nbPages * pageSize));
+                    }
+                    if (search) {
+                        facetJob.addParameter("filter", search);
+                        this.filterStore.set("searchPrevious", search);
+                    }
+                    // get the results from API
+                    facetJob.fetch({
+                        error: function(model, response) {
+                            console.error(response);
+                        },
+                        success: function(model, response) {
+                            if (model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) {
+                                // set a fake facet
+                                var f = new squid_api.model.ProjectFacetJobFacet();
+                                f.set("items", []);
+                                me.filterStore.set("facet", f);
+                            } else {
+                                me.filterStore.set("itemIndex", startIndex);
+                                me.filterStore.set("facet", model);
+                            }
+                            // set error message if exists
+                            var errorMessage = model.get("errorMessage");
+                            if (model.get("error")) {
+                                if (errorMessage) {
+                                    squid_api.model.status.set("message", errorMessage);
                                 }
                             }
-                        });
-                    } else {
-                        // trigger facet render
-                        me.filterStore.trigger("change:facet");
-                    }
+                        }
+                    });
+                } else {
+                    // trigger facet render
+                    me.filterStore.trigger("change:facet");
                 }
             }
         },
@@ -2228,6 +2241,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         initialize : function(options) {
             this.segment = options.segment;
             this.displayName = options.displayName;
+            this.config = squid_api.model.config;
             if (options.onCheck) {
                 this.onCheck = options.onCheck;
             } else {
@@ -2238,8 +2252,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 this.replaceWith = options.replaceWith;
             }
 
-            if (this.model) {
-                this.listenTo(this.model, 'change', this.render);
+            if (this.config) {
+                this.listenTo(this.config, 'change:selection', this.render);
             }
 
             // listen for global status change
@@ -2262,6 +2276,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 if (this.disabled === false) {
                     this.disabled = true;
                     var segment = this.getSegment();
+
+                    var selection = $.extend(true, {}, this.config.get("selection"));
                     if (segment !== null) {
                         var selectedItems = segment.selectedItems;
                         var selectedItemsUpdated = [];
@@ -2285,8 +2301,20 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         if (isChecked) {
                             selectedItemsUpdated.push({"id" : this.segment, "type" : "v"});
                         }
-                        segment.selectedItems = selectedItemsUpdated;
-                        this.model.trigger("change:selection", this.model);
+
+                        // update config selection
+                        if (selection) {
+                            if (selection.facets) {
+                                var facets = selection.facets;
+                                for (i=0; i<facets.length; i++) {
+                                    if (facets[i].dimension.type == "SEGMENTS") {
+                                        facets[i].selectedItems = selectedItemsUpdated;
+                                    }
+                                }
+                                selection.facets = facets;
+                            }
+                        }
+                        this.config.set("selection", squid_api.utils.buildCleanSelection(selection));
                     }
                 }
             }
@@ -2294,7 +2322,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
         getSegment : function() {
             var segment = null;
-            var selection = this.model.get('selection');
+            var selection = this.config.get('selection');
             if (selection) {
                 var facets = selection.facets;
                 if (facets) {
@@ -2314,7 +2342,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         render : function() {
             var selHTML = null;
             var isSelected = false;
-            if (this.model) {
+            if (this.config) {
                 // check if the segment is selected
                 var segment = this.getSegment();
                 if (segment) {

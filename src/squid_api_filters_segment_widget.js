@@ -19,6 +19,7 @@
         initialize : function(options) {
             this.segment = options.segment;
             this.displayName = options.displayName;
+            this.config = squid_api.model.config;
             if (options.onCheck) {
                 this.onCheck = options.onCheck;
             } else {
@@ -29,8 +30,8 @@
                 this.replaceWith = options.replaceWith;
             }
 
-            if (this.model) {
-                this.listenTo(this.model, 'change', this.render);
+            if (this.config) {
+                this.listenTo(this.config, 'change:selection', this.render);
             }
 
             // listen for global status change
@@ -53,6 +54,8 @@
                 if (this.disabled === false) {
                     this.disabled = true;
                     var segment = this.getSegment();
+
+                    var selection = $.extend(true, {}, this.config.get("selection"));
                     if (segment !== null) {
                         var selectedItems = segment.selectedItems;
                         var selectedItemsUpdated = [];
@@ -76,8 +79,20 @@
                         if (isChecked) {
                             selectedItemsUpdated.push({"id" : this.segment, "type" : "v"});
                         }
-                        segment.selectedItems = selectedItemsUpdated;
-                        this.model.trigger("change:selection", this.model);
+
+                        // update config selection
+                        if (selection) {
+                            if (selection.facets) {
+                                var facets = selection.facets;
+                                for (i=0; i<facets.length; i++) {
+                                    if (facets[i].dimension.type == "SEGMENTS") {
+                                        facets[i].selectedItems = selectedItemsUpdated;
+                                    }
+                                }
+                                selection.facets = facets;
+                            }
+                        }
+                        this.config.set("selection", squid_api.utils.buildCleanSelection(selection));
                     }
                 }
             }
@@ -85,7 +100,7 @@
 
         getSegment : function() {
             var segment = null;
-            var selection = this.model.get('selection');
+            var selection = this.config.get('selection');
             if (selection) {
                 var facets = selection.facets;
                 if (facets) {
@@ -105,7 +120,7 @@
         render : function() {
             var selHTML = null;
             var isSelected = false;
-            if (this.model) {
+            if (this.config) {
                 // check if the segment is selected
                 var segment = this.getSegment();
                 if (segment) {
