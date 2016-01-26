@@ -51,7 +51,7 @@ module.exports = function(grunt) {
                 watch : {
                     js : {
                         files : [ 'src/**/*.*' ],
-                        tasks : [ 'dev' ]
+                        tasks : [ 'default' ]
                     }
                 }
             });
@@ -61,8 +61,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-handlebars');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-clean');
-
-    grunt.registerTask('dev', [ 'jshint', 'handlebars', 'sass' ]);
 
     grunt.registerTask('default', [ 'jshint', 'clean', 'handlebars', 'concat:css', 'concat:js', 'sass']);
 };
