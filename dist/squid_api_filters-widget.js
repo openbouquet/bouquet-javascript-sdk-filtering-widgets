@@ -48,6 +48,10 @@ function program4(depth0,data) {
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
+    + " data-attributes=\"";
+  if (helper = helpers.attributes) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.attributes); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
     + "\">\n						<i class=\"fa fa-square-o\"></i><span>";
   if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
@@ -70,6 +74,10 @@ function program6(depth0,data) {
     + "\" data-id=\"";
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" data-attributes=\"";
+  if (helper = helpers.attributes) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.attributes); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\">\n						<i class=\"fa fa-square-o\"></i><span>";
   if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
@@ -658,6 +666,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     var value = target.attr("data-value");
                     var type = target.attr("data-type");
                     var id = target.attr("data-id");
+                    var attributes = target.attr("data-attributes");
 
                     // Get selected Filters
                     var selectionClone = $.extend(true, {}, this.filters.get("selection"));
@@ -677,7 +686,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         target.attr("selected", true);
 
                         // set up object to add a new selected item
-                        var selectObj = {id : id, type : type, value : value};
+                        var selectObj = {id : id, type : type, value : value, attributes: attributes};
 
                         // Push new filters to selectedItems array
 
