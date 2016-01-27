@@ -62,6 +62,7 @@
 
                 // add a spinning class
                 this.$el.find(".refresh-facet i").addClass("fa-spin");
+                this.$el.find(".refresh-facet span").text("refreshing");
             }
         },
 
@@ -228,7 +229,7 @@
             // apply action
             this.$el.find("span").on('apply.daterangepicker', function(ev, picker) {
                 // Update Change Selection upon date widget close
-                var startDate = moment(picker.startDate._d).format(squid_api.DATE_FORMAT);
+                var startDate = picker.startDate.format(squid_api.DATE_FORMAT);
                 var endDate = picker.endDate.format(squid_api.DATE_FORMAT);
                 me.updateFacet(facet, startDate, endDate);
             });

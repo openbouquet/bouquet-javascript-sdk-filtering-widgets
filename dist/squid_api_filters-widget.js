@@ -469,7 +469,7 @@ function program8(depth0,data) {
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" class=\"form-control btn btn-default refresh-facet\"><i class=\"fa fa-refresh\"></i> click to refresh</button>\r\n    ";
+    + "\" class=\"form-control btn btn-default refresh-facet\"><i class=\"fa fa-refresh\"></i> <span>click to refresh</span></button>\r\n    ";
   return buffer;
   }
 
@@ -1171,7 +1171,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         parentCheck : null,
         ignoredFacets : null,
         mandatory : null,
-        popup : null,
+        popup : true,
         onChange : null,
 
         initialize : function(options) {
@@ -1185,6 +1185,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
             if (options.filterPanel) {
                 this.filterPanel = options.filterPanel;
+            } else {
+                // create an element to hold the filterPanel
+                this.filterPanel = 'squid_api-view-CategoricalView';
+                $("body").append("<div id='"+this.filterPanel+"'></div>");
+                this.filterPanel = "#"+this.filterPanel;
             }
             if (options.filterSelected) {
                 this.filterSelected = options.filterSelected;
@@ -2022,6 +2027,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
                 // add a spinning class
                 this.$el.find(".refresh-facet i").addClass("fa-spin");
+                this.$el.find(".refresh-facet span").text("refreshing");
             }
         },
 
@@ -2188,7 +2194,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             // apply action
             this.$el.find("span").on('apply.daterangepicker', function(ev, picker) {
                 // Update Change Selection upon date widget close
-                var startDate = moment(picker.startDate._d).format(squid_api.DATE_FORMAT);
+                var startDate = picker.startDate.format(squid_api.DATE_FORMAT);
                 var endDate = picker.endDate.format(squid_api.DATE_FORMAT);
                 me.updateFacet(facet, startDate, endDate);
             });
