@@ -1171,7 +1171,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         parentCheck : null,
         ignoredFacets : null,
         mandatory : null,
-        popup : null,
+        popup : true,
         onChange : null,
 
         initialize : function(options) {
@@ -1185,6 +1185,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
             if (options.filterPanel) {
                 this.filterPanel = options.filterPanel;
+            } else {
+                // create an element to hold the filterPanel
+                this.filterPanel = 'squid_api-view-CategoricalView';
+                $("body").append("<div id='"+this.filterPanel+"'></div>");
+                this.filterPanel = "#"+this.filterPanel;
             }
             if (options.filterSelected) {
                 this.filterSelected = options.filterSelected;
