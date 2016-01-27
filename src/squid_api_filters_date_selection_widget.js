@@ -62,6 +62,7 @@
 
                 // add a spinning class
                 this.$el.find(".refresh-facet i").addClass("fa-spin");
+                this.$el.find(".refresh-facet span").text("refreshing");
             }
         },
 
