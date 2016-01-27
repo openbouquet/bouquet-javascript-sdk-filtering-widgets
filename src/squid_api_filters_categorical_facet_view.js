@@ -71,6 +71,7 @@
                     var value = target.attr("data-value");
                     var type = target.attr("data-type");
                     var id = target.attr("data-id");
+                    var attributes = target.attr("data-attributes");
 
                     // Get selected Filters
                     var selectionClone = $.extend(true, {}, this.filters.get("selection"));
@@ -90,7 +91,7 @@
                         target.attr("selected", true);
 
                         // set up object to add a new selected item
-                        var selectObj = {id : id, type : type, value : value};
+                        var selectObj = {id : id, type : type, value : value, attributes: attributes};
 
                         // Push new filters to selectedItems array
 
