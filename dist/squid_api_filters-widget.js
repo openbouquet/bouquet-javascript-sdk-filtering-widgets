@@ -48,6 +48,10 @@ function program4(depth0,data) {
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
+    + "\" data-attr=\"";
+  if (helper = helpers.dataAttr) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.dataAttr); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
     + "\">\n						<i class=\"fa fa-square-o\"></i><span>";
   if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
@@ -70,6 +74,10 @@ function program6(depth0,data) {
     + "\" data-id=\"";
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" data-attr=\"";
+  if (helper = helpers.dataAttr) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.dataAttr); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\">\n						<i class=\"fa fa-square-o\"></i><span>";
   if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
@@ -652,12 +660,12 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     // Get selected Filter & Item
                     var selectedFilter = this.model.get("selectedFilter");
                     var target = $(item.currentTarget);
-                    var selectedItem = target.attr("data-attr");
 
                     // Get clicked filter value & create object
                     var value = target.attr("data-value");
                     var type = target.attr("data-type");
                     var id = target.attr("data-id");
+                    var attributes = target.attr("data-attr");
 
                     // Get selected Filters
                     var selectionClone = $.extend(true, {}, this.filters.get("selection"));
@@ -678,9 +686,12 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
                         // set up object to add a new selected item
                         var selectObj = {id : id, type : type, value : value};
-
+                        // add attributes if exist
+                        if (attributes && attributes.length>0) {
+                        	selectObj.attributes = JSON.parse(attributes);
+                        }
+                        
                         // Push new filters to selectedItems array
-
                         var selectedFacet;
                         for (i=0; i<facets.length; i++) {
                             var facet = facets[i];
@@ -747,6 +758,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                             for (ix1=0; ix1<items.length; ix1++) {
                                 var obj = items[ix1];
                                 obj.selected = false;
+                                if  (obj.attributes) {
+                                	obj.dataAttr = JSON.stringify(obj.attributes);
+                                }
                                 for (ix2=0; ix2<selectedItems.length; ix2++) {
                                     if (items[ix1].id === selectedItems[ix2].id) {
                                         obj.selected = true;
