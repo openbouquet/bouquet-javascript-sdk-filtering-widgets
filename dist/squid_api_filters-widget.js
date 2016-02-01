@@ -1988,13 +1988,13 @@ $.widget( "ui.dialog", $.ui.dialog, {
         ranges : null,
         rangesPresets : {
             'all': function(min, max) {
-                return [moment(min), moment(max)];
+                return [moment(min).utc(), moment(max).utc()];
             },
             'first-month': function(min, max) {
-                return [moment(min).startOf('month'), moment(min).endOf('month')];
+                return [moment(min).utc().startOf('month'), moment(min).utc().endOf('month')];
             },
             'last-month': function(min, max) {
-                return [moment(max).startOf('month'), moment(max).endOf('month')];
+                return [moment(max).utc().startOf('month'), moment(max).utc().endOf('month')];
             }
         },
         monthsOnlyDisplay : false,
@@ -2090,9 +2090,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     if (facet.items) {
                         if (facet.items.length > 0) {
                             minMax = facet.items[0];
-                            dates.minDate = moment(minMax.lowerBound);
-                            dates.maxDate = moment(minMax.upperBound);
-                            dates.currentEndDate = moment(minMax.upperBound);
+                            dates.minDate = moment(minMax.lowerBound).utc();
+                            dates.maxDate = moment(minMax.upperBound).utc();
+                            dates.currentEndDate = moment(minMax.upperBound).utc();
                         }
                     }
                     // currently selected date check
@@ -2103,8 +2103,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
                             if ((minMax.type) && (moment(selectedItems.upperBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.upperBound).isBefore(dates.minDate.startOf("day")) || moment(selectedItems.lowerBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.lowerBound).isBefore(dates.minDate.startOf("day")))) {
                                 this.updateFacet(facet, dates.minDate.format(squid_api.DATE_FORMAT), dates.maxDate.format(squid_api.DATE_FORMAT));
                             } else {
-                                dates.currentStartDate = moment(selectedItems.lowerBound);
-                                dates.currentEndDate = moment(selectedItems.upperBound);
+                                dates.currentStartDate = moment(selectedItems.lowerBound).utc();
+                                dates.currentEndDate = moment(selectedItems.upperBound).utc();
                             }
                         }
                     }
@@ -2201,14 +2201,14 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 ranges: pickerRanges,
                 startDate: dates.currentStartDate ? dates.currentStartDate.format('YYYY-MM-DD') : null,
                 endDate: dates.currentEndDate ? dates.currentEndDate.format('YYYY-MM-DD') : null,
-                minDate : dates.minDate ? dates.minDate.format('YYYY-MM-DD') : moment().subtract("50", "years").format("YYYY-MM-DD"),
-                maxDate : dates.maxDate ? dates.maxDate.format('YYYY-MM-DD') : moment().format("YYYY-MM-DD"),
+                minDate : dates.minDate ? dates.minDate.format('YYYY-MM-DD') : moment().utc().subtract("50", "years").format("YYYY-MM-DD"),
+                maxDate : dates.maxDate ? dates.maxDate.format('YYYY-MM-DD') : moment().utc().format("YYYY-MM-DD"),
             });
 
             // apply action
             this.$el.find("span").on('apply.daterangepicker', function(ev, picker) {
                 // Update Change Selection upon date widget close
-                var startDate = picker.startDate.format(squid_api.DATE_FORMAT);
+                var startDate = picker.startDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000";
                 var endDate = picker.endDate.format(squid_api.DATE_FORMAT);
                 me.updateFacet(facet, startDate, endDate);
             });
