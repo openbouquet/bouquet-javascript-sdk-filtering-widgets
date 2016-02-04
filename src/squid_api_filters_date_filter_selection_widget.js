@@ -103,7 +103,7 @@
                     var period = _.clone(me.config.get("period"));
                     var domain = me.config.get("domain");
                     period[domain] = facet.val();
-                    var selection = me.getPeriodSelectio(period);
+                    var selection = me.getPeriodSelection(period);
                     me.config.set({"period": period, "selection" : selection});
                 }
             });
