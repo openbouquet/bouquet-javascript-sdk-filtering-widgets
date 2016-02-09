@@ -55,14 +55,17 @@
                 var periods = this.config.get("period");
                 var periodId = periods[this.config.get("domain")];
 
-                var getFacetMembersCallback = function() {
-                    me.config.set("selection", squid_api.utils.buildCleanSelection(me.filters.get("selection")));
-                };
-                squid_api.controller.facetjob.getFacetMembers(this.filters, periodId).done(getFacetMembersCallback);
-
-                // add a spinning class
+                // add spinning class
                 this.$el.find(".refresh-facet i").addClass("fa-spin");
                 this.$el.find(".refresh-facet span").text("refreshing");
+                
+                // get facet members for period facet
+                squid_api.controller.facetjob.getFacetMembers(this.filters, periodId).done(function() {
+                     me.config.set("selection", squid_api.utils.buildCleanSelection(me.filters.get("selection")));
+                    // remove spinning class
+                    this.$el.find(".refresh-facet i").removeClass("fa-spin");
+                    this.$el.find(".refresh-facet span").text("refreshed");
+                });
             }
         },
 

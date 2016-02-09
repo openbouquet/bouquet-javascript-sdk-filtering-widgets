@@ -472,13 +472,8 @@ function program6(depth0,data) {
 
 function program8(depth0,data) {
   
-  var buffer = "", stack1, helper;
-  buffer += "\r\n        <button data-toggle=\"tooltip\" title=\"Please click the refresh button to calculate the date facet: ";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" class=\"form-control btn btn-default refresh-facet\"><i class=\"fa fa-refresh\"></i> <span>click to refresh</span></button>\r\n    ";
-  return buffer;
+  
+  return "\r\n        <button data-toggle=\"tooltip\" title=\"Click to refresh period boundaries\" class=\"form-control btn btn-default refresh-facet\"><i class=\"fa fa-refresh\"></i> <span>click to refresh</span></button>\r\n    ";
   }
 
   buffer += "<div class=\"squid-api-date-selection-widget\">\r\n    ";
@@ -2034,14 +2029,17 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 var periods = this.config.get("period");
                 var periodId = periods[this.config.get("domain")];
 
-                var getFacetMembersCallback = function() {
-                    me.config.set("selection", squid_api.utils.buildCleanSelection(me.filters.get("selection")));
-                };
-                squid_api.controller.facetjob.getFacetMembers(this.filters, periodId).done(getFacetMembersCallback);
-
-                // add a spinning class
+                // add spinning class
                 this.$el.find(".refresh-facet i").addClass("fa-spin");
                 this.$el.find(".refresh-facet span").text("refreshing");
+                
+                // get facet members for period facet
+                squid_api.controller.facetjob.getFacetMembers(this.filters, periodId).done(function() {
+                     me.config.set("selection", squid_api.utils.buildCleanSelection(me.filters.get("selection")));
+                    // remove spinning class
+                    this.$el.find(".refresh-facet i").removeClass("fa-spin");
+                    this.$el.find(".refresh-facet span").text("refreshed");
+                });
             }
         },
 
