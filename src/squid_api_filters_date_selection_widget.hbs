@@ -2,11 +2,7 @@
     {{#if dateAvailable}}
 		<span>{{dateDisplay}}</span>
     {{else}}
-        {{#if facet}}
-                <span>select a date range</span>
-            {{else}}
-                no date available
-        {{/if}}
+        no date available
     {{/if}}
     {{#if notDone}}
         <button data-toggle="tooltip" title="Please click the refresh button to calculate the date facet: {{name}}" class="form-control btn btn-default refresh-facet"><i class="fa fa-refresh"></i> <span>click to refresh</span></button>
