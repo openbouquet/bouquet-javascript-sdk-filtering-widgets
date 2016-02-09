@@ -451,26 +451,11 @@ function program1(depth0,data) {
 
 function program3(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\r\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.facet), {hash:{},inverse:self.program(6, program6, data),fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n    ";
-  return buffer;
-  }
-function program4(depth0,data) {
   
-  
-  return "\r\n                <span>select a date range</span>\r\n            ";
+  return "\r\n        no date available\r\n    ";
   }
 
-function program6(depth0,data) {
-  
-  
-  return "\r\n                no date available\r\n        ";
-  }
-
-function program8(depth0,data) {
+function program5(depth0,data) {
   
   
   return "\r\n        <button data-toggle=\"tooltip\" title=\"Click to refresh period boundaries\" class=\"form-control btn btn-default refresh-facet\"><i class=\"fa fa-refresh\"></i> <span>click to refresh</span></button>\r\n    ";
@@ -480,7 +465,7 @@ function program8(depth0,data) {
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.dateAvailable), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.notDone), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.notDone), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n</div>\r\n";
   return buffer;
@@ -2057,7 +2042,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
              */
             var configPeriod = this.config.get("period");
             var domain = this.config.get("domain");
-            var filters = this.filters;
+            var selection = this.config.get("selection");
             var minMax = {};
             var selectedItems;
             var dates = {};
@@ -2065,86 +2050,96 @@ $.widget( "ui.dialog", $.ui.dialog, {
             var resetFacet = false;
             var viewData = {"dateAvailable" : false};
 
-            if (filters) {
-                var selection = filters.get("selection");
-                if (selection) {
-                    var facets = selection.facets;
-                    for (i=0; i<facets.length; i++) {
-                        // obtain current facet from config if exists
-                        if (configPeriod) {
-                            if (configPeriod[domain]) {
-                                if (facets[i].id == configPeriod[domain]) {
-                                    facet = facets[i];
+            if (selection) {
+                var facets = selection.facets;
+                for (i=0; i<facets.length; i++) {
+                    // obtain current facet from config if exists
+                    if (configPeriod) {
+                        if (configPeriod[domain]) {
+                            if (facets[i].id == configPeriod[domain]) {
+                                facet = facets[i];
+                            }
+                        }
+                    }
+
+                }
+            }
+            if (facet) {
+                viewData.name = facet.name;
+
+                // min-max date check
+                if (facet.items) {
+                    if (facet.items.length > 0) {
+                        minMax = facet.items[0];
+                        dates.minDate = moment(minMax.lowerBound).utc();
+                        dates.maxDate = moment(minMax.upperBound).utc();
+                        dates.currentEndDate = moment(minMax.upperBound).utc();
+                    }
+                }
+                // currently selected date check
+                if (facet.selectedItems) {
+                    selectedItems = facet.selectedItems[0];
+                    if (selectedItems) {
+                        // if currently selected date is outside of the min-max range then force an update
+                        if ((minMax.type) && (moment(selectedItems.upperBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.upperBound).isBefore(dates.minDate.startOf("day")) || moment(selectedItems.lowerBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.lowerBound).isBefore(dates.minDate.startOf("day")))) {
+                            this.updateFacet(facet, dates.minDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000", dates.maxDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000");
+                        } else {
+                            dates.currentStartDate = moment(selectedItems.lowerBound).utc();
+                            dates.currentEndDate = moment(selectedItems.upperBound).utc();
+                        }
+                    }
+                }
+
+                // detect if facet is done or not
+                var filters = this.filters;
+                if (filters) {
+                    var filtersSelection = filters.selection;
+                    if (filtersSelection) {
+                        var filtersFacets = filtersSelection.facets;
+                        if (filtersFacets) {
+                            for (ix=0; ix<filtersFacets.length; ix++) {
+                                if (filtersFacets[ix].id == facet.id) {
+                                    if (! filtersFacets[ix].done) {
+                                        viewData.notDone = true;
+                                    }
                                 }
                             }
                         }
-
-                    }
-                }
-                if (facet) {
-                    viewData.name = facet.name;
-
-                    // min-max date check
-                    if (facet.items) {
-                        if (facet.items.length > 0) {
-                            minMax = facet.items[0];
-                            dates.minDate = moment(minMax.lowerBound).utc();
-                            dates.maxDate = moment(minMax.upperBound).utc();
-                            dates.currentEndDate = moment(minMax.upperBound).utc();
-                        }
-                    }
-                    // currently selected date check
-                    if (facet.selectedItems) {
-                        selectedItems = facet.selectedItems[0];
-                        if (selectedItems) {
-                            // if currently selected date is outside of the min-max range then force an update
-                            if ((minMax.type) && (moment(selectedItems.upperBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.upperBound).isBefore(dates.minDate.startOf("day")) || moment(selectedItems.lowerBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.lowerBound).isBefore(dates.minDate.startOf("day")))) {
-                                this.updateFacet(facet, dates.minDate.format(squid_api.DATE_FORMAT), dates.maxDate.format(squid_api.DATE_FORMAT));
-                            } else {
-                                dates.currentStartDate = moment(selectedItems.lowerBound).utc();
-                                dates.currentEndDate = moment(selectedItems.upperBound).utc();
-                            }
-                        }
-                    }
-
-                    // detect if facet is done or not
-                    if (! facet.done) {
-                        viewData.notDone = true;
-                    }
-
-                    // set view data
-                    viewData.facet = facet;
-                    if (dates.currentStartDate && dates.currentEndDate) {
-                        viewData.dateAvailable = true;
-                        viewData.dateDisplay = dates.currentStartDate.format("ll") + " - " + dates.currentEndDate.format("ll");
-                    }
-
-                    // months only display logic
-                    if (this.monthsOnlyDisplay && dates.currentStartDate && dates.currentEndDate) {
-                        var d1 = dates.currentStartDate;
-                        var d2 = dates.currentEndDate;
-                        var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                        if ((d1.month() == d2.month()) && (d1.year() == d2.year())) {
-                            viewData.dateDisplay = monthNames[d1.month()] + " "  + d1.year();
-                        } else {
-                            viewData.dateDisplay =  monthNames[d1.month()] + " " + d1.year() + " - " + monthNames[d2.month()] + " " + d2.year();
-                        }
                     }
                 }
 
-                // render html
-                var html = this.template(viewData);
-                this.$el.html(html);
-
-                this.$el.find(".refresh-facet").tooltip({
-                    placement: "right",
-                    trigger: "hover"
-                });
-
-                // attach date picker if a facet is found
-                if (facet) {
-                    this.renderPicker(facet, dates);
+                // set view data
+                viewData.facet = facet;
+                if (dates.currentStartDate && dates.currentEndDate) {
+                    viewData.dateAvailable = true;
+                    viewData.dateDisplay = dates.currentStartDate.format("ll") + " - " + dates.currentEndDate.format("ll");
                 }
+
+                // months only display logic
+                if (this.monthsOnlyDisplay && dates.currentStartDate && dates.currentEndDate) {
+                    var d1 = dates.currentStartDate;
+                    var d2 = dates.currentEndDate;
+                    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                    if ((d1.month() == d2.month()) && (d1.year() == d2.year())) {
+                        viewData.dateDisplay = monthNames[d1.month()] + " "  + d1.year();
+                    } else {
+                        viewData.dateDisplay =  monthNames[d1.month()] + " " + d1.year() + " - " + monthNames[d2.month()] + " " + d2.year();
+                    }
+                }
+            }
+
+            // render html
+            var html = this.template(viewData);
+            this.$el.html(html);
+
+            this.$el.find(".refresh-facet").tooltip({
+                placement: "right",
+                trigger: "hover"
+            });
+
+            // attach date picker if a facet is found
+            if (facet) {
+                this.renderPicker(facet, dates);
             }
 
             return this;
