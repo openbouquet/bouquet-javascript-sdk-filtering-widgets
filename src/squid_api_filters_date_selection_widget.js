@@ -9,13 +9,13 @@
         ranges : null,
         rangesPresets : {
             'all': function(min, max) {
-                return [moment(min), moment(max)];
+                return [moment(min).utc(), moment(max).utc()];
             },
             'first-month': function(min, max) {
-                return [moment(min).startOf('month'), moment(min).endOf('month')];
+                return [moment(min).utc().startOf('month'), moment(min).utc().endOf('month')];
             },
             'last-month': function(min, max) {
-                return [moment(max).startOf('month'), moment(max).endOf('month')];
+                return [moment(max).utc().startOf('month'), moment(max).utc().endOf('month')];
             }
         },
         monthsOnlyDisplay : false,
@@ -55,14 +55,17 @@
                 var periods = this.config.get("period");
                 var periodId = periods[this.config.get("domain")];
 
-                var getFacetMembersCallback = function() {
-                    me.config.set("selection", squid_api.utils.buildCleanSelection(me.filters.get("selection")));
-                };
-                squid_api.controller.facetjob.getFacetMembers(this.filters, periodId).done(getFacetMembersCallback);
-
-                // add a spinning class
+                // add spinning class
                 this.$el.find(".refresh-facet i").addClass("fa-spin");
                 this.$el.find(".refresh-facet span").text("refreshing");
+                
+                // get facet members for period facet
+                squid_api.controller.facetjob.getFacetMembers(this.filters, periodId).done(function() {
+                     me.config.set("selection", squid_api.utils.buildCleanSelection(me.filters.get("selection")));
+                    // remove spinning class
+                    this.$el.find(".refresh-facet i").removeClass("fa-spin");
+                    this.$el.find(".refresh-facet span").text("refreshed");
+                });
             }
         },
 
@@ -80,7 +83,7 @@
              */
             var configPeriod = this.config.get("period");
             var domain = this.config.get("domain");
-            var filters = this.filters;
+            var selection = this.config.get("selection");
             var minMax = {};
             var selectedItems;
             var dates = {};
@@ -88,86 +91,96 @@
             var resetFacet = false;
             var viewData = {"dateAvailable" : false};
 
-            if (filters) {
-                var selection = filters.get("selection");
-                if (selection) {
-                    var facets = selection.facets;
-                    for (i=0; i<facets.length; i++) {
-                        // obtain current facet from config if exists
-                        if (configPeriod) {
-                            if (configPeriod[domain]) {
-                                if (facets[i].id == configPeriod[domain]) {
-                                    facet = facets[i];
+            if (selection) {
+                var facets = selection.facets;
+                for (i=0; i<facets.length; i++) {
+                    // obtain current facet from config if exists
+                    if (configPeriod) {
+                        if (configPeriod[domain]) {
+                            if (facets[i].id == configPeriod[domain]) {
+                                facet = facets[i];
+                            }
+                        }
+                    }
+
+                }
+            }
+            if (facet) {
+                viewData.name = facet.name;
+
+                // min-max date check
+                if (facet.items) {
+                    if (facet.items.length > 0) {
+                        minMax = facet.items[0];
+                        dates.minDate = moment(minMax.lowerBound).utc();
+                        dates.maxDate = moment(minMax.upperBound).utc();
+                        dates.currentEndDate = moment(minMax.upperBound).utc();
+                    }
+                }
+                // currently selected date check
+                if (facet.selectedItems) {
+                    selectedItems = facet.selectedItems[0];
+                    if (selectedItems) {
+                        // if currently selected date is outside of the min-max range then force an update
+                        if ((minMax.type) && (moment(selectedItems.upperBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.upperBound).isBefore(dates.minDate.startOf("day")) || moment(selectedItems.lowerBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.lowerBound).isBefore(dates.minDate.startOf("day")))) {
+                            this.updateFacet(facet, dates.minDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000", dates.maxDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000");
+                        } else {
+                            dates.currentStartDate = moment(selectedItems.lowerBound).utc();
+                            dates.currentEndDate = moment(selectedItems.upperBound).utc();
+                        }
+                    }
+                }
+
+                // detect if facet is done or not
+                var filters = this.filters;
+                if (filters) {
+                    var filtersSelection = filters.selection;
+                    if (filtersSelection) {
+                        var filtersFacets = filtersSelection.facets;
+                        if (filtersFacets) {
+                            for (ix=0; ix<filtersFacets.length; ix++) {
+                                if (filtersFacets[ix].id == facet.id) {
+                                    if (! filtersFacets[ix].done) {
+                                        viewData.notDone = true;
+                                    }
                                 }
                             }
                         }
-
-                    }
-                }
-                if (facet) {
-                    viewData.name = facet.name;
-
-                    // min-max date check
-                    if (facet.items) {
-                        if (facet.items.length > 0) {
-                            minMax = facet.items[0];
-                            dates.minDate = moment(minMax.lowerBound);
-                            dates.maxDate = moment(minMax.upperBound);
-                            dates.currentEndDate = moment(minMax.upperBound);
-                        }
-                    }
-                    // currently selected date check
-                    if (facet.selectedItems) {
-                        selectedItems = facet.selectedItems[0];
-                        if (selectedItems) {
-                            // if currently selected date is outside of the min-max range then force an update
-                            if ((minMax.type) && (moment(selectedItems.upperBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.upperBound).isBefore(dates.minDate.startOf("day")) || moment(selectedItems.lowerBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.lowerBound).isBefore(dates.minDate.startOf("day")))) {
-                                this.updateFacet(facet, dates.minDate.format(squid_api.DATE_FORMAT), dates.maxDate.format(squid_api.DATE_FORMAT));
-                            } else {
-                                dates.currentStartDate = moment(selectedItems.lowerBound);
-                                dates.currentEndDate = moment(selectedItems.upperBound);
-                            }
-                        }
-                    }
-
-                    // detect if facet is done or not
-                    if (! facet.done) {
-                        viewData.notDone = true;
-                    }
-
-                    // set view data
-                    viewData.facet = facet;
-                    if (dates.currentStartDate && dates.currentEndDate) {
-                        viewData.dateAvailable = true;
-                        viewData.dateDisplay = dates.currentStartDate.format("ll") + " - " + dates.currentEndDate.format("ll");
-                    }
-
-                    // months only display logic
-                    if (this.monthsOnlyDisplay && dates.currentStartDate && dates.currentEndDate) {
-                        var d1 = dates.currentStartDate;
-                        var d2 = dates.currentEndDate;
-                        var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                        if ((d1.month() == d2.month()) && (d1.year() == d2.year())) {
-                            viewData.dateDisplay = monthNames[d1.month()] + " "  + d1.year();
-                        } else {
-                            viewData.dateDisplay =  monthNames[d1.month()] + " " + d1.year() + " - " + monthNames[d2.month()] + " " + d2.year();
-                        }
                     }
                 }
 
-                // render html
-                var html = this.template(viewData);
-                this.$el.html(html);
-
-                this.$el.find(".refresh-facet").tooltip({
-                    placement: "right",
-                    trigger: "hover"
-                });
-
-                // attach date picker if a facet is found
-                if (facet) {
-                    this.renderPicker(facet, dates);
+                // set view data
+                viewData.facet = facet;
+                if (dates.currentStartDate && dates.currentEndDate) {
+                    viewData.dateAvailable = true;
+                    viewData.dateDisplay = dates.currentStartDate.format("ll") + " - " + dates.currentEndDate.format("ll");
                 }
+
+                // months only display logic
+                if (this.monthsOnlyDisplay && dates.currentStartDate && dates.currentEndDate) {
+                    var d1 = dates.currentStartDate;
+                    var d2 = dates.currentEndDate;
+                    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                    if ((d1.month() == d2.month()) && (d1.year() == d2.year())) {
+                        viewData.dateDisplay = monthNames[d1.month()] + " "  + d1.year();
+                    } else {
+                        viewData.dateDisplay =  monthNames[d1.month()] + " " + d1.year() + " - " + monthNames[d2.month()] + " " + d2.year();
+                    }
+                }
+            }
+
+            // render html
+            var html = this.template(viewData);
+            this.$el.html(html);
+
+            this.$el.find(".refresh-facet").tooltip({
+                placement: "right",
+                trigger: "hover"
+            });
+
+            // attach date picker if a facet is found
+            if (facet) {
+                this.renderPicker(facet, dates);
             }
 
             return this;
@@ -222,14 +235,14 @@
                 ranges: pickerRanges,
                 startDate: dates.currentStartDate ? dates.currentStartDate.format('YYYY-MM-DD') : null,
                 endDate: dates.currentEndDate ? dates.currentEndDate.format('YYYY-MM-DD') : null,
-                minDate : dates.minDate ? dates.minDate.format('YYYY-MM-DD') : moment().subtract("50", "years").format("YYYY-MM-DD"),
-                maxDate : dates.maxDate ? dates.maxDate.format('YYYY-MM-DD') : moment().format("YYYY-MM-DD"),
+                minDate : dates.minDate ? dates.minDate.format('YYYY-MM-DD') : moment().utc().subtract("50", "years").format("YYYY-MM-DD"),
+                maxDate : dates.maxDate ? dates.maxDate.format('YYYY-MM-DD') : moment().utc().format("YYYY-MM-DD"),
             });
 
             // apply action
             this.$el.find("span").on('apply.daterangepicker', function(ev, picker) {
                 // Update Change Selection upon date widget close
-                var startDate = picker.startDate.format(squid_api.DATE_FORMAT);
+                var startDate = picker.startDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000";
                 var endDate = picker.endDate.format(squid_api.DATE_FORMAT);
                 me.updateFacet(facet, startDate, endDate);
             });
