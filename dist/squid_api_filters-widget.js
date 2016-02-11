@@ -441,7 +441,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\r\n		<span>";
+  buffer += "\r\n		<span class=\"widget\">";
   if (helper = helpers.dateDisplay) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.dateDisplay); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -2020,10 +2020,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 
                 // get facet members for period facet
                 squid_api.controller.facetjob.getFacetMembers(this.filters, periodId).done(function() {
-                     me.config.set("selection", squid_api.utils.buildCleanSelection(me.filters.get("selection")));
-                    // remove spinning class
-                    this.$el.find(".refresh-facet i").removeClass("fa-spin");
-                    this.$el.find(".refresh-facet span").text("refreshed");
+                     me.render();
                 });
             }
         },
@@ -2067,33 +2064,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
             if (facet) {
                 viewData.name = facet.name;
 
-                // min-max date check
-                if (facet.items) {
-                    if (facet.items.length > 0) {
-                        minMax = facet.items[0];
-                        dates.minDate = moment(minMax.lowerBound).utc();
-                        dates.maxDate = moment(minMax.upperBound).utc();
-                        dates.currentEndDate = moment(minMax.upperBound).utc();
-                    }
-                }
-                // currently selected date check
-                if (facet.selectedItems) {
-                    selectedItems = facet.selectedItems[0];
-                    if (selectedItems) {
-                        // if currently selected date is outside of the min-max range then force an update
-                        if ((minMax.type) && (moment(selectedItems.upperBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.upperBound).isBefore(dates.minDate.startOf("day")) || moment(selectedItems.lowerBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.lowerBound).isBefore(dates.minDate.startOf("day")))) {
-                            this.updateFacet(facet, dates.minDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000", dates.maxDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000");
-                        } else {
-                            dates.currentStartDate = moment(selectedItems.lowerBound).utc();
-                            dates.currentEndDate = moment(selectedItems.upperBound).utc();
-                        }
-                    }
-                }
-
                 // detect if facet is done or not
                 var filters = this.filters;
                 if (filters) {
-                    var filtersSelection = filters.selection;
+                    var filtersSelection = filters.get("selection");
                     if (filtersSelection) {
                         var filtersFacets = filtersSelection.facets;
                         if (filtersFacets) {
@@ -2101,6 +2075,28 @@ $.widget( "ui.dialog", $.ui.dialog, {
                                 if (filtersFacets[ix].id == facet.id) {
                                     if (! filtersFacets[ix].done) {
                                         viewData.notDone = true;
+                                    }
+                                    // min-max date check
+                                    if (filtersFacets[ix].items) {
+                                        if (filtersFacets[ix].items.length > 0) {
+                                            minMax = filtersFacets[ix].items[0];
+                                            dates.minDate = moment(minMax.lowerBound).utc();
+                                            dates.maxDate = moment(minMax.upperBound).utc();
+                                            dates.currentEndDate = moment(minMax.upperBound).utc();
+                                        }
+                                    }
+                                    // currently selected date check
+                                    if (filtersFacets[ix].selectedItems) {
+                                        selectedItems = filtersFacets[ix].selectedItems[0];
+                                        if (selectedItems) {
+                                            // if currently selected date is outside of the min-max range then force an update
+                                            if ((minMax.type) && (moment(selectedItems.upperBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.upperBound).isBefore(dates.minDate.startOf("day")) || moment(selectedItems.lowerBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.lowerBound).isBefore(dates.minDate.startOf("day")))) {
+                                                this.updateFacet(filtersFacets[ix], dates.minDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000", dates.maxDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000");
+                                            } else {
+                                                dates.currentStartDate = moment(selectedItems.lowerBound).utc();
+                                                dates.currentEndDate = moment(selectedItems.upperBound).utc();
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -2187,7 +2183,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
 
             // Build Date Picker
-            this.$el.find("span").daterangepicker({
+            this.$el.find(".widget").daterangepicker({
                 opens: me.datePickerPosition,
                 format: 'YYYY-MM-DD',
                 showDropdowns: true,
