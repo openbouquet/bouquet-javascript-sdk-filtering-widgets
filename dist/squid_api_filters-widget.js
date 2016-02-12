@@ -1845,6 +1845,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
             // listen for global status change
             this.status.on('change:status', this.statusUpdate, this);
+
+            this.renderView();
         },
 
         remove: function() {
@@ -1855,11 +1857,44 @@ $.widget( "ui.dialog", $.ui.dialog, {
         },
 
         statusUpdate: function() {
-        	if (squid_api.model.status.get("status") == "RUNNING") {
+        	if (this.status.get("status") !== "DONE") {
         		this.$el.find("button").prop("disabled", true);
         	} else {
         		this.$el.find("button").prop("disabled", false);
         	}
+        },
+
+        renderView: function(jsonData) {
+            var me = this;
+            var html = this.template(jsonData);
+            this.$el.html(html);
+            this.$el.show();
+
+            // Initialize plugin
+            this.$el.find("select").multiselect({
+                buttonText: function(option, select) {
+                    if (select.find("option:selected").length > 0) {
+                        text = select.find("option:selected").text();
+                    } else if (select.find("option").length > 0) {
+                        text = "Select a period";
+                    } else {
+                        text = 'No usable period exists';
+                    }
+                    return text;
+                },
+                onChange: function(facet) {
+                    var period = _.clone(me.config.get("period"));
+                    var domain = me.config.get("domain");
+                    period[domain] = facet.val();
+                    var selection = me.getPeriodSelection(period);
+                    me.config.set({"period": period, "selection" : selection});
+                }
+            });
+
+            // Remove Button Title Tag
+            this.$el.find("button").removeAttr('title');
+
+            this.statusUpdate();
         },
 
         render: function() {
@@ -1899,33 +1934,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 return 0; // no sorting
             });
 
-            var html = me.template(jsonData);
-            me.$el.html(html);
-            me.$el.show();
-
-            // Initialize plugin
-            me.$el.find("select").multiselect({
-                buttonText: function(option, select) {
-                    if (select.find("option:selected").length > 0) {
-                        text = select.find("option:selected").text();
-                    } else if (select.find("option").length > 0) {
-                        text = "Select a period";
-                    } else {
-                        text = 'No usable period exists';
-                    }
-                    return text;
-                },
-                onChange: function(facet) {
-                    var period = _.clone(me.config.get("period"));
-                    var domain = me.config.get("domain");
-                    period[domain] = facet.val();
-                    var selection = me.getPeriodSelection(period);
-                    me.config.set({"period": period, "selection" : selection});
-                }
-            });
-
-            // Remove Button Title Tag
-            me.$el.find("button").removeAttr('title');
+            this.renderView(jsonData);
 
             return this;
         },
