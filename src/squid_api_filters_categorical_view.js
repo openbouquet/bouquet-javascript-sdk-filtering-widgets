@@ -193,8 +193,9 @@
             }, this);
 
             // listen for global status change
-            squid_api.model.status.on('change:status', this.statusUpdate, this);
+            this.status.on('change:status', this.statusUpdate, this);
 
+            this.render();
         },
 
         setInitialFacet : function(initialFacet) {
@@ -244,10 +245,10 @@
 
             if ((running) || (disabled)) {
                 // computation is running : disable input
-                this.$el.find("button").attr("disabled","disabled");
+                this.$el.find("button").attr("disabled", true);
             } else {
                 // computation is done : enable input
-                this.$el.find("button").removeAttr("disabled");
+                this.$el.find("button").attr("disabled", false);
             }
         },
 
@@ -372,6 +373,7 @@
                 if (buttonLabel) {
                     this.$el
                     .html("<button type='button' class='btn squid_api_filters_categorical_button'>" + buttonLabel + "<span class='caret'></span></button>");
+                    this.statusUpdate();
                 }
                 $(this.filterPanel).dialog({
                     dialogClass: "squid-api-filters-widget-popup",
