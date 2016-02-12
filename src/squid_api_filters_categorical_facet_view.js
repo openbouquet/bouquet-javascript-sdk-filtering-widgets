@@ -131,7 +131,7 @@
             var computingInProgress = false;
             var updatedItems = [];
 
-            if (facet) {
+            if (facet && this.filters) {
                 this.$el.addClass("min-filter-height");
 
                 var facetItems = facet.get("items");
