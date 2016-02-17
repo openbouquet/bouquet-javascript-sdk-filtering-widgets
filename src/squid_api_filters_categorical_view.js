@@ -21,7 +21,7 @@
         parentCheck : null,
         ignoredFacets : null,
         mandatory : null,
-        popup : true,
+        popup : false,
         onChange : null,
 
         initialize : function(options) {
