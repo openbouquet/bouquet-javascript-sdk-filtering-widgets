@@ -2212,7 +2212,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             this.$el.find("span").on('apply.daterangepicker', function(ev, picker) {
                 // Update Change Selection upon date widget close
                 var startDate = picker.startDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000";
-                var endDate = picker.endDate.format(squid_api.DATE_FORMAT);
+                var endDate = picker.endDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000";
                 me.updateFacet(facet, startDate, endDate);
             });
 
