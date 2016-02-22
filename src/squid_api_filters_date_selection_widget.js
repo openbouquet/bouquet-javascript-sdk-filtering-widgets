@@ -114,8 +114,10 @@
                         if (filtersFacets) {
                             for (ix=0; ix<filtersFacets.length; ix++) {
                                 if (filtersFacets[ix].id == facet.id) {
-                                    if (! filtersFacets[ix].done) {
-                                        viewData.notDone = true;
+                                    if (! filtersFacets[ix].done && filtersFacets[ix].items) {
+                                        if (filtersFacets[ix].items.length === 0) {
+                                            viewData.notDone = true;
+                                        }
                                     }
                                     // min-max date check
                                     if (filtersFacets[ix].items) {
