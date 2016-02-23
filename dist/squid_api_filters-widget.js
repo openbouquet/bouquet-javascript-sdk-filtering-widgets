@@ -343,7 +343,7 @@ function program2(depth0,data) {
   var buffer = "";
   buffer += "\n                <li>"
     + escapeExpression((typeof depth0 === functionType ? depth0.apply(depth0) : depth0))
-    + "</li>\n            ";
+    + ", </li>\n            ";
   return buffer;
   }
 
