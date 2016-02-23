@@ -1553,10 +1553,44 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 }
                 $(this.filterPanel).addClass("collapse");
             }
+            this.displayFacetsOnHover();
+        },
+
+        displayFacetsOnHover: function() {
+            var selection = this.model.get("selection");
+            var hoverText = "";
+            if (selection) {
+                var facets = selection.facets;
+                if (facets) {
+                    // Button which opens filter Panel
+                    var buttonLabel = this.getButtonLabel();
+                    // loop through selected model facets
+                    for (i=0; i<facets.length; i++) {
+                        if (facets[i].selectedItems.length > 0) {
+                            var facet = facets[i];
+                            // do not add to the count if a date
+                            if (facet.dimension.type !== "CONTINUOUS" && facet.dimension.valueType !== "DATE") {
+                                hoverText += " " + facet.name + " - ";
+                                var selectedItems = facet.selectedItems;
+                                for (ix=0; ix<selectedItems.length; ix++) {
+                                    if (ix !== selectedItems.length) {
+                                        hoverText += selectedItems[ix].value + ",";
+                                    } else {
+                                        hoverText += selectedItems[ix].value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            var el = this.$el.find(".squid_api_filters_categorical_button");
+            el.attr("title", hoverText);
+            el.attr("data-placement", "bottom");
+            el.tooltip();
         },
 
         updateFacetQuantityDisplay: function() {
-            // TODO: update for popup view
             var selection = this.model.get("selection");
             if (selection) {
                 var facets = selection.facets;
@@ -1570,7 +1604,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         if (facets[i].selectedItems.length > 0) {
                             // do not add to the count if a date
                             if (facets[i].dimension.type !== "CONTINUOUS" && facets[i].dimension.valueType !== "DATE") {
-                                count++;
+                                count += facets[i].selectedItems.length;
                             }
                         }
                     }
@@ -1581,6 +1615,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     } else {
                         this.$el.html("<button type='button' class='btn squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + " (" + count + ")</span><span class='caret'></span></button>");
                     }
+                    this.displayFacetsOnHover();
                 }
             }
         },
