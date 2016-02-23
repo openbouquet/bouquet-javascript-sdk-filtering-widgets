@@ -1621,13 +1621,15 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     }
                 }
             }
-            var el = this.$el.find(".squid_api_filters_categorical_button");
-            el.attr("data-original-title", this.filterHoverTemplate(jsonData));
-            el.attr("data-placement", "bottom");
-            el.tooltip({
-                html:true,
-                template: '<div class="tooltip squid_api_filters_categorical_button_hover_wrapper"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
-            });
+            if (jsonData.items.length !== 0) {
+                var el = this.$el.find(".squid_api_filters_categorical_button");
+                el.attr("data-original-title", this.filterHoverTemplate(jsonData));
+                el.attr("data-placement", "bottom");
+                el.tooltip({
+                    html:true,
+                    template: '<div class="tooltip squid_api_filters_categorical_button_hover_wrapper"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+                });
+            }
         },
 
         updateFacetQuantityDisplay: function() {
