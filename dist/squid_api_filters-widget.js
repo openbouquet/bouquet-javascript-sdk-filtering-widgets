@@ -1170,6 +1170,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         mandatory : null,
         popup : false,
         onChange : null,
+        displayFacetQuantity : false,
 
         initialize : function(options) {
             var me = this;
@@ -1223,6 +1224,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
             if (options.popup) {
                 this.popup = options.popup;
+            }
+            if (options.displayFacetQuantity) {
+                this.displayFacetQuantity = options.displayFacetQuantity;
             }
             if (options.onChange) {
                 this.onChange = options.onChange;
@@ -1310,6 +1314,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 if (me.currentModel !== me.model) {
                     var selectionClone = $.extend(true, {}, filters.get("selection"));
                     me.currentModel.set("selection", selectionClone);
+                }
+                if (me.displayFacetQuantity) {
+                    me.updateFacetQuantityDisplay();
                 }
             });
 
@@ -1545,6 +1552,36 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     .html("<button type='button' class='btn squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + "</span><span class='caret'></span></button>");
                 }
                 $(this.filterPanel).addClass("collapse");
+            }
+        },
+
+        updateFacetQuantityDisplay: function() {
+            // TODO: update for popup view
+            var selection = this.model.get("selection");
+            if (selection) {
+                var facets = selection.facets;
+                if (facets) {
+                    // Button which opens filter Panel
+                    var buttonLabel = this.getButtonLabel();
+                    // store number of selected facets items
+                    var count = 0;
+                    // loop through selected model facets
+                    for (i=0; i<facets.length; i++) {
+                        if (facets[i].selectedItems.length > 0) {
+                            // do not add to the count if a date
+                            if (facets[i].dimension.type !== "CONTINUOUS" && facets[i].dimension.valueType !== "DATE") {
+                                count++;
+                            }
+                        }
+                    }
+                    if (this.popup) {
+                        if (buttonLabel) {
+                            this.$el.html("<button type='button' class='btn squid_api_filters_categorical_button'>" + buttonLabel + " (" + count + ")<span class='caret'></span></button>");
+                        }
+                    } else {
+                        this.$el.html("<button type='button' class='btn squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + " (" + count + ")</span><span class='caret'></span></button>");
+                    }
+                }
             }
         },
 
