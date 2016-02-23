@@ -24,6 +24,9 @@
       top: 5px;
       cursor: pointer; }
 
+.tooltip .tooltip.bottom, .tooltip .tooltip-arrow {
+  top: 1px !important; }
+
 .squid-api-date-selection-widget #date-picker {
   float: left; }
   .squid-api-date-selection-widget #date-picker .sq-content {

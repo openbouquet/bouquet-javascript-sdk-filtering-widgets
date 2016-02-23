@@ -91,6 +91,7 @@
             }
 
             this.filterPanelTemplate = squid_api.template.squid_api_filters_categorical_view;
+            this.filterHoverTemplate = squid_api.template.squid_api_filters_categorical_view_hover_template;
 
             if (options.format) {
                 this.format = options.format;
@@ -411,7 +412,7 @@
 
         displayFacetsOnHover: function() {
             var selection = this.model.get("selection");
-            var hoverText = "";
+            var jsonData = {items : []};
             if (selection) {
                 var facets = selection.facets;
                 if (facets) {
@@ -423,24 +424,29 @@
                             var facet = facets[i];
                             // do not add to the count if a date
                             if (facet.dimension.type !== "CONTINUOUS" && facet.dimension.valueType !== "DATE") {
-                                hoverText += " " + facet.name + " - ";
                                 var selectedItems = facet.selectedItems;
+                                // store local object
+                                var obj = {};
+                                obj.name = facet.name;
+                                obj.values = [];
+                                // obtain all selected items
                                 for (ix=0; ix<selectedItems.length; ix++) {
-                                    if (ix !== selectedItems.length) {
-                                        hoverText += selectedItems[ix].value + ",";
-                                    } else {
-                                        hoverText += selectedItems[ix].value;
-                                    }
+                                    obj.values.push(selectedItems[ix].value);
                                 }
+                                // push to jsonData
+                                jsonData.items.push(obj);
                             }
                         }
                     }
                 }
             }
             var el = this.$el.find(".squid_api_filters_categorical_button");
-            el.attr("title", hoverText);
+            el.attr("data-original-title", this.filterHoverTemplate(jsonData));
             el.attr("data-placement", "bottom");
-            el.tooltip();
+            el.tooltip({
+                html:true,
+                template: '<div class="tooltip squid_api_filters_categorical_button_hover_wrapper"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+            });
         },
 
         updateFacetQuantityDisplay: function() {
