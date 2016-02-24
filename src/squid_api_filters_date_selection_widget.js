@@ -41,7 +41,9 @@
                 this.monthsOnlyDisplay = options.monthsOnlyDisplay;
             }
 
+            // TODO: see why filters selection change event is not triggered when not setting an upperBound timezone
             this.listenTo(this.filters, "change:selection", this.render);
+            this.listenTo(this.config, "change:selection", this.render);
             this.listenTo(this.config, "change:period", this.render);
 
             // listen for global status change
