@@ -1205,6 +1205,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         popup : false,
         onChange : null,
         displayFacetQuantity : false,
+        hoverFacetDisplay : true,
 
         initialize : function(options) {
             var me = this;
@@ -1261,6 +1262,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
             if (options.displayFacetQuantity) {
                 this.displayFacetQuantity = options.displayFacetQuantity;
+            }
+            if (!options.hoverFacetDisplay) {
+                this.hoverFacetDisplay = options.hoverFacetDisplay;
             }
             if (options.onChange) {
                 this.onChange = options.onChange;
@@ -1588,7 +1592,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 }
                 $(this.filterPanel).addClass("collapse");
             }
-            this.displayFacetsOnHover();
+            if (this.hoverFacetDisplay) {
+                this.displayFacetsOnHover();
+            }
         },
 
         displayFacetsOnHover: function() {
@@ -1657,7 +1663,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     } else {
                         this.$el.html("<button type='button' class='btn squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + " (" + count + ")</span><span class='caret'></span></button>");
                     }
-                    this.displayFacetsOnHover();
+                    if (this.hoverFacetDisplay) {
+                        this.displayFacetsOnHover();
+                    }
                 }
             }
         },

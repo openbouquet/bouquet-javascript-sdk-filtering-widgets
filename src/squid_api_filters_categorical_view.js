@@ -24,6 +24,7 @@
         popup : false,
         onChange : null,
         displayFacetQuantity : false,
+        hoverFacetDisplay : true,
 
         initialize : function(options) {
             var me = this;
@@ -80,6 +81,9 @@
             }
             if (options.displayFacetQuantity) {
                 this.displayFacetQuantity = options.displayFacetQuantity;
+            }
+            if (!options.hoverFacetDisplay) {
+                this.hoverFacetDisplay = options.hoverFacetDisplay;
             }
             if (options.onChange) {
                 this.onChange = options.onChange;
@@ -407,7 +411,9 @@
                 }
                 $(this.filterPanel).addClass("collapse");
             }
-            this.displayFacetsOnHover();
+            if (this.hoverFacetDisplay) {
+                this.displayFacetsOnHover();
+            }
         },
 
         displayFacetsOnHover: function() {
@@ -476,7 +482,9 @@
                     } else {
                         this.$el.html("<button type='button' class='btn squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + " (" + count + ")</span><span class='caret'></span></button>");
                     }
-                    this.displayFacetsOnHover();
+                    if (this.hoverFacetDisplay) {
+                        this.displayFacetsOnHover();
+                    }
                 }
             }
         },
