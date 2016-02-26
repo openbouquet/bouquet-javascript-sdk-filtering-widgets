@@ -1205,7 +1205,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         popup : false,
         onChange : null,
         displayFacetQuantity : false,
-        hoverFacetDisplay : true,
+        hoverFacetDisplay : null,
 
         initialize : function(options) {
             var me = this;
@@ -1263,7 +1263,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             if (options.displayFacetQuantity) {
                 this.displayFacetQuantity = options.displayFacetQuantity;
             }
-            if (!options.hoverFacetDisplay) {
+            if (options.hoverFacetDisplay) {
                 this.hoverFacetDisplay = options.hoverFacetDisplay;
             }
             if (options.onChange) {

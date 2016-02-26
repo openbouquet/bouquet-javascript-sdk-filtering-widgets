@@ -24,7 +24,7 @@
         popup : false,
         onChange : null,
         displayFacetQuantity : false,
-        hoverFacetDisplay : true,
+        hoverFacetDisplay : null,
 
         initialize : function(options) {
             var me = this;
@@ -82,7 +82,7 @@
             if (options.displayFacetQuantity) {
                 this.displayFacetQuantity = options.displayFacetQuantity;
             }
-            if (!options.hoverFacetDisplay) {
+            if (options.hoverFacetDisplay) {
                 this.hoverFacetDisplay = options.hoverFacetDisplay;
             }
             if (options.onChange) {
