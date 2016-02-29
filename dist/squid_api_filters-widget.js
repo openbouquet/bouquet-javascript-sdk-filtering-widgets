@@ -320,6 +320,40 @@ function program13(depth0,data) {
   else { return ''; }
   });
 
+this["squid_api"]["template"]["squid_api_filters_categorical_view_hover_template"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n        <b>";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</b>\n        <ul>\n            ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.values), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n        </ul>\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  var buffer = "";
+  buffer += "\n                <li> "
+    + escapeExpression((typeof depth0 === functionType ? depth0.apply(depth0) : depth0))
+    + " </li>\n            ";
+  return buffer;
+  }
+
+  buffer += "<div class=\"squid-api-categorical-view-hover-view\">\n    ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.items), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>\n";
+  return buffer;
+  });
+
 this["squid_api"]["template"]["squid_api_filters_categorical_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -706,7 +740,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             var computingInProgress = false;
             var updatedItems = [];
 
-            if (facet) {
+            if (facet && this.filters) {
                 this.$el.addClass("min-filter-height");
 
                 var facetItems = facet.get("items");
@@ -947,6 +981,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
 
             this.listenTo(this.model, "change", this.render);
+            this.render();
         },
 
         events: {
@@ -970,60 +1005,62 @@ $.widget( "ui.dialog", $.ui.dialog, {
         },
 
         render : function() {
-            var selection = this.model.get("selection");
             var selFacets = [];
             var noData = true;
-
-            if (selection) {
-                if (selection.facets) {
-                    var facets = selection.facets;
-                    for (i=0; i<facets.length; i++) {
-                        var facet = facets[i];
-                        if (facet.dimension.type == "CATEGORICAL" || facet.dimension.type == "SEGMENTS") {
-                            var selectedItems = facet.selectedItems;
-                            for (ix=0; ix<selectedItems.length; ix++) {
-                                if (this.initialFacet == facet.id || (!this.initialFacet && !this.initialDimension)) {
-                                    noData = false;
-                                    var obj = {};
-                                    obj.facetItem = selectedItems[ix].value;
-                                    obj.facetItemId = selectedItems[ix].id;
-                                    if (facet.name) {
-                                        obj.facetName = facet.name;
-                                    } else {
-                                        obj.facetName = facet.dimension.name;
+            if (this.model) {
+                var selection = this.model.get("selection");
+                if (selection) {
+                    if (selection.facets) {
+                        var facets = selection.facets;
+                        for (i=0; i<facets.length; i++) {
+                            var facet = facets[i];
+                            if (facet.dimension.type == "CATEGORICAL" || facet.dimension.type == "SEGMENTS") {
+                                var selectedItems = facet.selectedItems;
+                                for (ix=0; ix<selectedItems.length; ix++) {
+                                    if (this.initialFacet == facet.id || (!this.initialFacet && !this.initialDimension)) {
+                                        noData = false;
+                                        var obj = {};
+                                        obj.facetItem = selectedItems[ix].value;
+                                        obj.facetItemId = selectedItems[ix].id;
+                                        if (facet.name) {
+                                            obj.facetName = facet.name;
+                                        } else {
+                                            obj.facetName = facet.dimension.name;
+                                        }
+                                        obj.facetNameId = facet.id;
+                                        selFacets.push(obj);
                                     }
-                                    obj.facetNameId = facet.id;
-                                    selFacets.push(obj);
+                                }
+                            }
+                        }
+                    }
+                    if (this.facetList) {
+                        var updatedFacets = [];
+                        for (i=0; i<selFacets.length; i++) {
+                            for (ix=0; ix<this.facetList.length; ix++) {
+                                if (this.facetList[ix] === selFacets[i].facetNameId) {
+                                    updatedFacets.push(selFacets[i]);
+                                }
+                            }
+                        }
+                        if (updatedFacets.length === 0) {
+                            noData = true;
+                        } else {
+                            selFacets = updatedFacets;
+                        }
+                    }
+                    if (this.avoidFacets) {
+                        for (i=0; i<this.avoidFacets.length; i++) {
+                            for (ix=0; ix<selFacets.length; ix++) {
+                                if (this.avoidFacets[i] === selFacets[ix].facetNameId) {
+                                    selFacets.splice(ix, 1);
                                 }
                             }
                         }
                     }
                 }
-                if (this.facetList) {
-                    var updatedFacets = [];
-                    for (i=0; i<selFacets.length; i++) {
-                        for (ix=0; ix<this.facetList.length; ix++) {
-                            if (this.facetList[ix] === selFacets[i].facetNameId) {
-                                updatedFacets.push(selFacets[i]);
-                            }
-                        }
-                    }
-                    if (updatedFacets.length === 0) {
-                        noData = true;
-                    } else {
-                        selFacets = updatedFacets;
-                    }
-                }
-                if (this.avoidFacets) {
-                    for (i=0; i<this.avoidFacets.length; i++) {
-                        for (ix=0; ix<selFacets.length; ix++) {
-                            if (this.avoidFacets[i] === selFacets[ix].facetNameId) {
-                                selFacets.splice(ix, 1);
-                            }
-                        }
-                    }
-                }
             }
+
             this.$el.html(this.filterPanelTemplate({facets: selFacets, noData: noData, noDataMessage: this.noDataMessage, mandatory: this.mandatory}));
         }
     });
@@ -1165,8 +1202,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
         parentCheck : null,
         ignoredFacets : null,
         mandatory : null,
-        popup : true,
+        popup : false,
         onChange : null,
+        displayFacetQuantity : false,
+        hoverFacetDisplay : null,
 
         initialize : function(options) {
             var me = this;
@@ -1221,6 +1260,12 @@ $.widget( "ui.dialog", $.ui.dialog, {
             if (options.popup) {
                 this.popup = options.popup;
             }
+            if (options.displayFacetQuantity) {
+                this.displayFacetQuantity = options.displayFacetQuantity;
+            }
+            if (options.hoverFacetDisplay) {
+                this.hoverFacetDisplay = options.hoverFacetDisplay;
+            }
             if (options.onChange) {
                 this.onChange = options.onChange;
             }
@@ -1231,6 +1276,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
 
             this.filterPanelTemplate = squid_api.template.squid_api_filters_categorical_view;
+            this.filterHoverTemplate = squid_api.template.squid_api_filters_categorical_view_hover_template;
 
             if (options.format) {
                 this.format = options.format;
@@ -1308,6 +1354,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     var selectionClone = $.extend(true, {}, filters.get("selection"));
                     me.currentModel.set("selection", selectionClone);
                 }
+                if (me.displayFacetQuantity) {
+                    me.updateFacetQuantityDisplay();
+                }
             });
 
             this.filterStore.on("change:selectedFilter", function() {
@@ -1337,8 +1386,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }, this);
 
             // listen for global status change
-            squid_api.model.status.on('change:status', this.statusUpdate, this);
+            this.status.on('change:status', this.statusUpdate, this);
 
+            this.render();
         },
 
         setInitialFacet : function(initialFacet) {
@@ -1388,10 +1438,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
             if ((running) || (disabled)) {
                 // computation is running : disable input
-                this.$el.find("button").attr("disabled","disabled");
+                this.$el.find("button").attr("disabled", true);
             } else {
                 // computation is done : enable input
-                this.$el.find("button").removeAttr("disabled");
+                this.$el.find("button").attr("disabled", false);
             }
         },
 
@@ -1516,6 +1566,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 if (buttonLabel) {
                     this.$el
                     .html("<button type='button' class='btn squid_api_filters_categorical_button'>" + buttonLabel + "<span class='caret'></span></button>");
+                    this.statusUpdate();
                 }
                 $(this.filterPanel).dialog({
                     dialogClass: "squid-api-filters-widget-popup",
@@ -1540,6 +1591,82 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     .html("<button type='button' class='btn squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + "</span><span class='caret'></span></button>");
                 }
                 $(this.filterPanel).addClass("collapse");
+            }
+            if (this.hoverFacetDisplay) {
+                this.displayFacetsOnHover();
+            }
+        },
+
+        displayFacetsOnHover: function() {
+            var selection = this.model.get("selection");
+            var jsonData = {items : []};
+            if (selection) {
+                var facets = selection.facets;
+                if (facets) {
+                    // Button which opens filter Panel
+                    var buttonLabel = this.getButtonLabel();
+                    // loop through selected model facets
+                    for (i=0; i<facets.length; i++) {
+                        if (facets[i].selectedItems.length > 0) {
+                            var facet = facets[i];
+                            // do not add to the count if a date
+                            if (facet.dimension.type !== "CONTINUOUS" && facet.dimension.valueType !== "DATE") {
+                                var selectedItems = facet.selectedItems;
+                                // store local object
+                                var obj = {};
+                                obj.name = facet.name;
+                                obj.values = [];
+                                // obtain all selected items
+                                for (ix=0; ix<selectedItems.length; ix++) {
+                                    obj.values.push(selectedItems[ix].value);
+                                }
+                                // push to jsonData
+                                jsonData.items.push(obj);
+                            }
+                        }
+                    }
+                }
+            }
+            if (jsonData.items.length !== 0) {
+                var el = this.$el.find(".squid_api_filters_categorical_button");
+                el.attr("data-original-title", this.filterHoverTemplate(jsonData));
+                el.attr("data-placement", "bottom");
+                el.tooltip({
+                    html:true,
+                    template: '<div class="tooltip squid_api_filters_categorical_button_hover_wrapper"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+                });
+            }
+        },
+
+        updateFacetQuantityDisplay: function() {
+            var selection = this.model.get("selection");
+            if (selection) {
+                var facets = selection.facets;
+                if (facets) {
+                    // Button which opens filter Panel
+                    var buttonLabel = this.getButtonLabel();
+                    // store number of selected facets items
+                    var count = 0;
+                    // loop through selected model facets
+                    for (i=0; i<facets.length; i++) {
+                        if (facets[i].selectedItems.length > 0) {
+                            // do not add to the count if a date
+                            if (facets[i].dimension.type !== "CONTINUOUS" && facets[i].dimension.valueType !== "DATE") {
+                                count += facets[i].selectedItems.length;
+                            }
+                        }
+                    }
+                    if (this.popup) {
+                        if (buttonLabel) {
+                            this.$el.html("<button type='button' class='btn squid_api_filters_categorical_button'>" + buttonLabel + " (" + count + ")<span class='caret'></span></button>");
+                        }
+                    } else {
+                        this.$el.html("<button type='button' class='btn squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + " (" + count + ")</span><span class='caret'></span></button>");
+                    }
+                    if (this.hoverFacetDisplay) {
+                        this.displayFacetsOnHover();
+                    }
+                }
             }
         },
 
@@ -1843,6 +1970,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
             // listen for global status change
             this.status.on('change:status', this.statusUpdate, this);
+
+            this.renderView();
         },
 
         remove: function() {
@@ -1853,11 +1982,44 @@ $.widget( "ui.dialog", $.ui.dialog, {
         },
 
         statusUpdate: function() {
-        	if (squid_api.model.status.get("status") == "RUNNING") {
+        	if (this.status.get("status") !== "DONE") {
         		this.$el.find("button").prop("disabled", true);
         	} else {
         		this.$el.find("button").prop("disabled", false);
         	}
+        },
+
+        renderView: function(jsonData) {
+            var me = this;
+            var html = this.template(jsonData);
+            this.$el.html(html);
+            this.$el.show();
+
+            // Initialize plugin
+            this.$el.find("select").multiselect({
+                buttonText: function(option, select) {
+                    if (select.find("option:selected").length > 0) {
+                        text = select.find("option:selected").text();
+                    } else if (select.find("option").length > 0) {
+                        text = "Select a period";
+                    } else {
+                        text = 'No usable period exists';
+                    }
+                    return text;
+                },
+                onChange: function(facet) {
+                    var period = _.clone(me.config.get("period"));
+                    var domain = me.config.get("domain");
+                    period[domain] = facet.val();
+                    var selection = me.getPeriodSelection(period);
+                    me.config.set({"period": period, "selection" : selection});
+                }
+            });
+
+            // Remove Button Title Tag
+            this.$el.find("button").removeAttr('title');
+
+            this.statusUpdate();
         },
 
         render: function() {
@@ -1897,33 +2059,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 return 0; // no sorting
             });
 
-            var html = me.template(jsonData);
-            me.$el.html(html);
-            me.$el.show();
-
-            // Initialize plugin
-            me.$el.find("select").multiselect({
-                buttonText: function(option, select) {
-                    if (select.find("option:selected").length > 0) {
-                        text = select.find("option:selected").text();
-                    } else if (select.find("option").length > 0) {
-                        text = "Select a period";
-                    } else {
-                        text = 'No usable period exists';
-                    }
-                    return text;
-                },
-                onChange: function(facet) {
-                    var period = _.clone(me.config.get("period"));
-                    var domain = me.config.get("domain");
-                    period[domain] = facet.val();
-                    var selection = me.getPeriodSelection(period);
-                    me.config.set({"period": period, "selection" : selection});
-                }
-            });
-
-            // Remove Button Title Tag
-            me.$el.find("button").removeAttr('title');
+            this.renderView(jsonData);
 
             return this;
         },
@@ -2000,7 +2136,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 this.monthsOnlyDisplay = options.monthsOnlyDisplay;
             }
 
+            // TODO: see why filters selection change event is not triggered when not setting an upperBound timezone
             this.listenTo(this.filters, "change:selection", this.render);
+            this.listenTo(this.config, "change:selection", this.render);
             this.listenTo(this.config, "change:period", this.render);
 
             // listen for global status change
@@ -2200,7 +2338,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             this.$el.find("span").on('apply.daterangepicker', function(ev, picker) {
                 // Update Change Selection upon date widget close
                 var startDate = picker.startDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000";
-                var endDate = picker.endDate.format(squid_api.DATE_FORMAT);
+                var endDate = picker.endDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000";
                 me.updateFacet(facet, startDate, endDate);
             });
 

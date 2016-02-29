@@ -21,8 +21,10 @@
         parentCheck : null,
         ignoredFacets : null,
         mandatory : null,
-        popup : true,
+        popup : false,
         onChange : null,
+        displayFacetQuantity : false,
+        hoverFacetDisplay : null,
 
         initialize : function(options) {
             var me = this;
@@ -77,6 +79,12 @@
             if (options.popup) {
                 this.popup = options.popup;
             }
+            if (options.displayFacetQuantity) {
+                this.displayFacetQuantity = options.displayFacetQuantity;
+            }
+            if (options.hoverFacetDisplay) {
+                this.hoverFacetDisplay = options.hoverFacetDisplay;
+            }
             if (options.onChange) {
                 this.onChange = options.onChange;
             }
@@ -87,6 +95,7 @@
             }
 
             this.filterPanelTemplate = squid_api.template.squid_api_filters_categorical_view;
+            this.filterHoverTemplate = squid_api.template.squid_api_filters_categorical_view_hover_template;
 
             if (options.format) {
                 this.format = options.format;
@@ -164,6 +173,9 @@
                     var selectionClone = $.extend(true, {}, filters.get("selection"));
                     me.currentModel.set("selection", selectionClone);
                 }
+                if (me.displayFacetQuantity) {
+                    me.updateFacetQuantityDisplay();
+                }
             });
 
             this.filterStore.on("change:selectedFilter", function() {
@@ -193,8 +205,9 @@
             }, this);
 
             // listen for global status change
-            squid_api.model.status.on('change:status', this.statusUpdate, this);
+            this.status.on('change:status', this.statusUpdate, this);
 
+            this.render();
         },
 
         setInitialFacet : function(initialFacet) {
@@ -244,10 +257,10 @@
 
             if ((running) || (disabled)) {
                 // computation is running : disable input
-                this.$el.find("button").attr("disabled","disabled");
+                this.$el.find("button").attr("disabled", true);
             } else {
                 // computation is done : enable input
-                this.$el.find("button").removeAttr("disabled");
+                this.$el.find("button").attr("disabled", false);
             }
         },
 
@@ -372,6 +385,7 @@
                 if (buttonLabel) {
                     this.$el
                     .html("<button type='button' class='btn squid_api_filters_categorical_button'>" + buttonLabel + "<span class='caret'></span></button>");
+                    this.statusUpdate();
                 }
                 $(this.filterPanel).dialog({
                     dialogClass: "squid-api-filters-widget-popup",
@@ -396,6 +410,82 @@
                     .html("<button type='button' class='btn squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + "</span><span class='caret'></span></button>");
                 }
                 $(this.filterPanel).addClass("collapse");
+            }
+            if (this.hoverFacetDisplay) {
+                this.displayFacetsOnHover();
+            }
+        },
+
+        displayFacetsOnHover: function() {
+            var selection = this.model.get("selection");
+            var jsonData = {items : []};
+            if (selection) {
+                var facets = selection.facets;
+                if (facets) {
+                    // Button which opens filter Panel
+                    var buttonLabel = this.getButtonLabel();
+                    // loop through selected model facets
+                    for (i=0; i<facets.length; i++) {
+                        if (facets[i].selectedItems.length > 0) {
+                            var facet = facets[i];
+                            // do not add to the count if a date
+                            if (facet.dimension.type !== "CONTINUOUS" && facet.dimension.valueType !== "DATE") {
+                                var selectedItems = facet.selectedItems;
+                                // store local object
+                                var obj = {};
+                                obj.name = facet.name;
+                                obj.values = [];
+                                // obtain all selected items
+                                for (ix=0; ix<selectedItems.length; ix++) {
+                                    obj.values.push(selectedItems[ix].value);
+                                }
+                                // push to jsonData
+                                jsonData.items.push(obj);
+                            }
+                        }
+                    }
+                }
+            }
+            if (jsonData.items.length !== 0) {
+                var el = this.$el.find(".squid_api_filters_categorical_button");
+                el.attr("data-original-title", this.filterHoverTemplate(jsonData));
+                el.attr("data-placement", "bottom");
+                el.tooltip({
+                    html:true,
+                    template: '<div class="tooltip squid_api_filters_categorical_button_hover_wrapper"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+                });
+            }
+        },
+
+        updateFacetQuantityDisplay: function() {
+            var selection = this.model.get("selection");
+            if (selection) {
+                var facets = selection.facets;
+                if (facets) {
+                    // Button which opens filter Panel
+                    var buttonLabel = this.getButtonLabel();
+                    // store number of selected facets items
+                    var count = 0;
+                    // loop through selected model facets
+                    for (i=0; i<facets.length; i++) {
+                        if (facets[i].selectedItems.length > 0) {
+                            // do not add to the count if a date
+                            if (facets[i].dimension.type !== "CONTINUOUS" && facets[i].dimension.valueType !== "DATE") {
+                                count += facets[i].selectedItems.length;
+                            }
+                        }
+                    }
+                    if (this.popup) {
+                        if (buttonLabel) {
+                            this.$el.html("<button type='button' class='btn squid_api_filters_categorical_button'>" + buttonLabel + " (" + count + ")<span class='caret'></span></button>");
+                        }
+                    } else {
+                        this.$el.html("<button type='button' class='btn squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + " (" + count + ")</span><span class='caret'></span></button>");
+                    }
+                    if (this.hoverFacetDisplay) {
+                        this.displayFacetsOnHover();
+                    }
+                }
             }
         },
 

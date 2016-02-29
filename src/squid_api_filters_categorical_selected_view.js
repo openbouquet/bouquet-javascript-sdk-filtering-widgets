@@ -55,6 +55,7 @@
             }
 
             this.listenTo(this.model, "change", this.render);
+            this.render();
         },
 
         events: {
@@ -78,60 +79,62 @@
         },
 
         render : function() {
-            var selection = this.model.get("selection");
             var selFacets = [];
             var noData = true;
-
-            if (selection) {
-                if (selection.facets) {
-                    var facets = selection.facets;
-                    for (i=0; i<facets.length; i++) {
-                        var facet = facets[i];
-                        if (facet.dimension.type == "CATEGORICAL" || facet.dimension.type == "SEGMENTS") {
-                            var selectedItems = facet.selectedItems;
-                            for (ix=0; ix<selectedItems.length; ix++) {
-                                if (this.initialFacet == facet.id || (!this.initialFacet && !this.initialDimension)) {
-                                    noData = false;
-                                    var obj = {};
-                                    obj.facetItem = selectedItems[ix].value;
-                                    obj.facetItemId = selectedItems[ix].id;
-                                    if (facet.name) {
-                                        obj.facetName = facet.name;
-                                    } else {
-                                        obj.facetName = facet.dimension.name;
+            if (this.model) {
+                var selection = this.model.get("selection");
+                if (selection) {
+                    if (selection.facets) {
+                        var facets = selection.facets;
+                        for (i=0; i<facets.length; i++) {
+                            var facet = facets[i];
+                            if (facet.dimension.type == "CATEGORICAL" || facet.dimension.type == "SEGMENTS") {
+                                var selectedItems = facet.selectedItems;
+                                for (ix=0; ix<selectedItems.length; ix++) {
+                                    if (this.initialFacet == facet.id || (!this.initialFacet && !this.initialDimension)) {
+                                        noData = false;
+                                        var obj = {};
+                                        obj.facetItem = selectedItems[ix].value;
+                                        obj.facetItemId = selectedItems[ix].id;
+                                        if (facet.name) {
+                                            obj.facetName = facet.name;
+                                        } else {
+                                            obj.facetName = facet.dimension.name;
+                                        }
+                                        obj.facetNameId = facet.id;
+                                        selFacets.push(obj);
                                     }
-                                    obj.facetNameId = facet.id;
-                                    selFacets.push(obj);
+                                }
+                            }
+                        }
+                    }
+                    if (this.facetList) {
+                        var updatedFacets = [];
+                        for (i=0; i<selFacets.length; i++) {
+                            for (ix=0; ix<this.facetList.length; ix++) {
+                                if (this.facetList[ix] === selFacets[i].facetNameId) {
+                                    updatedFacets.push(selFacets[i]);
+                                }
+                            }
+                        }
+                        if (updatedFacets.length === 0) {
+                            noData = true;
+                        } else {
+                            selFacets = updatedFacets;
+                        }
+                    }
+                    if (this.avoidFacets) {
+                        for (i=0; i<this.avoidFacets.length; i++) {
+                            for (ix=0; ix<selFacets.length; ix++) {
+                                if (this.avoidFacets[i] === selFacets[ix].facetNameId) {
+                                    selFacets.splice(ix, 1);
                                 }
                             }
                         }
                     }
                 }
-                if (this.facetList) {
-                    var updatedFacets = [];
-                    for (i=0; i<selFacets.length; i++) {
-                        for (ix=0; ix<this.facetList.length; ix++) {
-                            if (this.facetList[ix] === selFacets[i].facetNameId) {
-                                updatedFacets.push(selFacets[i]);
-                            }
-                        }
-                    }
-                    if (updatedFacets.length === 0) {
-                        noData = true;
-                    } else {
-                        selFacets = updatedFacets;
-                    }
-                }
-                if (this.avoidFacets) {
-                    for (i=0; i<this.avoidFacets.length; i++) {
-                        for (ix=0; ix<selFacets.length; ix++) {
-                            if (this.avoidFacets[i] === selFacets[ix].facetNameId) {
-                                selFacets.splice(ix, 1);
-                            }
-                        }
-                    }
-                }
             }
+
             this.$el.html(this.filterPanelTemplate({facets: selFacets, noData: noData, noDataMessage: this.noDataMessage, mandatory: this.mandatory}));
         }
     });
