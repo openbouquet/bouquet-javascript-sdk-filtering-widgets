@@ -24,6 +24,12 @@
       top: 5px;
       cursor: pointer; }
 
+.squid-api-range-selection-widget ul {
+  list-style-type: none;
+  display: inline-block; }
+  .squid-api-range-selection-widget ul li {
+    display: inline-block; }
+
 .squid-api-date-selection-widget #date-picker {
   float: left; }
   .squid-api-date-selection-widget #date-picker .sq-content {

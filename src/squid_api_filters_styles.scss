@@ -33,6 +33,15 @@
         }
     }
 }
+.squid-api-range-selection-widget {
+    ul {
+        list-style-type: none;
+        display: inline-block;
+        li {
+            display: inline-block;
+        }
+    }
+}
 
 .squid-api-date-selection-widget {
     #date-picker {
