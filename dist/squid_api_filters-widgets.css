@@ -28,7 +28,15 @@
   list-style-type: none;
   display: inline-block; }
   .squid-api-range-selection-widget ul li {
-    display: inline-block; }
+    cursor: pointer;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0px 10px;
+    margin-right: 10px; }
+    .squid-api-range-selection-widget ul li:hover {
+      color: #fff;
+      background: #4d4d4d; }
 
 .squid-api-date-selection-widget #date-picker {
   float: left; }

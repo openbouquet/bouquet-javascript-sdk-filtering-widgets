@@ -470,10 +470,28 @@ function program4(depth0,data) {
 this["squid_api"]["template"]["squid_api_filters_date_range_selection_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
   
+  var buffer = "", stack1, helper;
+  buffer += "\n            <li class=";
+  if (helper = helpers.className) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.className); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + ">";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</li>\n        ";
+  return buffer;
+  }
 
-
-  return "<div class=\"squid-api-range-selection-widget\">\n    <ul>\n        <li class=\"30-days\">Last 30 Days</li>\n        <li class=\"60-days\">Last 60 Days</li>\n    </ul>\n</div>";
+  buffer += "<div class=\"squid-api-range-selection-widget\">\n    <ul>\n        ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.ranges), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    </ul>\n</div>";
+  return buffer;
   });
 
 this["squid_api"]["template"]["squid_api_filters_date_selection_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -2102,17 +2120,23 @@ $.widget( "ui.dialog", $.ui.dialog, {
     var View = Backbone.View.extend({
         model: null,
         ranges : null,
-        rangesPresets : {
-            'all': function(min, max) {
-                return [moment(min).utc(), moment(max).utc()];
+        defaultRanges: [
+            {
+                name : "All",
+                lowerExpression : "=$'MIN'",
+                upperExpression : "=$'MAX'"
             },
-            'first-month': function(min, max) {
-                return [moment(min).utc().startOf('month'), moment(min).utc().endOf('month')];
+            {
+                name : "First Month",
+                lowerExpression : "=$'MIN'",
+                upperExpression : "=DATE_ADD($'MIN', 1 ,\"MONTH\")"
             },
-            'last-month': function(min, max) {
-                return [moment(max).utc().startOf('month'), moment(max).utc().endOf('month')];
+            {
+                name : "Last Month",
+                lowerExpression : "=DATE_SUB($'MAX', 1 ,\"MONTH\")",
+                upperExpression : "=$'MAX'"
             }
-        },
+        ],
         monthsOnlyDisplay : false,
 
         initialize: function(options) {
@@ -2128,19 +2152,42 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
             if (options.ranges) {
                 this.ranges = options.ranges;
+            } else {
+                this.ranges = this.defaultRanges;
             }
 
-            //this.listenTo(this.model, "change:facets", this.render);
-            this.render();
+            this.listenTo(this.config, "change:selection", this.render);
         },
 
         events: {
-            "click .30-days": function(e) {
-                console.log("30 days");
-            },
-            "click .60-days": function(e) {
-                console.log("60 days");
+            "click li": function(e) {
+                var className = $(e.currentTarget).attr("class");
+                var ranges = this.jsonData.ranges;
+                for (i=0; i<ranges.length; i++) {
+                    if (ranges[i].className == className) {
+                        this.updateSelection(ranges[i].lowerExpression, ranges[i].upperExpression);
+                    }
+                }
             }
+        },
+
+        updateSelection: function(lowerExpression, upperExpression) {
+            var selection = $.extend(true, {}, this.config.get("selection"));
+            if (selection) {
+                var facets = selection.facets;
+                if (facets) {
+                    for (var i=0; i<facets.length; i++) {
+                        if (facets[i].dimension.type == "CONTINUOUS" && facets[i].dimension.valueType == "DATE") {
+                            facets[i].selectedItems[0].lowerBound = lowerExpression;
+                            facets[i].selectedItems[0].upperBound = upperExpression;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // set config selection
+            this.config.set("selection", selection);
         },
 
         statusUpdate: function() {
@@ -2150,10 +2197,23 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 this.$el.find("span").removeClass("inactive");
             }
         },
-
+        clickEvent: function(range) {
+            console.log(range.lowerExpression);
+        },
         render: function() {
+            this.jsonData = {
+                ranges : []
+            };
+
+            // construct data
+            for (i=0; i<this.ranges.length; i++) {
+                var range = this.ranges[i];
+                range.className = range.name.replace(" ", "-");
+                this.jsonData.ranges.push(range);
+            }
+
             // render html
-            var html = this.template();
+            var html = this.template(this.jsonData);
             this.$el.html(html);
 
             return this;
