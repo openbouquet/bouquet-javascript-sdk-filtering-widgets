@@ -487,7 +487,7 @@ function program1(depth0,data) {
   return buffer;
   }
 
-  buffer += "<div class=\"squid-api-range-selection-widget\">\n    <select class=\"form-control\">\n        <option><i class=\"fa fa-calendar\"></i> Relative</option>\n        ";
+  buffer += "<div class=\"squid-api-range-selection-widget\">\n    <select class=\"form-control\">\n        ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.ranges), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n    </select>\n    </ul>\n</div>";
@@ -2219,6 +2219,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             this.$el.html(html);
 
             // detect currently selected expression range
+            var count = 0;
             for (i=0; i<this.ranges.length; i++) {
                 range = this.ranges[i];
                 if (selection) {
@@ -2227,6 +2228,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         for (ix=0; ix<facets.length; ix++) {
                             if (facets[ix].dimension.type == "CONTINUOUS" && facets[ix].dimension.valueType == "DATE" && facets[ix].selectedItems.length > 0) {
                                 if (facets[ix].selectedItems[0].lowerBound == range.lowerExpression && facets[ix].selectedItems[0].upperBound == range.upperExpression) {
+                                    count++;
                                     this.$el.find("select").val(range.val);
                                     break;
                                 }
@@ -2234,6 +2236,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         }
                     }
                 }
+            }
+            if (count === 0) {
+                this.$el.find("select").prepend("<option value='custom'>Custom</option>");
+                this.$el.find("select").val('custom');
             }
 
             return this;

@@ -105,6 +105,7 @@
             this.$el.html(html);
 
             // detect currently selected expression range
+            var count = 0;
             for (i=0; i<this.ranges.length; i++) {
                 range = this.ranges[i];
                 if (selection) {
@@ -113,6 +114,7 @@
                         for (ix=0; ix<facets.length; ix++) {
                             if (facets[ix].dimension.type == "CONTINUOUS" && facets[ix].dimension.valueType == "DATE" && facets[ix].selectedItems.length > 0) {
                                 if (facets[ix].selectedItems[0].lowerBound == range.lowerExpression && facets[ix].selectedItems[0].upperBound == range.upperExpression) {
+                                    count++;
                                     this.$el.find("select").val(range.val);
                                     break;
                                 }
@@ -120,6 +122,10 @@
                         }
                     }
                 }
+            }
+            if (count === 0) {
+                this.$el.find("select").prepend("<option value='custom'>Custom</option>");
+                this.$el.find("select").val('custom');
             }
 
             return this;
