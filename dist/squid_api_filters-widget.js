@@ -487,7 +487,7 @@ function program1(depth0,data) {
   return buffer;
   }
 
-  buffer += "<div class=\"squid-api-range-selection-widget\">\n    <select class=\"form-control\">\n        ";
+  buffer += "<div class=\"squid-api-range-selection-widget\">\n    <select class=\"form-control\">\n        <option value='custom'>Custom</option>\n        ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.ranges), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n    </select>\n    </ul>\n</div>";
@@ -2168,6 +2168,22 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         this.updateSelection(ranges[i].lowerExpression, ranges[i].upperExpression);
                     }
                 }
+
+                var filtersSelection = this.filters.get("selection");
+                if (val == "custom") {
+                    if (filtersSelection) {
+                        var facets = filtersSelection.facets;
+                        if (facets) {
+                            for (ix=0; ix<facets.length; ix++) {
+                                if (facets[ix].dimension.type == "CONTINUOUS" && facets[ix].dimension.valueType == "DATE") {
+                                    if (facets[ix].selectedItems.length > 0) {
+                                        this.updateSelection(facets[ix].selectedItems[0].lowerBound, facets[ix].selectedItems[0].upperBound);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
 
@@ -2196,9 +2212,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
             } else {
                 this.$el.find("span").removeClass("inactive");
             }
-        },
-        clickEvent: function(range) {
-            console.log(range.lowerExpression);
         },
         render: function() {
             var selection = this.config.get("selection");
@@ -2238,7 +2251,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 }
             }
             if (count === 0) {
-                this.$el.find("select").prepend("<option value='custom'>Custom</option>");
                 this.$el.find("select").val('custom');
             }
 

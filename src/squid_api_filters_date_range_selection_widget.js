@@ -54,6 +54,22 @@
                         this.updateSelection(ranges[i].lowerExpression, ranges[i].upperExpression);
                     }
                 }
+
+                var filtersSelection = this.filters.get("selection");
+                if (val == "custom") {
+                    if (filtersSelection) {
+                        var facets = filtersSelection.facets;
+                        if (facets) {
+                            for (ix=0; ix<facets.length; ix++) {
+                                if (facets[ix].dimension.type == "CONTINUOUS" && facets[ix].dimension.valueType == "DATE") {
+                                    if (facets[ix].selectedItems.length > 0) {
+                                        this.updateSelection(facets[ix].selectedItems[0].lowerBound, facets[ix].selectedItems[0].upperBound);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
 
@@ -82,9 +98,6 @@
             } else {
                 this.$el.find("span").removeClass("inactive");
             }
-        },
-        clickEvent: function(range) {
-            console.log(range.lowerExpression);
         },
         render: function() {
             var selection = this.config.get("selection");
@@ -124,7 +137,6 @@
                 }
             }
             if (count === 0) {
-                this.$el.find("select").prepend("<option value='custom'>Custom</option>");
                 this.$el.find("select").val('custom');
             }
 
