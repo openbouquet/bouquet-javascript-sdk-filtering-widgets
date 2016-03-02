@@ -1,7 +1,9 @@
 <div class="squid-api-range-selection-widget">
-    <ul>
+    <select class="form-control">
+        <option><i class="fa fa-calendar"></i> Relative</option>
         {{#each ranges}}
-            <li class={{className}}>{{name}}</li>
+            <option value="{{val}}">{{name}}</option>
         {{/each}}
+    </select>
     </ul>
 </div>

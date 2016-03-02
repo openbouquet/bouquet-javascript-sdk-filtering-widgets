@@ -475,22 +475,22 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n            <li class=";
-  if (helper = helpers.className) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.className); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += "\n            <option value=\"";
+  if (helper = helpers.val) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.val); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + ">";
+    + "\">";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</li>\n        ";
+    + "</option>\n        ";
   return buffer;
   }
 
-  buffer += "<div class=\"squid-api-range-selection-widget\">\n    <ul>\n        ";
+  buffer += "<div class=\"squid-api-range-selection-widget\">\n    <select class=\"form-control\">\n        <option><i class=\"fa fa-calendar\"></i> Relative</option>\n        ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.ranges), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </ul>\n</div>";
+  buffer += "\n    </select>\n    </ul>\n</div>";
   return buffer;
   });
 
@@ -2160,11 +2160,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
         },
 
         events: {
-            "click li": function(e) {
-                var className = $(e.currentTarget).attr("class");
+            "change": function(e) {
+                var val = $(e.currentTarget).find("select").val();
                 var ranges = this.jsonData.ranges;
                 for (i=0; i<ranges.length; i++) {
-                    if (ranges[i].className == className) {
+                    if (ranges[i].val == val) {
                         this.updateSelection(ranges[i].lowerExpression, ranges[i].upperExpression);
                     }
                 }
@@ -2201,20 +2201,40 @@ $.widget( "ui.dialog", $.ui.dialog, {
             console.log(range.lowerExpression);
         },
         render: function() {
+            var selection = this.config.get("selection");
+            var range;
             this.jsonData = {
                 ranges : []
             };
 
             // construct data
             for (i=0; i<this.ranges.length; i++) {
-                var range = this.ranges[i];
-                range.className = range.name.replace(" ", "-");
+                range = this.ranges[i];
+                range.val = range.name.replace(" ", "-");
                 this.jsonData.ranges.push(range);
             }
 
             // render html
             var html = this.template(this.jsonData);
             this.$el.html(html);
+
+            // detect currently selected expression range
+            for (i=0; i<this.ranges.length; i++) {
+                range = this.ranges[i];
+                if (selection) {
+                    var facets = selection.facets;
+                    if (facets) {
+                        for (ix=0; ix<facets.length; ix++) {
+                            if (facets[ix].dimension.type == "CONTINUOUS" && facets[ix].dimension.valueType == "DATE" && facets[ix].selectedItems.length > 0) {
+                                if (facets[ix].selectedItems[0].lowerBound == range.lowerExpression && facets[ix].selectedItems[0].upperBound == range.upperExpression) {
+                                    this.$el.find("select").val(range.val);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             return this;
         }
@@ -2452,10 +2472,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
             // Build Date Picker
             this.$el.find(".widget").daterangepicker({
-                opens: me.datePickerPosition,
                 format: 'YYYY-MM-DD',
                 showDropdowns: true,
-                ranges: pickerRanges,
                 startDate: dates.currentStartDate ? dates.currentStartDate.format('YYYY-MM-DD') : null,
                 endDate: dates.currentEndDate ? dates.currentEndDate.format('YYYY-MM-DD') : null,
                 minDate : dates.minDate ? dates.minDate.format('YYYY-MM-DD') : moment().utc().subtract("50", "years").format("YYYY-MM-DD"),

@@ -33,8 +33,8 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     padding: 0px 10px;
-    margin-right: 10px; }
-    .squid-api-range-selection-widget ul li:hover {
+    margin-right: 20px; }
+    .squid-api-range-selection-widget ul li:hover, .squid-api-range-selection-widget ul li#range-selected {
       color: #fff;
       background: #4d4d4d; }
 

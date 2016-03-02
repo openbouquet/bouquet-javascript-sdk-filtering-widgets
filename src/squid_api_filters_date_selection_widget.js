@@ -227,10 +227,8 @@
 
             // Build Date Picker
             this.$el.find(".widget").daterangepicker({
-                opens: me.datePickerPosition,
                 format: 'YYYY-MM-DD',
                 showDropdowns: true,
-                ranges: pickerRanges,
                 startDate: dates.currentStartDate ? dates.currentStartDate.format('YYYY-MM-DD') : null,
                 endDate: dates.currentEndDate ? dates.currentEndDate.format('YYYY-MM-DD') : null,
                 minDate : dates.minDate ? dates.minDate.format('YYYY-MM-DD') : moment().utc().subtract("50", "years").format("YYYY-MM-DD"),

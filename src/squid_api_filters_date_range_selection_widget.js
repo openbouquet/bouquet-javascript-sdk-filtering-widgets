@@ -46,11 +46,11 @@
         },
 
         events: {
-            "click li": function(e) {
-                var className = $(e.currentTarget).attr("class");
+            "change": function(e) {
+                var val = $(e.currentTarget).find("select").val();
                 var ranges = this.jsonData.ranges;
                 for (i=0; i<ranges.length; i++) {
-                    if (ranges[i].className == className) {
+                    if (ranges[i].val == val) {
                         this.updateSelection(ranges[i].lowerExpression, ranges[i].upperExpression);
                     }
                 }
@@ -87,20 +87,40 @@
             console.log(range.lowerExpression);
         },
         render: function() {
+            var selection = this.config.get("selection");
+            var range;
             this.jsonData = {
                 ranges : []
             };
 
             // construct data
             for (i=0; i<this.ranges.length; i++) {
-                var range = this.ranges[i];
-                range.className = range.name.replace(" ", "-");
+                range = this.ranges[i];
+                range.val = range.name.replace(" ", "-");
                 this.jsonData.ranges.push(range);
             }
 
             // render html
             var html = this.template(this.jsonData);
             this.$el.html(html);
+
+            // detect currently selected expression range
+            for (i=0; i<this.ranges.length; i++) {
+                range = this.ranges[i];
+                if (selection) {
+                    var facets = selection.facets;
+                    if (facets) {
+                        for (ix=0; ix<facets.length; ix++) {
+                            if (facets[ix].dimension.type == "CONTINUOUS" && facets[ix].dimension.valueType == "DATE" && facets[ix].selectedItems.length > 0) {
+                                if (facets[ix].selectedItems[0].lowerBound == range.lowerExpression && facets[ix].selectedItems[0].upperBound == range.upperExpression) {
+                                    this.$el.find("select").val(range.val);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             return this;
         }

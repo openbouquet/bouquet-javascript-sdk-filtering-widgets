@@ -43,8 +43,8 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             padding: 0px 10px;
-            margin-right: 10px;
-            &:hover {
+            margin-right: 20px;
+            &:hover, &#range-selected {
                 color: #fff;
                 background: #4d4d4d;
             }
