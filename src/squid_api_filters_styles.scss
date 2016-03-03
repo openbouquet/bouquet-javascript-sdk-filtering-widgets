@@ -33,6 +33,11 @@
         }
     }
 }
+.squid-api-range-selection-widget {
+    select {
+        cursor: pointer;
+    }
+}
 
 .squid-api-date-selection-widget {
     #date-picker {
