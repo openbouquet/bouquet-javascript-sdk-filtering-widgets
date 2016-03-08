@@ -1217,18 +1217,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
                        if ($(this).parents("li").hasClass("disabled")) {
                            // index if value is disabled when clicked
                            var value = $(this).find("input").val();
-                           //squid_api.getSelectedProject().then(function(project) {
-                           //    project.get("Dimensions").load(function(dimensions) {
-                           //        console.log("dimensions");
-                           //    });
-                           //     console.log(project);
-                           //
-                           //    //return squid_api.getCustomer().then(function(customer) {
-                           //    //    return customer.get("projects").load(me.config.get("project")).then(function(project) {
-                           //    //        return project.get(me.typeLabelPlural.toLowerCase()).load();
-                           //    //    });
-                           //    //});
-                           //});
 
                            me.loadCollection(me.config.get("domain")).done(function(collection) {
                                var facetModel = _.where(me.model.get("selection").facets, {"id":value});
@@ -1240,7 +1228,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
                                        model.set("type", "CATEGORICAL");
                                        model.save(null, {
                                            success: function() {
-                                               alert("model saved");
                                                me.config.trigger("change:selection");
                                            }
                                        });
