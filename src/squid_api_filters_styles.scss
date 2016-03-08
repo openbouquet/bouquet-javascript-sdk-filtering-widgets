@@ -418,14 +418,24 @@
     }
     &:before {
         position: absolute;
-        top: -6px;
+        top: -7px;
         left: 9px;
-        z-index: 2;
         display: inline-block;
         border-right: 7px solid transparent;
         border-bottom: 7px solid #ccc;
         border-left: 7px solid transparent;
-        border-bottom-color: #fff;
+        border-bottom-color: rgba(0, 0, 0, 0.2);
+        content: '';
+    }
+    &:after {
+        position: absolute;
+        top: -6px;
+        z-index: 1;
+        left: 9px;
+        display: inline-block;
+        border-right: 7px solid transparent;
+        border-bottom: 7px solid #fff;
+        border-left: 7px solid transparent;
         content: '';
     }
     .ui-dialog-titlebar-close {
