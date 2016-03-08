@@ -41,9 +41,7 @@
                 this.monthsOnlyDisplay = options.monthsOnlyDisplay;
             }
 
-            // TODO: see why filters selection change event is not triggered when not setting an upperBound timezone
             this.listenTo(this.filters, "change:selection", this.render);
-            this.listenTo(this.config, "change:selection", this.render);
             this.listenTo(this.config, "change:period", this.render);
 
             // listen for global status change
@@ -191,7 +189,7 @@
                 responsible for updating a given date facet with a new start / end date.
              */
             var obj = [{"lowerBound":startDate, "type":"i", "upperBound":endDate}];
-            var selection =  $.extend({}, this.filters.get("selection"));
+            var selection =  $.extend(true, {}, this.filters.get("selection"));
             if (selection) {
                 for (var i=0; i<selection.facets.length; i++) {
                     if (selection.facets[i].id == facet.id) {
