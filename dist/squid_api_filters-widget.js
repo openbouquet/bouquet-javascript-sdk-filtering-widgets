@@ -1108,6 +1108,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
         avoidFacets : null,
 
         initialize : function(options) {
+            this.config = squid_api.model.config;
+
             if (!this.model) {
                 this.model = squid_api.model.filters;
             }
@@ -1140,12 +1142,23 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
             this.$el.find(".btn-select-filter").multiselect({
                 nonSelectedText: 'Select Filter',
+                enableHTML : true,
                 onChange: function(option) {
                     var filterValue = $(option).val();
                     me.filterStore.set("selectedFilter", filterValue);
                 }
             });
+        },
 
+        loadCollection : function(parentId) {
+            var me = this;
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                    return project.get("domains").load(parentId).then(function(domain) {
+                        return domain.get("dimensions").load();
+                    });
+                });
+            });
         },
 
         renderSelection : function() {
@@ -1158,27 +1171,28 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 if (this.model.get("selection")) {
                     for (i=0; i<facets.length; i++) {
                         var facet = facets[i];
+                        var json = {
+                            label : facet.name,
+                            title : facet.name,
+                            value : facet.id,
+                            disabled : true,
+                        };
+                        if (facet.id == selectedFilter) {
+                            json.selected = true;
+                        }
                         if ((facet.dimension.type == "CATEGORICAL") || (facet.dimension.type == "SEGMENTS")) {
-                            var selected = false;
-                            if (facet.id == selectedFilter) {
-                                selected = true;
-                            }
-                            var json = {
-                                label : facet.name,
-                                title : facet.name,
-                                value : facet.id,
-                                selected : selected
-                            };
-                            if (this.facetList) {
-                                for (ix=0; ix<this.facetList.length; ix++) {
-                                    if (this.facetList[ix] === facet.id) {
-                                        items.push(json);
-                                    }
+                            json.disabled = false;
+                        }
+
+                        if (this.facetList) {
+                            for (ix=0; ix<this.facetList.length; ix++) {
+                                if (this.facetList[ix] === facet.id) {
+                                    items.push(json);
                                 }
                             }
-                            else {
-                                items.push(json);
-                            }
+                        }
+                        else {
+                            items.push(json);
                         }
                     }
                     if (this.avoidFacets) {
@@ -1198,6 +1212,47 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     if (items.length >= 10) {
                         select.siblings(".btn-group").addClass("largeList");
                     }
+
+                    this.$el.find("label").click(function() {
+                       if ($(this).parents("li").hasClass("disabled")) {
+                           // index if value is disabled when clicked
+                           var value = $(this).find("input").val();
+                           //squid_api.getSelectedProject().then(function(project) {
+                           //    project.get("Dimensions").load(function(dimensions) {
+                           //        console.log("dimensions");
+                           //    });
+                           //     console.log(project);
+                           //
+                           //    //return squid_api.getCustomer().then(function(customer) {
+                           //    //    return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                           //    //        return project.get(me.typeLabelPlural.toLowerCase()).load();
+                           //    //    });
+                           //    //});
+                           //});
+
+                           me.loadCollection(me.config.get("domain")).done(function(collection) {
+                               var facetModel = _.where(me.model.get("selection").facets, {"id":value});
+                               if (facetModel[0]) {
+                                   var dimensionId = facetModel[0].dimension.oid;
+                                   var getModel = collection.where({oid : dimensionId});
+                                   if (getModel.length > 0) {
+                                       var model = getModel[0];
+                                       model.set("type", "CATEGORICAL");
+                                       model.save(null, {
+                                           success: function() {
+                                               alert("model saved");
+                                               me.config.trigger("change:selection");
+                                           }
+                                       });
+                                   }
+                               }
+                           }).fail(function() {
+                               console.warn("Couldn't load collection");
+                           });
+
+                           // trigger filters change
+                       }
+                    });
                 }
             }
         }

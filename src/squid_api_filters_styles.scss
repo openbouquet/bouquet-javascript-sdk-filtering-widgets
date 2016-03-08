@@ -33,6 +33,14 @@
         }
     }
 }
+.squid_api_filters-categorical-panel-view {
+    .multiselect-container {
+        li {
+            float: left;
+            width: 50%;
+        }
+    }
+}
 .squid-api-range-selection-widget {
     select {
         cursor: pointer;
