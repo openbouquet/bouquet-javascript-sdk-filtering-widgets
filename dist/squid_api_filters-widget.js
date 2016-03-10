@@ -2241,6 +2241,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
             // detect currently selected expression range
             var count = 0;
+            var dateFacets = 0;
             for (i=0; i<this.ranges.length; i++) {
                 range = this.ranges[i];
                 if (selection) {
@@ -2248,6 +2249,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     if (facets) {
                         for (ix=0; ix<facets.length; ix++) {
                             if (facets[ix].dimension.type == "CONTINUOUS" && facets[ix].dimension.valueType == "DATE" && facets[ix].selectedItems.length > 0) {
+                                dateFacets++;
                                 if (facets[ix].selectedItems[0].lowerBound == range.lowerExpression && facets[ix].selectedItems[0].upperBound == range.upperExpression) {
                                     count++;
                                     this.$el.find("select").val(range.val);
@@ -2258,8 +2260,12 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     }
                 }
             }
-            if (count === 0) {
-                this.$el.find("select").val('custom');
+            if (dateFacets > 0) {
+                if (count === 0) {
+                    this.$el.find("select").val('custom');
+                }
+            } else {
+                this.$el.find("select").remove();
             }
 
             return this;
@@ -2312,9 +2318,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 this.monthsOnlyDisplay = options.monthsOnlyDisplay;
             }
 
-            // TODO: see why filters selection change event is not triggered when not setting an upperBound timezone
             this.listenTo(this.filters, "change:selection", this.render);
-            this.listenTo(this.config, "change:selection", this.render);
             this.listenTo(this.config, "change:period", this.render);
 
             // listen for global status change
@@ -2462,7 +2466,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 responsible for updating a given date facet with a new start / end date.
              */
             var obj = [{"lowerBound":startDate, "type":"i", "upperBound":endDate}];
-            var selection =  $.extend({}, this.filters.get("selection"));
+            var selection =  $.extend(true, {}, this.filters.get("selection"));
             if (selection) {
                 for (var i=0; i<selection.facets.length; i++) {
                     if (selection.facets[i].id == facet.id) {
