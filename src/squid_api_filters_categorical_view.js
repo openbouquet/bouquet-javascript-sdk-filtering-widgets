@@ -384,7 +384,7 @@
             if (this.popup) {
                 if (buttonLabel) {
                     this.$el
-                    .html("<button type='button' class='btn squid_api_filters_categorical_button'>" + buttonLabel + "<span class='caret'></span></button>");
+                    .html("<button type='button' class='btn btn-default squid_api_filters_categorical_button'>" + buttonLabel + "<span class='caret'></span></button>");
                     this.statusUpdate();
                 }
                 $(this.filterPanel).dialog({
@@ -407,7 +407,7 @@
             } else {
                 if (buttonLabel) {
                     this.$el
-                    .html("<button type='button' class='btn squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + "</span><span class='caret'></span></button>");
+                    .html("<button type='button' class='btn btn-default squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + "</span><span class='caret'></span></button>");
                 }
                 $(this.filterPanel).addClass("collapse");
             }
@@ -477,10 +477,10 @@
                     }
                     if (this.popup) {
                         if (buttonLabel) {
-                            this.$el.html("<button type='button' class='btn squid_api_filters_categorical_button'>" + buttonLabel + " (" + count + ")<span class='caret'></span></button>");
+                            this.$el.html("<button type='button' class='btn btn-default squid_api_filters_categorical_button'>" + buttonLabel + " (" + count + ")<span class='caret'></span></button>");
                         }
                     } else {
-                        this.$el.html("<button type='button' class='btn squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + " (" + count + ")</span><span class='caret'></span></button>");
+                        this.$el.html("<button type='button' class='btn btn-default squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + " (" + count + ")</span><span class='caret'></span></button>");
                     }
                     if (this.hoverFacetDisplay) {
                         this.displayFacetsOnHover();
