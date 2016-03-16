@@ -19,6 +19,7 @@
             }
         },
         monthsOnlyDisplay : false,
+        datePickerPosition: null,
 
         initialize: function(options) {
             var me = this;
@@ -36,6 +37,8 @@
             }
             if (options.datePickerPosition) {
                 this.datePickerPosition  = options.datePickerPosition;
+            } else {
+                this.datePickerPosition = "right";
             }
             if (options.monthsOnlyDisplay) {
                 this.monthsOnlyDisplay = options.monthsOnlyDisplay;
@@ -228,6 +231,7 @@
             // Build Date Picker
             this.$el.find(".widget").daterangepicker({
                 format: 'YYYY-MM-DD',
+                opens: this.datePickerPosition,
                 showDropdowns: true,
                 startDate: dates.currentStartDate ? dates.currentStartDate.format('YYYY-MM-DD') : null,
                 endDate: dates.currentEndDate ? dates.currentEndDate.format('YYYY-MM-DD') : null,
