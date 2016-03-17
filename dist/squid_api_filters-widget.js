@@ -311,7 +311,7 @@ function program13(depth0,data) {
   if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\">Cancel</button>\n		</div>\n	";
+    + "\" data-clavier=\"true\">Close</button>\n		</div>\n	";
   return buffer;
   }
 
