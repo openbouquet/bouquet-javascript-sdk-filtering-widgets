@@ -311,7 +311,7 @@ function program13(depth0,data) {
   if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\">Cancel</button>\n		</div>\n	";
+    + "\" data-clavier=\"true\">Close</button>\n		</div>\n	";
   return buffer;
   }
 
@@ -1592,7 +1592,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             if (this.popup) {
                 if (buttonLabel) {
                     this.$el
-                    .html("<button type='button' class='btn squid_api_filters_categorical_button'>" + buttonLabel + "<span class='caret'></span></button>");
+                    .html("<button type='button' class='btn btn-default form-control squid_api_filters_categorical_button'>" + buttonLabel + "<span class='caret'></span></button>");
                     this.statusUpdate();
                 }
                 $(this.filterPanel).dialog({
@@ -1615,7 +1615,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             } else {
                 if (buttonLabel) {
                     this.$el
-                    .html("<button type='button' class='btn squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + "</span><span class='caret'></span></button>");
+                    .html("<button type='button' class='btn btn-default form-control squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + "</span><span class='caret'></span></button>");
                 }
                 $(this.filterPanel).addClass("collapse");
             }
@@ -1685,10 +1685,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     }
                     if (this.popup) {
                         if (buttonLabel) {
-                            this.$el.html("<button type='button' class='btn squid_api_filters_categorical_button'>" + buttonLabel + " (" + count + ")<span class='caret'></span></button>");
+                            this.$el.html("<button type='button' class='btn btn-default form-control squid_api_filters_categorical_button'>" + buttonLabel + " (" + count + ")<span class='caret'></span></button>");
                         }
                     } else {
-                        this.$el.html("<button type='button' class='btn squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + " (" + count + ")</span><span class='caret'></span></button>");
+                        this.$el.html("<button type='button' class='btn btn-default form-control squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + " (" + count + ")</span><span class='caret'></span></button>");
                     }
                     if (this.hoverFacetDisplay) {
                         this.displayFacetsOnHover();
@@ -2296,6 +2296,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
         },
         monthsOnlyDisplay : false,
+        datePickerPosition: null,
 
         initialize: function(options) {
             var me = this;
@@ -2313,6 +2314,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
             if (options.datePickerPosition) {
                 this.datePickerPosition  = options.datePickerPosition;
+            } else {
+                this.datePickerPosition = "right";
             }
             if (options.monthsOnlyDisplay) {
                 this.monthsOnlyDisplay = options.monthsOnlyDisplay;
@@ -2505,6 +2508,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             // Build Date Picker
             this.$el.find(".widget").daterangepicker({
                 format: 'YYYY-MM-DD',
+                opens: this.datePickerPosition,
                 showDropdowns: true,
                 startDate: dates.currentStartDate ? dates.currentStartDate.format('YYYY-MM-DD') : null,
                 endDate: dates.currentEndDate ? dates.currentEndDate.format('YYYY-MM-DD') : null,
