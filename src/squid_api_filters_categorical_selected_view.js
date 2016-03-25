@@ -41,8 +41,11 @@
             if (options.mandatory) {
                 this.mandatory = options.mandatory;
             }
-
-            this.filterPanelTemplate = squid_api.template.squid_api_filters_categorical_selected_view;
+            if (options.template) {
+                this.template = options.template;
+            } else {
+                this.template = squid_api.template.squid_api_filters_categorical_selected_view;
+            }
 
             if (options.format) {
                 this.format = options.format;
@@ -135,7 +138,7 @@
                 }
             }
 
-            this.$el.html(this.filterPanelTemplate({facets: selFacets, noData: noData, noDataMessage: this.noDataMessage, mandatory: this.mandatory}));
+            this.$el.html(this.template({facets: selFacets, noData: noData, noDataMessage: this.noDataMessage, mandatory: this.mandatory}));
         }
     });
 
