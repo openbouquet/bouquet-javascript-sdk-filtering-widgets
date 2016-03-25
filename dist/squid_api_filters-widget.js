@@ -479,6 +479,10 @@ function program1(depth0,data) {
   if (helper = helpers.val) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.val); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
+    + "\" class=\"select\" data-attr=\"";
+  if (helper = helpers.val) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.val); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
     + "\">";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
@@ -2168,22 +2172,22 @@ $.widget( "ui.dialog", $.ui.dialog, {
         },
 
         events: {
-            "change": function(e) {
-                var val = $(e.currentTarget).find("select").val();
+            "click .select" : function(e) {
+                var val = $(e.target).attr("data-attr");
                 var ranges = this.jsonData.ranges;
                 for (i=0; i<ranges.length; i++) {
-                    if (ranges[i].val == val) {
+                    if (ranges[i].val === val) {
                         this.updateSelection(ranges[i].lowerExpression, ranges[i].upperExpression);
                     }
                 }
 
                 var filtersSelection = this.filters.get("selection");
-                if (val == "custom") {
+                if (val === "custom") {
                     if (filtersSelection) {
                         var facets = filtersSelection.facets;
                         if (facets) {
                             for (ix=0; ix<facets.length; ix++) {
-                                if (facets[ix].dimension.type == "CONTINUOUS" && facets[ix].dimension.valueType == "DATE") {
+                                if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].dimension.valueType === "DATE") {
                                     if (facets[ix].selectedItems.length > 0) {
                                         this.updateSelection(facets[ix].selectedItems[0].lowerBound, facets[ix].selectedItems[0].upperBound);
                                     }
@@ -2201,7 +2205,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 var facets = selection.facets;
                 if (facets) {
                     for (var i=0; i<facets.length; i++) {
-                        if (facets[i].dimension.type == "CONTINUOUS" && facets[i].dimension.valueType == "DATE") {
+                        if (facets[i].dimension.type === "CONTINUOUS" && facets[i].dimension.valueType === "DATE") {
                             facets[i].selectedItems[0].lowerBound = lowerExpression;
                             facets[i].selectedItems[0].upperBound = upperExpression;
                             break;
@@ -2215,7 +2219,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         },
 
         statusUpdate: function() {
-            if (this.status.get("status") == "RUNNING") {
+            if (this.status.get("status") === "RUNNING") {
                 this.$el.find("span").addClass("inactive");
             } else {
                 this.$el.find("span").removeClass("inactive");
@@ -2248,9 +2252,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     var facets = selection.facets;
                     if (facets) {
                         for (ix=0; ix<facets.length; ix++) {
-                            if (facets[ix].dimension.type == "CONTINUOUS" && facets[ix].dimension.valueType == "DATE" && facets[ix].selectedItems.length > 0) {
+                            if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].dimension.valueType === "DATE" && facets[ix].selectedItems.length > 0) {
                                 dateFacets++;
-                                if (facets[ix].selectedItems[0].lowerBound == range.lowerExpression && facets[ix].selectedItems[0].upperBound == range.upperExpression) {
+                                if (facets[ix].selectedItems[0].lowerBound === range.lowerExpression && facets[ix].selectedItems[0].upperBound === range.upperExpression) {
                                     count++;
                                     this.$el.find("select").val(range.val);
                                     break;
