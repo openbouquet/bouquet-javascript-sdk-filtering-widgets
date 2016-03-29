@@ -1,6 +1,82 @@
 this["squid_api"] = this["squid_api"] || {};
 this["squid_api"]["template"] = this["squid_api"]["template"] || {};
 
+this["squid_api"]["template"]["squid_api_FiltersSelector"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, self=this, functionType="function", escapeExpression=this.escapeExpression;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n    <label class=\"noData ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.mandatory), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\">";
+  if (helper = helpers.noDataMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.noDataMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</label>\n";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return "warning fa fa-exclamation-circle";
+  }
+
+function program4(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n    <ul class=\"facets\">\n        ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.facets), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    </ul>\n";
+  return buffer;
+  }
+function program5(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n            <li data-id=\"";
+  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" class=\"facet\">\n                <div class=\"facet-name\">\n                    ";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n                </div>\n                <ul class=\"items\" data-id=\"";
+  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">\n	                ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.items), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                </ul>\n            </li>\n        ";
+  return buffer;
+  }
+function program6(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n	                <li data-id=\"";
+  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" class=\"item\">\n		                <div class=\"facet-value\">\n		                    ";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n		                </div>\n		                <div class=\"facet-remove\">\n	                    	<i class=\"glyphicon glyphicon-remove\"></i>\n	                	</div>\n	                </li>\n	                ";
+  return buffer;
+  }
+
+  buffer += "<div class=\"squid-api-FiltersSelector\">\n";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.noData), {hash:{},inverse:self.program(4, program4, data),fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>\n\n";
+  return buffer;
+  });
+
 this["squid_api"]["template"]["squid_api_filters_categorical_facet_view"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -606,6 +682,102 @@ function program4(depth0,data) {
   buffer += "\n</div>";
   return buffer;
   });
+(function (root, factory) {
+    root.squid_api.view.FiltersSelector = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_FiltersSelector);
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+
+        model : null,
+        template : template,
+
+        initialize : function(options) {
+            if (!this.model) {
+                this.model = squid_api.model.filters;
+            }
+            if (options.template) {
+                this.template = options.template;
+            }
+            if (options.onSelectFacet) {
+                this.onSelectFacet = options.onSelectFacet;
+            }
+
+            this.listenTo(this.model, "change", this.render);
+            this.render();
+        },
+
+        events: {
+            "click .facet-remove": function(event) {
+                // Obtain facet name / value
+                var parent = $(event.currentTarget).parent("li");
+                var facetId = parent.parent("ul").data("id");
+                var itemId = parent.data("id");
+                this.onRemoveItem(facetId, itemId);
+            },
+            "click .facet" : function(event) {
+                // Obtain facet name / value
+                var facetId = $(event.currentTarget).data("id");
+                if (this.onSelectFacet) {
+                    this.onSelectFacet(facetId);
+                }
+            }
+        },
+        
+        onRemoveItem : function(facetId, itemId) {
+            // Copy model selection object properties to remove object reference
+            var selectionClone = $.extend(true, {}, this.model.get("selection"));
+            if (selectionClone) {
+                var facets = selectionClone.facets;
+                if (facets) {
+                    // Remove selected item from facet
+                    squid_api.controller.facetjob.unSelect(facets, facetId, itemId);
+                    squid_api.model.config.set("selection", selectionClone);
+                }
+            }
+        },
+
+        render : function() {
+            var selFacets = [];
+            var noData = true;
+            if (this.model) {
+                var selection = this.model.get("selection");
+                if (selection) {
+                    if (selection.facets) {
+                        noData = false;
+                        var facets = selection.facets;
+                        for (i = 0; i < facets.length; i++) {
+                            var facet = facets[i];
+                            if (facet.dimension.type === "CATEGORICAL" || facet.dimension.type === "SEGMENTS") {
+                                var selFacet = {
+                                        "id" : facet.id,
+                                        "name" : facet.name ? facet.name : facet.dimension.name,
+                                        "items" : []
+                                };
+                                var selectedItems = facet.selectedItems;
+                                for (ix = 0; ix < selectedItems.length; ix++) {             
+                                    selFacet.items.push({
+                                            "id" : selectedItems[ix].id,
+                                            "name" : selectedItems[ix].value
+                                    });            
+                                }
+                                selFacets.push(selFacet);
+                            }
+                        }
+                    }
+                }
+            }
+
+            this.$el.html(this.template({
+                facets : selFacets,
+                noData : noData,
+                noDataMessage : this.noDataMessage
+            }));
+        }
+    });
+
+    return View;
+}));
+
 $.widget( "ui.dialog", $.ui.dialog, {
     options: {
         clickOutside: false, // Determine if clicking outside the dialog shall close it
