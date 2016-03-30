@@ -46,6 +46,8 @@
             this.listenTo(this.model, "change:pageIndex", this.render);
             this.listenTo(this.model, "change:facet", this.render);
             this.listenTo(this.status, "change", this.widgetState);
+
+            this.render();
         },
 
         widgetState: function() {
