@@ -350,7 +350,7 @@
                 });
 
                 view2 = new squid_api.view.CategoricalFacetView({
-                    el: this.el,
+                    el: $(this.filterPanel).find("#filter-display-results"),
                     model: this.filterStore,
                     filters: this.currentModel,
                     noFiltersMessage : this.noFiltersMessage,
