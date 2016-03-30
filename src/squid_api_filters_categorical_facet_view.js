@@ -27,6 +27,11 @@
             } else {
                 this.filters = squid_api.model.filters;
             }
+            if (options.template) {
+                this.template = options.template;
+            } else {
+                this.template = squid_api.template.squid_api_filters_categorical_facet_view;
+            }
             if (options.status) {
             	this.status = options.status;
             } else {
@@ -201,7 +206,7 @@
                 this.$el.removeClass("min-filter-height");
             }
 
-            var html = squid_api.template.squid_api_filters_categorical_facet_view({
+            var html = this.template({
                 "items" : updatedItems, "message" : message, "computingInProgress" : computingInProgress
             });
 

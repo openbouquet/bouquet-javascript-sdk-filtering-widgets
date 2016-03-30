@@ -27,6 +27,7 @@
         hoverFacetDisplay : null,
         facetViewOnly : null,
         template: null,
+        facetViewTemplate: null,
 
         initialize : function(options) {
             var me = this;
@@ -64,6 +65,9 @@
             }
             if (options.initialDimension) {
                 this.initialDimension = options.initialDimension;
+            }
+            if (options.facetViewTemplate) {
+                this.facetViewTemplate = options.facetViewTemplate;
             }
             if (options.singleSelect) {
                 this.singleSelect = options.singleSelect;
@@ -327,6 +331,7 @@
                 var facetItems = new squid_api.view.CategoricalFacetView({
                     el: $(this.el).find(".results"),
                     model: this.filterStore,
+                    template: this.facetViewTemplate,
                     filters: this.currentModel,
                     noFiltersMessage : this.noFiltersMessage,
                     singleSelect : this.singleSelect,
@@ -356,6 +361,7 @@
                 view2 = new squid_api.view.CategoricalFacetView({
                     el: $(this.filterPanel).find("#filter-display-results"),
                     model: this.filterStore,
+                    template: this.facetViewTemplate,
                     filters: this.currentModel,
                     noFiltersMessage : this.noFiltersMessage,
                     singleSelect : this.singleSelect,

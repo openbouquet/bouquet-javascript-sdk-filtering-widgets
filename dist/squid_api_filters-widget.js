@@ -841,6 +841,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
             } else {
                 this.filters = squid_api.model.filters;
             }
+            if (options.template) {
+                this.template = options.template;
+            } else {
+                this.template = squid_api.template.squid_api_filters_categorical_facet_view;
+            }
             if (options.status) {
             	this.status = options.status;
             } else {
@@ -1015,7 +1020,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 this.$el.removeClass("min-filter-height");
             }
 
-            var html = squid_api.template.squid_api_filters_categorical_facet_view({
+            var html = this.template({
                 "items" : updatedItems, "message" : message, "computingInProgress" : computingInProgress
             });
 
@@ -1420,6 +1425,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         hoverFacetDisplay : null,
         facetViewOnly : null,
         template: null,
+        facetViewTemplate: null,
 
         initialize : function(options) {
             var me = this;
@@ -1457,6 +1463,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
             if (options.initialDimension) {
                 this.initialDimension = options.initialDimension;
+            }
+            if (options.facetViewTemplate) {
+                this.facetViewTemplate = options.facetViewTemplate;
             }
             if (options.singleSelect) {
                 this.singleSelect = options.singleSelect;
@@ -1720,6 +1729,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 var facetItems = new squid_api.view.CategoricalFacetView({
                     el: $(this.el).find(".results"),
                     model: this.filterStore,
+                    template: this.facetViewTemplate,
                     filters: this.currentModel,
                     noFiltersMessage : this.noFiltersMessage,
                     singleSelect : this.singleSelect,
@@ -1749,6 +1759,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 view2 = new squid_api.view.CategoricalFacetView({
                     el: $(this.filterPanel).find("#filter-display-results"),
                     model: this.filterStore,
+                    template: this.facetViewTemplate,
                     filters: this.currentModel,
                     noFiltersMessage : this.noFiltersMessage,
                     singleSelect : this.singleSelect,
