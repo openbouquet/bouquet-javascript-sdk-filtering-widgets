@@ -25,6 +25,8 @@
         onChange : null,
         displayFacetQuantity : false,
         hoverFacetDisplay : null,
+        facetViewOnly : null,
+        template: null,
 
         initialize : function(options) {
             var me = this;
@@ -34,7 +36,6 @@
             }
             // force using the non-blocking engine
             this.model.set("engineVersion", "2");
-
             if (options.filterPanel) {
                 this.filterPanel = options.filterPanel;
             } else {
@@ -48,6 +49,9 @@
             }
             if (! options.panelButtons) {
                 this.panelButtons = options.panelButtons;
+            }
+            if (options.facetViewOnly) {
+                this.facetViewOnly = options.facetViewOnly;
             }
             if (options.buttonLabel) {
                 this.buttonLabel = options.buttonLabel;
@@ -87,6 +91,9 @@
             }
             if (options.onChange) {
                 this.onChange = options.onChange;
+            }
+            if (options.template) {
+                this.template = options.template;
             }
             if (options.status) {
             	this.status = options.status;
@@ -315,40 +322,63 @@
             // Button which opens filter Panel
             var buttonLabel = this.getButtonLabel();
 
-            // Print Base Filter Panel Layout
-            $(this.filterPanel).addClass("squid_api_filters_categorical_filter_panel").html(this.filterPanelTemplate({
-                "popup" : this.popup,
-                "data-target" : this.filterPanel,
-                "panel-buttons" : this.panelButtons,
-                "initialFacet" : this.initialFacet
-            }));
+            if (this.facetViewOnly) {
+                this.$el.html(this.template());
+                var facetItems = new squid_api.view.CategoricalFacetView({
+                    el: $(this.el).find(".results"),
+                    model: this.filterStore,
+                    filters: this.currentModel,
+                    noFiltersMessage : this.noFiltersMessage,
+                    singleSelect : this.singleSelect,
+                    onChange : this.onChange
+                });
+            } else {
+                // Print Base Filter Panel Layout
+                $(this.filterPanel).addClass("squid_api_filters_categorical_filter_panel").html(this.filterPanelTemplate({
+                    "popup" : this.popup,
+                    "data-target" : this.filterPanel,
+                    "panel-buttons" : this.panelButtons,
+                    "initialFacet" : this.initialFacet
+                }));
 
-            view = new squid_api.view.CategoricalSelectorView({
-                el: $(this.filterPanel).find("#filter-selection"),
-                model: this.currentModel,
-                filterStore : this.filterStore,
-                facetList : this.facetList,
-                avoidFacets : this.ignoredFacets
-            });
-
-            view2 = new squid_api.view.CategoricalFacetView({
-                el: $(this.filterPanel).find("#filter-display-results"),
-                model: this.filterStore,
-                filters: this.currentModel,
-                noFiltersMessage : this.noFiltersMessage,
-                singleSelect : this.singleSelect,
-                onChange : this.onChange
-            });
-
-            view3 = new squid_api.view.CategoricalPagingView({
-                el: $(this.filterPanel).find("#pagination-container"),
-                model: this.filterStore
-            });
-
-            if (this.panelButtons) {
-                view4 = new squid_api.view.CategoricalSelectedView({
-                    el: $(this.filterPanel).find("#selected"),
+                view = new squid_api.view.CategoricalSelectorView({
+                    el: $(this.filterPanel).find("#filter-selection"),
                     model: this.currentModel,
+                    filterStore : this.filterStore,
+                    facetList : this.facetList,
+                    avoidFacets : this.ignoredFacets
+                });
+
+                view2 = new squid_api.view.CategoricalFacetView({
+                    el: this.el,
+                    model: this.filterStore,
+                    filters: this.currentModel,
+                    noFiltersMessage : this.noFiltersMessage,
+                    singleSelect : this.singleSelect,
+                    onChange : this.onChange
+                });
+
+                view3 = new squid_api.view.CategoricalPagingView({
+                    el: $(this.filterPanel).find("#pagination-container"),
+                    model: this.filterStore
+                });
+
+                if (this.panelButtons) {
+                    view4 = new squid_api.view.CategoricalSelectedView({
+                        el: $(this.filterPanel).find("#selected"),
+                        model: this.currentModel,
+                        noDataMessage: this.noFiltersMessage,
+                        initialFacet : this.initialFacet,
+                        initialDimension : this.initialDimension,
+                        facetList : this.facetList,
+                        avoidFacets : this.ignoredFacets,
+                        mandatory : this.mandatory
+                    });
+                }
+
+                view5 = new squid_api.view.CategoricalSelectedView({
+                    el: this.filterSelected,
+                    model: this.model,
                     noDataMessage: this.noFiltersMessage,
                     initialFacet : this.initialFacet,
                     initialDimension : this.initialDimension,
@@ -356,63 +386,54 @@
                     avoidFacets : this.ignoredFacets,
                     mandatory : this.mandatory
                 });
-            }
 
-            view5 = new squid_api.view.CategoricalSelectedView({
-                el: this.filterSelected,
-                model: this.model,
-                noDataMessage: this.noFiltersMessage,
-                initialFacet : this.initialFacet,
-                initialDimension : this.initialDimension,
-                facetList : this.facetList,
-                avoidFacets : this.ignoredFacets,
-                mandatory : this.mandatory
-            });
+                $(this.filterPanel).find("#searchbox").keyup(_.bind(this.search, this));
 
-            var me = this;
-            if (this.panelButtons) {
-                $(this.filterPanel).find(".apply-selection").click(function() {
-                    me.applySelection();
-                });
-                $(this.filterPanel).find(".cancel-selection").click(function() {
-                    me.cancelSelection();
-                });
-            }
-
-            $(this.filterPanel).find("#searchbox").keyup(_.bind(this.search, this));
-
-            if (this.popup) {
-                if (buttonLabel) {
-                    this.$el
-                    .html("<button type='button' class='btn btn-default form-control squid_api_filters_categorical_button'>" + buttonLabel + "<span class='caret'></span></button>");
-                    this.statusUpdate();
+                var me = this;
+                if (this.panelButtons) {
+                    $(this.filterPanel).find(".apply-selection").click(function() {
+                        me.applySelection();
+                    });
+                    $(this.filterPanel).find(".cancel-selection").click(function() {
+                        me.cancelSelection();
+                    });
                 }
-                $(this.filterPanel).dialog({
-                    dialogClass: "squid-api-filters-widget-popup",
-                    autoOpen: false,
-                    position: {
-                        my: "left top", at: "left bottom", of: this.$el.find("button")
-                    },
-                    clickOutside: true, // clicking outside the dialog will close it
-                    clickOutsideTrigger: this.$el.find("button"), // Element (id or class) that triggers the dialog opening
-                });
-                // Click Event for filter panel button
-                this.$el.find("button").off("click").on("click", function() {
-                    if ($(me.filterPanel).dialog("isOpen")) {
-                        $(me.filterPanel).dialog( "close" );
-                    } else {
-                        $(me.filterPanel).dialog( "open" );
+
+                $(this.filterPanel).find("#searchbox").keyup(_.bind(this.search, this));
+
+                if (this.popup) {
+                    if (buttonLabel) {
+                        this.$el
+                            .html("<button type='button' class='btn btn-default form-control squid_api_filters_categorical_button'>" + buttonLabel + "<span class='caret'></span></button>");
+                        this.statusUpdate();
                     }
-                });
-            } else {
-                if (buttonLabel) {
-                    this.$el
-                    .html("<button type='button' class='btn btn-default form-control squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + "</span><span class='caret'></span></button>");
+                    $(this.filterPanel).dialog({
+                        dialogClass: "squid-api-filters-widget-popup",
+                        autoOpen: false,
+                        position: {
+                            my: "left top", at: "left bottom", of: this.$el.find("button")
+                        },
+                        clickOutside: true, // clicking outside the dialog will close it
+                        clickOutsideTrigger: this.$el.find("button"), // Element (id or class) that triggers the dialog opening
+                    });
+                    // Click Event for filter panel button
+                    this.$el.find("button").off("click").on("click", function() {
+                        if ($(me.filterPanel).dialog("isOpen")) {
+                            $(me.filterPanel).dialog( "close" );
+                        } else {
+                            $(me.filterPanel).dialog( "open" );
+                        }
+                    });
+                } else {
+                    if (buttonLabel) {
+                        this.$el
+                            .html("<button type='button' class='btn btn-default form-control squid_api_filters_categorical_button' data-toggle='collapse' data-target="+ this.filterPanel + "><span class='name'>" + buttonLabel + "</span><span class='caret'></span></button>");
+                    }
+                    $(this.filterPanel).addClass("collapse");
                 }
-                $(this.filterPanel).addClass("collapse");
-            }
-            if (this.hoverFacetDisplay) {
-                this.displayFacetsOnHover();
+                if (this.hoverFacetDisplay) {
+                    this.displayFacetsOnHover();
+                }
             }
         },
 
@@ -490,6 +511,9 @@
         },
 
         events: {
+            "keyup" : function(event) {
+                this.search(event);
+            },
             "click .squid_api_filters_categorical_button": function(item) {
                 var className = 'opened';
 

@@ -19,6 +19,8 @@
             }
 
             this.listenTo(this.model, "change", this.render);
+
+            // render view
             this.render();
         },
 
@@ -38,7 +40,7 @@
                 }
             }
         },
-        
+
         onRemoveItem : function(facetId, itemId) {
             // Copy model selection object properties to remove object reference
             var selectionClone = $.extend(true, {}, this.model.get("selection"));
@@ -70,11 +72,11 @@
                                         "items" : []
                                 };
                                 var selectedItems = facet.selectedItems;
-                                for (ix = 0; ix < selectedItems.length; ix++) {             
+                                for (ix = 0; ix < selectedItems.length; ix++) {
                                     selFacet.items.push({
                                             "id" : selectedItems[ix].id,
                                             "name" : selectedItems[ix].value
-                                    });            
+                                    });
                                 }
                                 selFacets.push(selFacet);
                             }
