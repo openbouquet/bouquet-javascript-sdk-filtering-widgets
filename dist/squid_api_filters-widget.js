@@ -237,7 +237,7 @@ function program6(depth0,data) {
   return "\n		<li class=\"next\"  data-id=\"next\"><a  href=\"#\"><i class=\"fa fa-arrow-right\"></i></a></li>\n		";
   }
 
-  buffer += "<div class=\"pagination squid-api-action\">\n	<ul>\n		";
+  buffer += "<div class=\"pagination squid-api-action\">\n	<ul class=\"pagination\">\n		";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.prev), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n		";
@@ -246,7 +246,7 @@ function program6(depth0,data) {
   buffer += "\n		";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.next), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	</ul>\n</div>";
+  buffer += "\n	</ul>\n</div>\n";
   return buffer;
   });
 
