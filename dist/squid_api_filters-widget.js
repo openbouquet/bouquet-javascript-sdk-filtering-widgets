@@ -1725,6 +1725,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     singleSelect : this.singleSelect,
                     onChange : this.onChange
                 });
+                var paginationView = new squid_api.view.CategoricalPagingView({
+                    el: $(this.el).find(".pagination-container"),
+                    model: this.filterStore
+                });
             } else {
                 // Print Base Filter Panel Layout
                 $(this.filterPanel).addClass("squid_api_filters_categorical_filter_panel").html(this.filterPanelTemplate({
