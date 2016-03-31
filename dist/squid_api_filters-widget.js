@@ -2350,9 +2350,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
 }(this, function (Backbone, squid_api, template) {
 
     var View = Backbone.View.extend({
+        defaultFacetsAttribute : "facets",
+        facetsAttribute : this.defaultFacetsAttribute,
         model: null,
-        ranges : null,
-        defaultRanges: [
+        monthsOnlyDisplay : false,
+        ranges: [
             {
                 name : "All",
                 lowerExpression : "=$'MIN'",
@@ -2369,7 +2371,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 upperExpression : "=$'MAX'"
             }
         ],
-        monthsOnlyDisplay : false,
 
         initialize: function(options) {
             var me = this;
@@ -2377,18 +2378,22 @@ $.widget( "ui.dialog", $.ui.dialog, {
             this.status = squid_api.model.status;
             this.filters = squid_api.model.filters;
 
-            if (options.template) {
-                this.template = options.template;
-            } else {
-                this.template = template;
-            }
-            if (options.ranges) {
-                this.ranges = options.ranges;
-            } else {
-                this.ranges = this.defaultRanges;
+            if (options) {
+                if (options.template) {
+                    this.template = options.template;
+                } else {
+                    this.template = template;
+                }
+                if (options.ranges) {
+                    this.ranges = options.ranges;
+                }
+                if (options.facetsAttribute) {
+                    this.facetsAttribute = options.facetsAttribute;
+                }
             }
 
             this.listenTo(this.config, "change:selection", this.render);
+            this.render();
         },
 
         events: {
@@ -2404,7 +2409,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 var filtersSelection = this.filters.get("selection");
                 if (val === "custom") {
                     if (filtersSelection) {
-                        var facets = filtersSelection.facets;
+                        var facets = filtersSelection[this.facetsAttribute];
                         if (facets) {
                             for (ix=0; ix<facets.length; ix++) {
                                 if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].dimension.valueType === "DATE") {
@@ -2420,9 +2425,14 @@ $.widget( "ui.dialog", $.ui.dialog, {
         },
 
         updateSelection: function(lowerExpression, upperExpression) {
-            var selection = $.extend(true, {}, this.config.get("selection"));
-            if (selection) {
-                var facets = selection.facets;
+            var selectionClone = $.extend(true, {}, this.config.get("selection"));
+            if (selectionClone) {
+                var facets = selectionClone[this.facetsAttribute];
+                if (!facets && (this.facetsAttribute !== this.defaultFacetsAttribute)) {
+                    // copy the default facets (case of compareTo empty)
+                    facets = $.extend(true, [], selectionClone[this.defaultFacetsAttribute]);
+                    selectionClone[this.facetsAttribute] = facets;
+                }
                 if (facets) {
                     for (var i=0; i<facets.length; i++) {
                         if (facets[i].dimension.type === "CONTINUOUS" && facets[i].dimension.valueType === "DATE") {
@@ -2435,7 +2445,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
 
             // set config selection
-            this.config.set("selection", selection);
+            this.config.set("selection", selectionClone);
         },
 
         statusUpdate: function() {
@@ -2469,7 +2479,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             for (i=0; i<this.ranges.length; i++) {
                 range = this.ranges[i];
                 if (selection) {
-                    var facets = selection.facets;
+                    var facets = selection[this.facetsAttribute];
                     if (facets) {
                         for (ix=0; ix<facets.length; ix++) {
                             if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].dimension.valueType === "DATE" && facets[ix].selectedItems.length > 0) {
