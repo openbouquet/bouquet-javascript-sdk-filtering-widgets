@@ -86,12 +86,16 @@
                     facets = $.extend(true, [], selectionClone.facets);
                 }
                 if (facets) {
-                    for (var i=0; i<facets.length; i++) {
-                        if (facets[i].dimension.type === "CONTINUOUS" && facets[i].dimension.valueType === "DATE") {
-                            facets[i].selectedItems[0].lowerBound = lowerExpression;
-                            facets[i].selectedItems[0].upperBound = upperExpression;
-                            break;
+                    if (lowerExpression && upperExpression) {
+                        for (var i=0; i<facets.length; i++) {
+                            if (facets[i].dimension.type === "CONTINUOUS" && facets[i].dimension.valueType === "DATE") {
+                                facets[i].selectedItems[0].lowerBound = lowerExpression;
+                                facets[i].selectedItems[0].upperBound = upperExpression;
+                                break;
+                            }
                         }
+                    } else {
+                        facets = null;
                     }
                     selectionClone[this.facetsAttribute] = facets;
                 }
