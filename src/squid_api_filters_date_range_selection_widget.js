@@ -4,8 +4,7 @@
 }(this, function (Backbone, squid_api, template) {
 
     var View = Backbone.View.extend({
-        defaultFacetsAttribute : "facets",
-        facetsAttribute : this.defaultFacetsAttribute,
+        facetsAttribute : "facets",
         model: null,
         monthsOnlyDisplay : false,
         ranges: [
@@ -82,10 +81,9 @@
             var selectionClone = $.extend(true, {}, this.config.get("selection"));
             if (selectionClone) {
                 var facets = selectionClone[this.facetsAttribute];
-                if (!facets && (this.facetsAttribute !== this.defaultFacetsAttribute)) {
+                if (!facets && (this.facetsAttribute !== "facets")) {
                     // copy the default facets (case of compareTo empty)
-                    facets = $.extend(true, [], selectionClone[this.defaultFacetsAttribute]);
-                    selectionClone[this.facetsAttribute] = facets;
+                    facets = $.extend(true, [], selectionClone.facets);
                 }
                 if (facets) {
                     for (var i=0; i<facets.length; i++) {
@@ -95,6 +93,7 @@
                             break;
                         }
                     }
+                    selectionClone[this.facetsAttribute] = facets;
                 }
             }
 
