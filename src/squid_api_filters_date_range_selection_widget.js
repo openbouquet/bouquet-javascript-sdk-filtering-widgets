@@ -78,31 +78,45 @@
         },
 
         updateSelection: function(lowerExpression, upperExpression) {
-            var selectionClone = $.extend(true, {}, this.config.get("selection"));
-            if (selectionClone) {
-                var facets = selectionClone[this.facetsAttribute];
-                if (!facets && (this.facetsAttribute !== "facets")) {
-                    // copy the default facets (case of compareTo empty)
-                    facets = $.extend(true, [], selectionClone.facets);
-                }
-                if (facets) {
-                    if (lowerExpression && upperExpression) {
-                        for (var i=0; i<facets.length; i++) {
-                            if (facets[i].dimension.type === "CONTINUOUS" && facets[i].dimension.valueType === "DATE") {
-                                facets[i].selectedItems[0].lowerBound = lowerExpression;
-                                facets[i].selectedItems[0].upperBound = upperExpression;
+            // set the period facet
+            var period = this.config.get("period");
+            if (period) {
+                var periodId = period[Object.keys(period)[0]];
+                var selectionClone = $.extend(true, {}, this.config.get("selection"));
+                if (selectionClone) {
+                    var facets = selectionClone[this.facetsAttribute];
+                    if (!facets && (this.facetsAttribute !== "facets")) {
+                        // init the period facets (case of compareTo empty)
+                        facets = [];
+                        for (var i1=0; i1<selectionClone.facets.length; i1++) {
+                            if (selectionClone.facets[i1].id === periodId) {
+                                facets.push($.extend(true, {}, selectionClone.facets[i1]));
                                 break;
                             }
                         }
-                    } else {
-                        facets = null;
                     }
-                    selectionClone[this.facetsAttribute] = facets;
+                    
+                    if (facets) {
+                        if (lowerExpression && upperExpression) {
+                            for (var i=0; i<facets.length; i++) {
+                                if (facets[i].id === periodId) {
+                                    facets[i].selectedItems[0].lowerBound = lowerExpression;
+                                    facets[i].selectedItems[0].upperBound = upperExpression;
+                                }
+                            }
+                            
+                        } else {
+                            facets = null;
+                        }
+                        selectionClone[this.facetsAttribute] = facets;
+                    }
                 }
+    
+                // set config selection
+                this.config.set("selection", selectionClone);
+            } else {
+                console.error("No period found in config");
             }
-
-            // set config selection
-            this.config.set("selection", selectionClone);
         },
 
         statusUpdate: function() {
