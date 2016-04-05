@@ -82,7 +82,7 @@
                     var attributes = target.attr("data-attr");
 
                     // Get selected Filters
-                    var selectionClone = $.extend(true, {}, this.filters.get("selection"));
+                    var selectionClone = $.extend(true, {}, squid_api.model.config.get("selection"));
                     var facets = selectionClone.facets;
 
                     if (target.attr("selected")) {
