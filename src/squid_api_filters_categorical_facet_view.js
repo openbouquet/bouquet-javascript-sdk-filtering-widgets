@@ -24,7 +24,13 @@
             }
             if (options.filters) {
                 this.filters = options.filters;
-                this.listenTo(this.filters, "change:selection", this.render);
+            } else {
+                this.filters = squid_api.model.filters;
+            }
+            if (options.template) {
+                this.template = options.template;
+            } else {
+                this.template = squid_api.template.squid_api_filters_categorical_facet_view;
             }
             if (options.status) {
             	this.status = options.status;
@@ -39,13 +45,16 @@
             }
             if (options.onChange) {
                 this.onChange = options.onChange;
-            }            
- 
+            }
+
+            this.listenTo(this.filters, "change:selection", this.render);
             this.listenTo(this.model, "change:pageIndex", this.render);
             this.listenTo(this.model, "change:facet", this.render);
             this.listenTo(this.status, "change", this.widgetState);
+
+            this.render();
         },
-        
+
         widgetState: function() {
         	// treat global status
             var running = (this.status.get("status") != this.status.STATUS_DONE);
@@ -73,7 +82,7 @@
                     var attributes = target.attr("data-attr");
 
                     // Get selected Filters
-                    var selectionClone = $.extend(true, {}, this.filters.get("selection"));
+                    var selectionClone = $.extend(true, {}, squid_api.model.config.get("selection"));
                     var facets = selectionClone.facets;
 
                     if (target.attr("selected")) {
@@ -95,7 +104,7 @@
                         if (attributes && attributes.length>0) {
                         	selectObj.attributes = JSON.parse(attributes);
                         }
-                        
+
                         // Push new filters to selectedItems array
                         var selectedFacet;
                         for (i=0; i<facets.length; i++) {
@@ -111,7 +120,7 @@
                         }
                         // Remove selected items from children
                         squid_api.controller.facetjob.unSelectChildren(facets, selectedFacet, false);
-                        
+
                         //Handle callback when selection changed
                         if (this.onChange) {
                         	this.onChange(facets, selectedFacet);
@@ -120,7 +129,7 @@
 
                     // Set the updated filters model
                     squid_api.model.config.set("selection", squid_api.utils.buildCleanSelection(selectionClone));
-                    
+
                 }
             },
         },
@@ -197,7 +206,7 @@
                 this.$el.removeClass("min-filter-height");
             }
 
-            var html = squid_api.template.squid_api_filters_categorical_facet_view({
+            var html = this.template({
                 "items" : updatedItems, "message" : message, "computingInProgress" : computingInProgress
             });
 

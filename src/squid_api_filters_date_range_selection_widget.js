@@ -4,9 +4,10 @@
 }(this, function (Backbone, squid_api, template) {
 
     var View = Backbone.View.extend({
+        facetsAttribute : "facets",
         model: null,
-        ranges : null,
-        defaultRanges: [
+        monthsOnlyDisplay : false,
+        ranges: [
             {
                 name : "All",
                 lowerExpression : "=$'MIN'",
@@ -23,7 +24,6 @@
                 upperExpression : "=$'MAX'"
             }
         ],
-        monthsOnlyDisplay : false,
 
         initialize: function(options) {
             var me = this;
@@ -31,37 +31,41 @@
             this.status = squid_api.model.status;
             this.filters = squid_api.model.filters;
 
-            if (options.template) {
-                this.template = options.template;
-            } else {
-                this.template = template;
-            }
-            if (options.ranges) {
-                this.ranges = options.ranges;
-            } else {
-                this.ranges = this.defaultRanges;
+            if (options) {
+                if (options.template) {
+                    this.template = options.template;
+                } else {
+                    this.template = template;
+                }
+                if (options.ranges) {
+                    this.ranges = options.ranges;
+                }
+                if (options.facetsAttribute) {
+                    this.facetsAttribute = options.facetsAttribute;
+                }
             }
 
             this.listenTo(this.config, "change:selection", this.render);
+            this.render();
         },
 
         events: {
-            "change": function(e) {
-                var val = $(e.currentTarget).find("select").val();
+            "click .select" : function(e) {
+                var val = $(e.target).attr("data-attr");
                 var ranges = this.jsonData.ranges;
                 for (i=0; i<ranges.length; i++) {
-                    if (ranges[i].val == val) {
+                    if (ranges[i].val === val) {
                         this.updateSelection(ranges[i].lowerExpression, ranges[i].upperExpression);
                     }
                 }
 
                 var filtersSelection = this.filters.get("selection");
-                if (val == "custom") {
+                if (val === "custom") {
                     if (filtersSelection) {
-                        var facets = filtersSelection.facets;
+                        var facets = filtersSelection[this.facetsAttribute];
                         if (facets) {
                             for (ix=0; ix<facets.length; ix++) {
-                                if (facets[ix].dimension.type == "CONTINUOUS" && facets[ix].dimension.valueType == "DATE") {
+                                if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].dimension.valueType === "DATE") {
                                     if (facets[ix].selectedItems.length > 0) {
                                         this.updateSelection(facets[ix].selectedItems[0].lowerBound, facets[ix].selectedItems[0].upperBound);
                                     }
@@ -74,26 +78,49 @@
         },
 
         updateSelection: function(lowerExpression, upperExpression) {
-            var selection = $.extend(true, {}, this.config.get("selection"));
-            if (selection) {
-                var facets = selection.facets;
-                if (facets) {
-                    for (var i=0; i<facets.length; i++) {
-                        if (facets[i].dimension.type == "CONTINUOUS" && facets[i].dimension.valueType == "DATE") {
-                            facets[i].selectedItems[0].lowerBound = lowerExpression;
-                            facets[i].selectedItems[0].upperBound = upperExpression;
-                            break;
+            // set the period facet
+            var period = this.config.get("period");
+            if (period) {
+                var periodId = period[Object.keys(period)[0]];
+                var selectionClone = $.extend(true, {}, this.config.get("selection"));
+                if (selectionClone) {
+                    var facets = selectionClone[this.facetsAttribute];
+                    if (!facets && (this.facetsAttribute !== "facets")) {
+                        // init the period facets (case of compareTo empty)
+                        facets = [];
+                        for (var i1=0; i1<selectionClone.facets.length; i1++) {
+                            if (selectionClone.facets[i1].id === periodId) {
+                                facets.push($.extend(true, {}, selectionClone.facets[i1]));
+                                break;
+                            }
                         }
                     }
+                    
+                    if (facets) {
+                        if (lowerExpression && upperExpression) {
+                            for (var i=0; i<facets.length; i++) {
+                                if (facets[i].id === periodId) {
+                                    facets[i].selectedItems[0].lowerBound = lowerExpression;
+                                    facets[i].selectedItems[0].upperBound = upperExpression;
+                                }
+                            }
+                            
+                        } else {
+                            facets = null;
+                        }
+                        selectionClone[this.facetsAttribute] = facets;
+                    }
                 }
+    
+                // set config selection
+                this.config.set("selection", selectionClone);
+            } else {
+                console.error("No period found in config");
             }
-
-            // set config selection
-            this.config.set("selection", selection);
         },
 
         statusUpdate: function() {
-            if (this.status.get("status") == "RUNNING") {
+            if (this.status.get("status") === "RUNNING") {
                 this.$el.find("span").addClass("inactive");
             } else {
                 this.$el.find("span").removeClass("inactive");
@@ -123,12 +150,12 @@
             for (i=0; i<this.ranges.length; i++) {
                 range = this.ranges[i];
                 if (selection) {
-                    var facets = selection.facets;
+                    var facets = selection[this.facetsAttribute];
                     if (facets) {
                         for (ix=0; ix<facets.length; ix++) {
-                            if (facets[ix].dimension.type == "CONTINUOUS" && facets[ix].dimension.valueType == "DATE" && facets[ix].selectedItems.length > 0) {
+                            if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].dimension.valueType === "DATE" && facets[ix].selectedItems.length > 0) {
                                 dateFacets++;
-                                if (facets[ix].selectedItems[0].lowerBound == range.lowerExpression && facets[ix].selectedItems[0].upperBound == range.upperExpression) {
+                                if (facets[ix].selectedItems[0].lowerBound === range.lowerExpression && facets[ix].selectedItems[0].upperBound === range.upperExpression) {
                                     count++;
                                     this.$el.find("select").val(range.val);
                                     break;

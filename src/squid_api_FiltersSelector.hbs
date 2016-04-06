@@ -1,0 +1,28 @@
+<div class="squid-api-FiltersSelector">
+{{#if noData}}
+    <label class="noData {{#if mandatory}}warning fa fa-exclamation-circle{{/if}}">{{noDataMessage}}</label>
+{{else}}
+    <ul class="facets">
+        {{#each facets}}
+            <li data-id="{{id}}" class="facet">
+                <div class="facet-name">
+                    {{name}}
+                </div>
+                <ul class="items" data-id="{{id}}">
+	                {{#each items}}
+	                <li data-id="{{id}}" class="item">
+		                <div class="facet-value">
+		                    {{name}}
+		                </div>
+		                <div class="facet-remove">
+	                    	<i class="glyphicon glyphicon-remove"></i>
+	                	</div>
+	                </li>
+	                {{/each}}
+                </ul>
+            </li>
+        {{/each}}
+    </ul>
+{{/if}}
+</div>
+

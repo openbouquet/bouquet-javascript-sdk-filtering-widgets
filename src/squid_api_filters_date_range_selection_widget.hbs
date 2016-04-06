@@ -2,7 +2,7 @@
     <select class="form-control">
         <option value='custom'>Custom</option>
         {{#each ranges}}
-            <option value="{{val}}">{{name}}</option>
+            <option value="{{val}}" class="select" data-attr="{{val}}">{{name}}</option>
         {{/each}}
     </select>
     </ul>
