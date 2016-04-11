@@ -126,8 +126,23 @@
                 this.$el.find("span").removeClass("inactive");
             }
         },
-        currentlySelected: function() {
-
+        currentlySelected: function(range) {
+            var selection = this.config.get("selection");
+            var selected = false;
+            if (selection) {
+                var facets = selection[this.facetsAttribute];
+                if (facets) {
+                    for (ix=0; ix<facets.length; ix++) {
+                        if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].dimension.valueType === "DATE" && facets[ix].selectedItems.length > 0) {
+                            if (facets[ix].selectedItems[0].lowerBound === range.lowerExpression && facets[ix].selectedItems[0].upperBound === range.upperExpression) {
+                                selected = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return selected;
         },
         render: function() {
             var selection = this.config.get("selection");
@@ -139,6 +154,7 @@
             // construct data
             for (i=0; i<this.ranges.length; i++) {
                 range = this.ranges[i];
+                range.selected = this.currentlySelected(range);
                 range.val = range.name.replace(" ", "-");
                 this.jsonData.ranges.push(range);
             }
@@ -152,24 +168,8 @@
             var dateFacets = 0;
             for (i=0; i<this.ranges.length; i++) {
                 range = this.ranges[i];
-                if (selection) {
-                    var facets = selection[this.facetsAttribute];
-                    if (facets) {
-                        for (ix=0; ix<facets.length; ix++) {
-                            if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].dimension.valueType === "DATE" && facets[ix].selectedItems.length > 0) {
-                                dateFacets++;
-                                if (facets[ix].selectedItems[0].lowerBound === range.lowerExpression && facets[ix].selectedItems[0].upperBound === range.upperExpression) {
-                                    count++;
-                                    if (this.$el.find("select").length === 0) {
-                                        this.$el.find("[data-attr='" + range.val + "']").addClass("selected");
-                                    } else {
-                                        this.$el.find("select").val(range.val);
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                if (this.currentlySelected(range) === true) {
+                    this.$el.find("select").val(range.val);
                 }
             }
             if (dateFacets > 0) {
