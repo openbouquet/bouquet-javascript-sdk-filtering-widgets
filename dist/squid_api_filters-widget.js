@@ -2441,7 +2441,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                             }
                         }
                     }
-                    
+
                     if (facets) {
                         if (lowerExpression && upperExpression) {
                             for (var i=0; i<facets.length; i++) {
@@ -2450,14 +2450,14 @@ $.widget( "ui.dialog", $.ui.dialog, {
                                     facets[i].selectedItems[0].upperBound = upperExpression;
                                 }
                             }
-                            
+
                         } else {
                             facets = null;
                         }
                         selectionClone[this.facetsAttribute] = facets;
                     }
                 }
-    
+
                 // set config selection
                 this.config.set("selection", selectionClone);
             } else {
@@ -2471,6 +2471,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
             } else {
                 this.$el.find("span").removeClass("inactive");
             }
+        },
+        currentlySelected: function() {
+
         },
         render: function() {
             var selection = this.config.get("selection");
@@ -2503,7 +2506,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
                                 dateFacets++;
                                 if (facets[ix].selectedItems[0].lowerBound === range.lowerExpression && facets[ix].selectedItems[0].upperBound === range.upperExpression) {
                                     count++;
-                                    this.$el.find("select").val(range.val);
+                                    if (this.$el.find("select").length === 0) {
+                                        this.$el.find("[data-attr='" + range.val + "']").addClass("selected");
+                                    } else {
+                                        this.$el.find("select").val(range.val);
+                                    }
                                     break;
                                 }
                             }
