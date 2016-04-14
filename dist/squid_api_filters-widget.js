@@ -719,8 +719,9 @@ function program4(depth0,data) {
             "click .facet" : function(event) {
                 // Obtain facet name / value
                 var facetId = $(event.currentTarget).data("id");
+                var facetName = $(event.currentTarget).text();
                 if (this.onSelectFacet) {
-                    this.onSelectFacet(facetId);
+                    this.onSelectFacet(facetId, facetName);
                 }
             }
         },
