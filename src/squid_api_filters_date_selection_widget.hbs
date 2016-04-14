@@ -1,6 +1,11 @@
 <div class="squid-api-date-selection-widget">
     {{#if dateAvailable}}
 		<span class="widget">{{dateDisplay}}</span>
+		{{#if dateCompareDisplay}}
+		<div class="compare">
+			{{dateCompareDisplay}}
+		</div>
+		{{/if}}
     {{else}}
         no date available
     {{/if}}

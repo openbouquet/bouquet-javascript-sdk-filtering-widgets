@@ -586,27 +586,40 @@ function program1(depth0,data) {
   if (helper = helpers.dateDisplay) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.dateDisplay); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span>\r\n    ";
+    + "</span>\r\n		";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.dateCompareDisplay), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\r\n		<div class=\"compare\">\r\n			";
+  if (helper = helpers.dateCompareDisplay) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.dateCompareDisplay); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\r\n		</div>\r\n		";
   return buffer;
   }
 
-function program3(depth0,data) {
+function program4(depth0,data) {
   
   
   return "\r\n        no date available\r\n    ";
   }
 
-function program5(depth0,data) {
+function program6(depth0,data) {
   
   
   return "\r\n        <button data-toggle=\"tooltip\" title=\"Click to refresh period boundaries\" class=\"form-control btn btn-default refresh-facet\"><i class=\"fa fa-refresh\"></i> <span>click to refresh</span></button>\r\n    ";
   }
 
   buffer += "<div class=\"squid-api-date-selection-widget\">\r\n    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.dateAvailable), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.dateAvailable), {hash:{},inverse:self.program(4, program4, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.notDone), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.notDone), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n</div>\r\n";
   return buffer;
@@ -2684,6 +2697,17 @@ $.widget( "ui.dialog", $.ui.dialog, {
                             }
                         }
                     }
+                    // compare
+                    var results = filters.get("results");
+                    if (results) {
+                        var compareTo = results.compareTo;
+                        if (compareTo && compareTo[0]) {
+                            var compareItem = compareTo[0].selectedItems[0];
+                            dates.compareStartDate = moment(compareItem.lowerBound).utc();
+                            dates.compareEndDate = moment(compareItem.upperBound).utc();
+                        }
+                    }
+                   
                 }
 
                 // set view data
@@ -2691,17 +2715,29 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 if (dates.currentStartDate && dates.currentEndDate) {
                     viewData.dateAvailable = true;
                     viewData.dateDisplay = dates.currentStartDate.format("ll") + " - " + dates.currentEndDate.format("ll");
+                    if (dates.compareStartDate && dates.compareEndDate) {
+                        viewData.dateCompareDisplay = dates.compareStartDate.format("ll") + " - " + dates.compareEndDate.format("ll");
+                    }
                 }
 
                 // months only display logic
                 if (this.monthsOnlyDisplay && dates.currentStartDate && dates.currentEndDate) {
+                    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
                     var d1 = dates.currentStartDate;
                     var d2 = dates.currentEndDate;
-                    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
                     if ((d1.month() == d2.month()) && (d1.year() == d2.year())) {
                         viewData.dateDisplay = monthNames[d1.month()] + " "  + d1.year();
                     } else {
                         viewData.dateDisplay =  monthNames[d1.month()] + " " + d1.year() + " - " + monthNames[d2.month()] + " " + d2.year();
+                    }
+                    if (dates.compareStartDate && dates.compareEndDate) {
+                        var dc1 = dates.compareStartDate;
+                        var dc2 = dates.compareEndDate;
+                        if ((dc1.month() == dc2.month()) && (dc1.year() == dc2.year())) {
+                            viewData.dateCompareDisplay = monthNames[dc1.month()] + " "  + dc1.year();
+                        } else {
+                            viewData.dateCompareDisplay =  monthNames[dc1.month()] + " " + dc1.year() + " - " + monthNames[dc2.month()] + " " + dc2.year();
+                        }
                     }
                 }
             }

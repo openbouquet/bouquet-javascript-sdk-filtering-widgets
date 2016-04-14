@@ -148,6 +148,17 @@
                             }
                         }
                     }
+                    // compare
+                    var results = filters.get("results");
+                    if (results) {
+                        var compareTo = results.compareTo;
+                        if (compareTo && compareTo[0]) {
+                            var compareItem = compareTo[0].selectedItems[0];
+                            dates.compareStartDate = moment(compareItem.lowerBound).utc();
+                            dates.compareEndDate = moment(compareItem.upperBound).utc();
+                        }
+                    }
+                   
                 }
 
                 // set view data
@@ -155,17 +166,29 @@
                 if (dates.currentStartDate && dates.currentEndDate) {
                     viewData.dateAvailable = true;
                     viewData.dateDisplay = dates.currentStartDate.format("ll") + " - " + dates.currentEndDate.format("ll");
+                    if (dates.compareStartDate && dates.compareEndDate) {
+                        viewData.dateCompareDisplay = dates.compareStartDate.format("ll") + " - " + dates.compareEndDate.format("ll");
+                    }
                 }
 
                 // months only display logic
                 if (this.monthsOnlyDisplay && dates.currentStartDate && dates.currentEndDate) {
+                    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
                     var d1 = dates.currentStartDate;
                     var d2 = dates.currentEndDate;
-                    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
                     if ((d1.month() == d2.month()) && (d1.year() == d2.year())) {
                         viewData.dateDisplay = monthNames[d1.month()] + " "  + d1.year();
                     } else {
                         viewData.dateDisplay =  monthNames[d1.month()] + " " + d1.year() + " - " + monthNames[d2.month()] + " " + d2.year();
+                    }
+                    if (dates.compareStartDate && dates.compareEndDate) {
+                        var dc1 = dates.compareStartDate;
+                        var dc2 = dates.compareEndDate;
+                        if ((dc1.month() == dc2.month()) && (dc1.year() == dc2.year())) {
+                            viewData.dateCompareDisplay = monthNames[dc1.month()] + " "  + dc1.year();
+                        } else {
+                            viewData.dateCompareDisplay =  monthNames[dc1.month()] + " " + dc1.year() + " - " + monthNames[dc2.month()] + " " + dc2.year();
+                        }
                     }
                 }
             }
