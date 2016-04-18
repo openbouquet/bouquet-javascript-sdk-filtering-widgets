@@ -2445,7 +2445,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 var selectionClone = $.extend(true, {}, this.config.get("selection"));
                 if (selectionClone) {
                     var facets = selectionClone[this.facetsAttribute];
-                    if (!facets && (this.facetsAttribute !== "facets")) {
+                    if ((!facets || (facets && facets.length === 0)) && (this.facetsAttribute !== "facets")) {
                         // init the period facets (case of compareTo empty)
                         facets = [];
                         for (var i1=0; i1<selectionClone.facets.length; i1++) {
