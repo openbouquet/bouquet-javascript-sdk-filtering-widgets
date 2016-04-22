@@ -66,21 +66,20 @@
                         var facets = selection.facets;
                         for (i = 0; i < facets.length; i++) {
                             var facet = facets[i];
-                            if (facet.dimension.type === "CATEGORICAL" || facet.dimension.type === "SEGMENTS") {
-                                var selFacet = {
-                                        "id" : facet.id,
-                                        "name" : facet.name ? facet.name : facet.dimension.name,
-                                        "items" : []
-                                };
-                                var selectedItems = facet.selectedItems;
-                                for (ix = 0; ix < selectedItems.length; ix++) {
-                                    selFacet.items.push({
-                                            "id" : selectedItems[ix].id,
-                                            "name" : selectedItems[ix].value
-                                    });
-                                }
-                                selFacets.push(selFacet);
+                            var selFacet = {
+                                    "id" : facet.id,
+                                    "name" : facet.name ? facet.name : facet.dimension.name,
+                                    "items" : []
+                            };
+                            var selectedItems = facet.selectedItems;
+                            for (ix = 0; ix < selectedItems.length; ix++) {
+                                selFacet.items.push({
+                                        "id" : selectedItems[ix].id,
+                                        "name" : selectedItems[ix].value
+                                });
                             }
+                            selFacet.available = (facet.dimension.type === "CATEGORICAL" || facet.dimension.type === "SEGMENTS" || selFacet.items.length > 0) && facet.dimension.valueType !== "DATE";
+                            selFacets.push(selFacet);
                         }
                     }
                 }

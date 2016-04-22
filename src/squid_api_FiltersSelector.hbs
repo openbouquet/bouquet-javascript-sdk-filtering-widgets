@@ -4,25 +4,24 @@
 {{else}}
     <ul class="facets">
         {{#each facets}}
-            <li data-id="{{id}}" class="facet">
+            <li data-id="{{id}}" class="facet" {{#if available}} class="facet available" {{/if}}>
                 <div class="facet-name">
                     {{name}}
                 </div>
                 <ul class="items" data-id="{{id}}">
-	                {{#each items}}
-	                <li data-id="{{id}}" class="item">
-		                <div class="facet-value">
-		                    {{name}}
-		                </div>
-		                <div class="facet-remove">
-	                    	<i class="glyphicon glyphicon-remove"></i>
-	                	</div>
-	                </li>
-	                {{/each}}
+                    {{#each items}}
+                    <li data-id="{{id}}" class="item">
+                        <div class="facet-value">
+                            {{name}}
+                        </div>
+                        <div class="facet-remove">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </div>
+                    </li>
+                    {{/each}}
                 </ul>
             </li>
         {{/each}}
     </ul>
 {{/if}}
 </div>
-

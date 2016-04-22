@@ -41,7 +41,10 @@ function program5(depth0,data) {
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" class=\"facet\">\n                <div class=\"facet-name\">\n                    ";
+    + "\" class=\"facet\" ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.available), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">\n                <div class=\"facet-name\">\n                    ";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -49,31 +52,37 @@ function program5(depth0,data) {
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n	                ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.items), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
+    + "\">\n                    ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.items), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                </ul>\n            </li>\n        ";
   return buffer;
   }
 function program6(depth0,data) {
   
+  
+  return " class=\"facet available\" ";
+  }
+
+function program8(depth0,data) {
+  
   var buffer = "", stack1, helper;
-  buffer += "\n	                <li data-id=\"";
+  buffer += "\n                    <li data-id=\"";
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" class=\"item\">\n		                <div class=\"facet-value\">\n		                    ";
+    + "\" class=\"item\">\n                        <div class=\"facet-value\">\n                            ";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n		                </div>\n		                <div class=\"facet-remove\">\n	                    	<i class=\"glyphicon glyphicon-remove\"></i>\n	                	</div>\n	                </li>\n	                ";
+    + "\n                        </div>\n                        <div class=\"facet-remove\">\n                            <i class=\"glyphicon glyphicon-remove\"></i>\n                        </div>\n                    </li>\n                    ";
   return buffer;
   }
 
   buffer += "<div class=\"squid-api-FiltersSelector\">\n";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.noData), {hash:{},inverse:self.program(4, program4, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n\n";
+  buffer += "\n</div>\n";
   return buffer;
   });
 
@@ -763,21 +772,20 @@ function program4(depth0,data) {
                         var facets = selection.facets;
                         for (i = 0; i < facets.length; i++) {
                             var facet = facets[i];
-                            if (facet.dimension.type === "CATEGORICAL" || facet.dimension.type === "SEGMENTS") {
-                                var selFacet = {
-                                        "id" : facet.id,
-                                        "name" : facet.name ? facet.name : facet.dimension.name,
-                                        "items" : []
-                                };
-                                var selectedItems = facet.selectedItems;
-                                for (ix = 0; ix < selectedItems.length; ix++) {
-                                    selFacet.items.push({
-                                            "id" : selectedItems[ix].id,
-                                            "name" : selectedItems[ix].value
-                                    });
-                                }
-                                selFacets.push(selFacet);
+                            var selFacet = {
+                                    "id" : facet.id,
+                                    "name" : facet.name ? facet.name : facet.dimension.name,
+                                    "items" : []
+                            };
+                            var selectedItems = facet.selectedItems;
+                            for (ix = 0; ix < selectedItems.length; ix++) {
+                                selFacet.items.push({
+                                        "id" : selectedItems[ix].id,
+                                        "name" : selectedItems[ix].value
+                                });
                             }
+                            selFacet.available = (facet.dimension.type === "CATEGORICAL" || facet.dimension.type === "SEGMENTS" || selFacet.items.length > 0) && facet.dimension.valueType !== "DATE";
+                            selFacets.push(selFacet);
                         }
                     }
                 }
