@@ -49,26 +49,24 @@
             this.render();
         },
 
-        events: {
-            "click .select" : function(e) {
-                var val = $(e.target).attr("data-attr");
-                var ranges = this.jsonData.ranges;
-                for (i=0; i<ranges.length; i++) {
-                    if (ranges[i].val === val) {
-                        this.updateSelection(ranges[i].lowerExpression, ranges[i].upperExpression);
-                    }
+        changeEvent: function(e) {
+            var val = $(e.target).attr("data-attr") || $(e.target).val();
+            var ranges = this.jsonData.ranges;
+            for (i=0; i<ranges.length; i++) {
+                if (ranges[i].val === val) {
+                    this.updateSelection(ranges[i].lowerExpression, ranges[i].upperExpression);
                 }
+            }
 
-                var filtersSelection = this.filters.get("selection");
-                if (val === "custom") {
-                    if (filtersSelection) {
-                        var facets = filtersSelection[this.facetsAttribute];
-                        if (facets) {
-                            for (ix=0; ix<facets.length; ix++) {
-                                if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].dimension.valueType === "DATE") {
-                                    if (facets[ix].selectedItems.length > 0) {
-                                        this.updateSelection(facets[ix].selectedItems[0].lowerBound, facets[ix].selectedItems[0].upperBound);
-                                    }
+            var filtersSelection = this.filters.get("selection");
+            if (val === "custom") {
+                if (filtersSelection) {
+                    var facets = filtersSelection[this.facetsAttribute];
+                    if (facets) {
+                        for (ix=0; ix<facets.length; ix++) {
+                            if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].dimension.valueType === "DATE") {
+                                if (facets[ix].selectedItems.length > 0) {
+                                    this.updateSelection(facets[ix].selectedItems[0].lowerBound, facets[ix].selectedItems[0].upperBound);
                                 }
                             }
                         }
@@ -77,11 +75,20 @@
             }
         },
 
+        events: {
+            "change select" : function(e) {
+                this.changeEvent(e);
+            },
+            "click .select" : function(e) {
+                this.changeEvent(e);
+            }
+        },
+
         updateSelection: function(lowerExpression, upperExpression) {
             // set the period facet
             var period = this.config.get("period");
             if (period) {
-                var periodId = period[Object.keys(period)[0]];
+                var periodId = period[this.config.get("domain")];
                 var selectionClone = $.extend(true, {}, this.config.get("selection"));
                 if (selectionClone) {
                     var facets = selectionClone[this.facetsAttribute];
@@ -164,20 +171,11 @@
             this.$el.html(html);
 
             // detect currently selected expression range
-            var count = 0;
-            var dateFacets = 0;
             for (i=0; i<this.ranges.length; i++) {
                 range = this.ranges[i];
                 if (this.currentlySelected(range) === true) {
                     this.$el.find("select").val(range.val);
                 }
-            }
-            if (dateFacets > 0) {
-                if (count === 0) {
-                    this.$el.find("select").val('custom');
-                }
-            } else {
-                this.$el.find("select").remove();
             }
 
             return this;
