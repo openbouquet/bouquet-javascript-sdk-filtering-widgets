@@ -32,11 +32,17 @@
                 event.preventDefault();
                 event.stopPropagation();
                 var pageId = $(event.currentTarget).data("id");
+
+                // set page id within widget scope
+                this.pageId = pageId;
+
                 var pageIndex = this.model.get("pageIndex");
                 var nbPages = this.model.get("nbPages");
                 var itemIndex = this.model.get("itemIndex");
                 var pageSize = this.model.get("pageSize");
+
                 var firstPageIndex = Math.round(itemIndex / pageSize);
+
                 if (pageId == "prev") {
                     if (pageIndex > (firstPageIndex - nbPages)) {
                         // previous page
@@ -69,6 +75,14 @@
                 var itemIndex = this.model.get("itemIndex");
 
                 var firstPageIndex = Math.round(itemIndex / pageSize);
+                if (this.pageId === "prev") {
+                    if (firstPageIndex === pageIndex) {
+                        firstPageIndex = firstPageIndex - (pageSize - 1);
+                        if (firstPageIndex < 0) {
+                            firstPageIndex = 0;
+                        }
+                    }
+                }
 
                 var pages = [];
                 var pageCount = facetItems.length / pageSize;
