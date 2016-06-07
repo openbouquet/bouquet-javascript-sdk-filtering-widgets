@@ -100,9 +100,9 @@
                 this.template = options.template;
             }
             if (options.status) {
-            	this.status = options.status;
+                this.status = options.status;
             } else {
-            	this.status = squid_api.model.status;
+                this.status = squid_api.model.status;
             }
 
             this.filterPanelTemplate = squid_api.template.squid_api_filters_categorical_view;
@@ -622,34 +622,63 @@
                         this.filterStore.set("searchPrevious", search);
                     }
                     // get the results from API
-                    facetJob.fetch({
-                        error: function(model, response) {
-                            console.error(response);
-                        },
-                        success: function(model, response) {
-                            if (model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) {
-                                // set a fake facet
-                                var f = new squid_api.model.ProjectFacetJobFacet();
-                                f.set("items", []);
-                                me.filterStore.set("facet", f);
-                            } else {
-                                me.filterStore.set("itemIndex", startIndex);
-                                me.filterStore.set("facet", model);
-                            }
-                            // set error message if exists
-                            var errorMessage = model.get("errorMessage");
-                            if (model.get("error")) {
-                                if (errorMessage) {
-                                    squid_api.model.status.set("message", errorMessage);
-                                }
-                            }
-                        }
-                    });
+                    this.facetJobFetch(facetJob, startIndex);
                 } else {
                     // trigger facet render
                     me.filterStore.trigger("change:facet");
                 }
             }
+        },
+
+        setFakeFacet: function() {
+            // set a fake facet (to obtain model data)
+            var f = new squid_api.model.ProjectFacetJobFacet();
+            f.set("items", []);
+            this.filterStore.set("facet", f);
+        },
+
+        facetJobFetch: function(facetJob, startIndex) {
+            var me = this;
+            var facetJobId = facetJob.get("oid");
+            var selectedFilter = this.filterStore.get("selectedFilter");
+            var selectedFacet = this.filterStore.get("facet");
+
+            if (facetJobId === selectedFilter) {
+                if (! selectedFacet) {
+                    // due to timeOut for the success handler
+                    this.setFakeFacet();
+                }
+            }
+
+            facetJob.fetch({
+                error: function(model, response) {
+                    console.error(response);
+                },
+                success: function(model, response) {
+                    if (model.get("id") === me.filterStore.get("selectedFilter")) {
+                        if (model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) {
+                            if (! model.get("items")) {
+                                // set fake facet
+                                me.setFakeFacet();
+                                // retry every 5 seconds
+                                setInterval(me.facetJobFetch(facetJob, startIndex), 5000);
+                            } else {
+                                me.filterStore.set("facet", model);
+                            }
+                        } else {
+                            me.filterStore.set("itemIndex", startIndex);
+                            me.filterStore.set("facet", model);
+                        }
+                        // set error message if exists
+                        var errorMessage = model.get("errorMessage");
+                        if (model.get("error")) {
+                            if (errorMessage) {
+                                squid_api.model.status.set("message", errorMessage);
+                            }
+                        }
+                    }
+                }
+            });
         },
 
         applySelection : function() {
