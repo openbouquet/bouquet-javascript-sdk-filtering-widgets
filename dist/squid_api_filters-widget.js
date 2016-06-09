@@ -2063,23 +2063,12 @@ $.widget( "ui.dialog", $.ui.dialog, {
             var selectedFilter = this.filterStore.get("selectedFilter");
             var selectedFacet = this.filterStore.get("facet");
 
-            if (facetJobId === selectedFilter) {
-                if (! selectedFacet) {
-                    // due to timeOut for the success handler
-                    this.setFakeFacet();
-                }
-            }
-
             facetJob.fetch({
                 error: function(model, response) {
                     console.error(response);
                 },
                 success: function(model, response) {
                     if ((model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) || model.get("done") === false) {
-                        if (! model.get("items")) {
-                            // set fake facet
-                            me.setFakeFacet();
-                        }
                         if (model.get("done") === true) {
                             me.filterStore.set("facet", model);
                         } else {
@@ -2089,7 +2078,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                             // reset currentModel ID
                             facetJob.set("id",me.currentModel.get("id"));
                             // retry every 5 seconds
-                            setInterval(me.facetJobFetch(facetJob, startIndex), 5000);
+                            setTimeout(function () {
+                                me.facetJobFetch(facetJob, startIndex);
+                            }, 5000);
                         }
                     } else {
                         me.filterStore.set("itemIndex", startIndex);
@@ -2102,6 +2093,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
                             squid_api.model.status.set("message", errorMessage);
                         }
                     }
+                    // manually trigger if previously set
+                    me.filterStore.trigger("change:facet");
                 }
             });
         },
