@@ -1702,14 +1702,14 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 this.currentModel = new squid_api.model.FiltersJob();
                 var attributesClone = $.extend(true, {}, this.model.attributes);
                 this.currentModel.set(attributesClone);
-                this.listenTo(this.currentModel, 'change', function() {
+                this.listenTo(this.currentModel, 'change:id', function() {
                     // force facet fetch (because the selection has changed)
                     me.renderFacet(true);
                 });
             } else {
                 if (this.currentModel !== this.model) {
                     this.currentModel = this.model;
-                    this.listenTo(this.currentModel, 'change', function() {
+                    this.listenTo(this.currentModel, 'change:id', function() {
                         // force facet fetch (because the selection has changed)
                         me.renderFacet(true);
                     });
@@ -2075,30 +2075,28 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     console.error(response);
                 },
                 success: function(model, response) {
-                    if (model.get("id") === me.filterStore.get("selectedFilter")) {
-                        if ((model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) || model.get("done") === false) {
-                            if (! model.get("items")) {
-                                // set fake facet
-                                me.setFakeFacet();
-                            }
-                            if (model.get("done") === true) {
-                                me.filterStore.set("facet", model);
-                            } else {
-                                // reset currentModel ID
-                                facetJob.set("id",me.currentModel.get("id"));
-                                // retry every 5 seconds
-                                setInterval(me.facetJobFetch(facetJob, startIndex), 5000);
-                            }
-                        } else {
-                            me.filterStore.set("itemIndex", startIndex);
-                            me.filterStore.set("facet", model);
+                    if ((model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) || model.get("done") === false) {
+                        if (! model.get("items")) {
+                            // set fake facet
+                            me.setFakeFacet();
                         }
-                        // set error message if exists
-                        var errorMessage = model.get("errorMessage");
-                        if (model.get("error")) {
-                            if (errorMessage) {
-                                squid_api.model.status.set("message", errorMessage);
-                            }
+                        if (model.get("done") === true) {
+                            me.filterStore.set("facet", model);
+                        } else {
+                            // reset currentModel ID
+                            facetJob.set("id",me.currentModel.get("id"));
+                            // retry every 5 seconds
+                            setInterval(me.facetJobFetch(facetJob, startIndex), 5000);
+                        }
+                    } else {
+                        me.filterStore.set("itemIndex", startIndex);
+                        me.filterStore.set("facet", model);
+                    }
+                    // set error message if exists
+                    var errorMessage = model.get("errorMessage");
+                    if (model.get("error")) {
+                        if (errorMessage) {
+                            squid_api.model.status.set("message", errorMessage);
                         }
                     }
                 }
