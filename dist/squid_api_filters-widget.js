@@ -2083,6 +2083,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         if (model.get("done") === true) {
                             me.filterStore.set("facet", model);
                         } else {
+                            me.filterStore.set("facet", model);
                             // reset currentModel ID
                             facetJob.set("id",me.currentModel.get("id"));
                             // retry every 5 seconds
