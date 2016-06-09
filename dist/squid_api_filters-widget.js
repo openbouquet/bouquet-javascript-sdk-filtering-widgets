@@ -2076,14 +2076,18 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 },
                 success: function(model, response) {
                     if (model.get("id") === me.filterStore.get("selectedFilter")) {
-                        if (model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) {
+                        if ((model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) || model.get("done") === false) {
                             if (! model.get("items")) {
                                 // set fake facet
                                 me.setFakeFacet();
+                            }
+                            if (model.get("done") === true) {
+                                me.filterStore.set("facet", model);
+                            } else {
+                                // reset currentModel ID
+                                facetJob.set("id",me.currentModel.get("id"));
                                 // retry every 5 seconds
                                 setInterval(me.facetJobFetch(facetJob, startIndex), 5000);
-                            } else {
-                                me.filterStore.set("facet", model);
                             }
                         } else {
                             me.filterStore.set("itemIndex", startIndex);
