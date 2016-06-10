@@ -643,6 +643,13 @@
             var selectedFilter = this.filterStore.get("selectedFilter");
             var selectedFacet = this.filterStore.get("facet");
 
+            if (facetJobId === selectedFilter) {
+                if (! selectedFacet) {
+                    // due to timeOut for the success handler
+                    this.setFakeFacet();
+                }
+            }
+
             facetJob.fetch({
                 error: function(model, response) {
                     console.error(response);
