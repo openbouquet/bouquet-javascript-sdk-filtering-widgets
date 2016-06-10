@@ -1346,7 +1346,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             this.render();
             this.renderSelection();
         },
-        
+
         render : function() {
             var me = this;
 
@@ -1368,28 +1368,30 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 var facets = this.model.get("selection").facets;
                 var items = [];
                 if (this.model.get("selection")) {
-                    for (i=0; i<facets.length; i++) {
-                        var facet = facets[i];
-                        if ((facet.dimension.type == "CATEGORICAL") || (facet.dimension.type == "SEGMENTS")) {
-                            var selected = false;
-                            if (facet.id == selectedFilter) {
-                                selected = true;
-                            }
-                            var json = {
-                                label : facet.name,
-                                title : facet.name,
-                                value : facet.id,
-                                selected : selected
-                            };
-                            if (this.facetList) {
-                                for (ix=0; ix<this.facetList.length; ix++) {
-                                    if (this.facetList[ix] === facet.id) {
-                                        items.push(json);
+                    if (facets) {
+                        for (i=0; i<facets.length; i++) {
+                            var facet = facets[i];
+                            if ((facet.dimension.type == "CATEGORICAL") || (facet.dimension.type == "SEGMENTS")) {
+                                var selected = false;
+                                if (facet.id == selectedFilter) {
+                                    selected = true;
+                                }
+                                var json = {
+                                    label : facet.name,
+                                    title : facet.name,
+                                    value : facet.id,
+                                    selected : selected
+                                };
+                                if (this.facetList) {
+                                    for (ix=0; ix<this.facetList.length; ix++) {
+                                        if (this.facetList[ix] === facet.id) {
+                                            items.push(json);
+                                        }
                                     }
                                 }
-                            }
-                            else {
-                                items.push(json);
+                                else {
+                                    items.push(json);
+                                }
                             }
                         }
                     }
