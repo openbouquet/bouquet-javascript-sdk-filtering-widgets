@@ -37,6 +37,7 @@
                 var itemIndex = this.model.get("itemIndex");
                 var pageSize = this.model.get("pageSize");
                 var firstPageIndex = Math.round(itemIndex / pageSize);
+                this.itemClicked = "number";
                 if (pageId == "prev") {
                     if (pageIndex > (firstPageIndex - nbPages)) {
                         // previous page
@@ -45,6 +46,7 @@
                         // previous page group
                         this.model.set("pageIndex", firstPageIndex - nbPages);
                     }
+                    this.itemClicked = "prev";
                 } else if (pageId == "next") {
                     if (pageIndex < (firstPageIndex + nbPages)) {
                         // next page
@@ -53,6 +55,7 @@
                         // next page group
                         this.model.set("pageIndex", firstPageIndex + nbPages);
                     }
+                    this.itemClicked = "next";
                 } else {
                     this.model.set("pageIndex", pageId-1);
                 }
@@ -77,6 +80,14 @@
                         pageCount = nbPages;
                     }
                     var prev = (firstPageIndex === 0) ? null : true;
+
+                    if (this.itemClicked === "prev" && (pageIndex + 1) % 2 === 0) {
+                        firstPageIndex = ((firstPageIndex + 1) - (pageSize) >= 0) ?  (firstPageIndex + 1) - pageSize : firstPageIndex;
+                        pageCount = nbPages;
+                        if (firstPageIndex === 0) {
+                            prev = false;
+                        }
+                    }
                     for (var i=firstPageIndex; i<(firstPageIndex+pageCount); i++) {
                         var selected = null;
                         if (i == pageIndex) {
@@ -84,6 +95,7 @@
                         }
                         pages.push({ "id" : i+1, "selected" :  selected});
                     }
+
                     var next = null;
                     if (facet.get("hasMore")) {
                         next = true;
