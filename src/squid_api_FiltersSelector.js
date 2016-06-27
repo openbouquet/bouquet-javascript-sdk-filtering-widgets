@@ -8,6 +8,8 @@
         template : template,
 
         initialize : function(options) {
+            this.config = squid_api.model.config;
+
             if (!this.model) {
                 this.model = squid_api.model.filters;
             }
@@ -39,6 +41,31 @@
                 if (this.onSelectFacet) {
                     this.onSelectFacet(facetId, facetName);
                 }
+            },
+            "click .reset-filters" : function() {
+                var me = this;
+                var projectId = this.config.get("project");
+                var bookmarkId = this.config.get("bookmark");
+
+                // get the Bookmark
+                squid_api.getCustomer().then(function(customer) {
+                    customer.get("projects").load(projectId).then(function(project) {
+                        project.get("bookmarks").load(bookmarkId).done(function(bookmark) {
+                            var forcedConfig = {};
+                            var config = me.config.toJSON();
+                            // exclude the selection from re-setting the config
+                            for (var x in config) {
+                                if (x !== "selection") {
+                                    forcedConfig[x] = config[x];
+                                }
+                            }
+                            // set bookmark
+                            squid_api.setBookmark(bookmark, forcedConfig);
+                        }).fail(function(model, response, options) {
+                            console.error("bookmark fetch failed : " + bookmarkId);
+                        });
+                    });
+                });
             }
         },
 

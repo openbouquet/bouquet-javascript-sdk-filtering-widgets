@@ -656,6 +656,15 @@ function program1(depth0,data) {
   return buffer;
   });
 
+this["squid_api"]["template"]["squid_api_reset_filters_button"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "";
+
+
+  return buffer;
+  });
+
 this["squid_api"]["template"]["squid_api_selection_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -714,6 +723,8 @@ function program4(depth0,data) {
         template : template,
 
         initialize : function(options) {
+            this.config = squid_api.model.config;
+
             if (!this.model) {
                 this.model = squid_api.model.filters;
             }
@@ -745,6 +756,31 @@ function program4(depth0,data) {
                 if (this.onSelectFacet) {
                     this.onSelectFacet(facetId, facetName);
                 }
+            },
+            "click .reset-filters" : function() {
+                var me = this;
+                var projectId = this.config.get("project");
+                var bookmarkId = this.config.get("bookmark");
+
+                // get the Bookmark
+                squid_api.getCustomer().then(function(customer) {
+                    customer.get("projects").load(projectId).then(function(project) {
+                        project.get("bookmarks").load(bookmarkId).done(function(bookmark) {
+                            var forcedConfig = {};
+                            var config = me.config.toJSON();
+                            // exclude the selection from re-setting the config
+                            for (var x in config) {
+                                if (x !== "selection") {
+                                    forcedConfig[x] = config[x];
+                                }
+                            }
+                            // set bookmark
+                            squid_api.setBookmark(bookmark, forcedConfig);
+                        }).fail(function(model, response, options) {
+                            console.error("bookmark fetch failed : " + bookmarkId);
+                        });
+                    });
+                });
             }
         },
 
@@ -3066,6 +3102,40 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
             return this;
         }
+
+    });
+
+    return View;
+}));
+
+// squid_api_selection_widget.js
+(function (root, factory) {
+    root.squid_api.view.ResetFiltersButton = factory(root.Backbone, root.squid_api, root.squid_api.template.squid_api_reset_filters_button);
+}(this, function (Backbone, squid_api, template) {
+    var View = Backbone.View.extend( {
+
+        template : null,
+
+        initialize : function(options) {
+            if (options.template) {
+                this.template = options.template;
+            } else {
+                this.template = template;
+            }
+            this.render();
+        },
+
+        events: {
+            "click .reset-filters": function(event) {
+                event.preventDefault();
+                alert('here');
+            }
+        },
+
+        render : function() {
+            this.$el.html(this.template());
+            return this;
+        },
 
     });
 
