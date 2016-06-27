@@ -666,7 +666,7 @@
                                     // retry every 5 seconds
                                     setTimeout(function () {
                                         me.facetJobFetch(facetJob, startIndex);
-                                    }, 5000);
+                                    }, 20000);
                                 }
                             } else {
                                 me.filterStore.set("itemIndex", startIndex);

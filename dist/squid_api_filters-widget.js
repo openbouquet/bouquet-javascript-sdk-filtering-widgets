@@ -656,15 +656,6 @@ function program1(depth0,data) {
   return buffer;
   });
 
-this["squid_api"]["template"]["squid_api_reset_filters_button"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "";
-
-
-  return buffer;
-  });
-
 this["squid_api"]["template"]["squid_api_selection_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -2136,7 +2127,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                                     // retry every 5 seconds
                                     setTimeout(function () {
                                         me.facetJobFetch(facetJob, startIndex);
-                                    }, 5000);
+                                    }, 20000);
                                 }
                             } else {
                                 me.filterStore.set("itemIndex", startIndex);
@@ -3102,40 +3093,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
             return this;
         }
-
-    });
-
-    return View;
-}));
-
-// squid_api_selection_widget.js
-(function (root, factory) {
-    root.squid_api.view.ResetFiltersButton = factory(root.Backbone, root.squid_api, root.squid_api.template.squid_api_reset_filters_button);
-}(this, function (Backbone, squid_api, template) {
-    var View = Backbone.View.extend( {
-
-        template : null,
-
-        initialize : function(options) {
-            if (options.template) {
-                this.template = options.template;
-            } else {
-                this.template = template;
-            }
-            this.render();
-        },
-
-        events: {
-            "click .reset-filters": function(event) {
-                event.preventDefault();
-                alert('here');
-            }
-        },
-
-        render : function() {
-            this.$el.html(this.template());
-            return this;
-        },
 
     });
 
