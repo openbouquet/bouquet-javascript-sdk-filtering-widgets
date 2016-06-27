@@ -3,6 +3,8 @@ module.exports = function(grunt) {
             .initConfig({
                 jshint : {
                     options: {
+			// "" for stdout
+			reporterOutput: "", 
                         debug: true
                     },
                     all : [ 'src/*.js' ]
