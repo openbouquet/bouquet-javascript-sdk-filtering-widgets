@@ -282,14 +282,14 @@
                 this.currentModel = new squid_api.model.FiltersJob();
                 var attributesClone = $.extend(true, {}, this.model.attributes);
                 this.currentModel.set(attributesClone);
-                this.listenTo(this.currentModel, 'change:id', function() {
+                this.listenTo(this.currentModel, 'change', function() {
                     // force facet fetch (because the selection has changed)
                     me.renderFacet(true);
                 });
             } else {
                 if (this.currentModel !== this.model) {
                     this.currentModel = this.model;
-                    this.listenTo(this.currentModel, 'change:id', function() {
+                    this.listenTo(this.currentModel, 'change', function() {
                         // force facet fetch (because the selection has changed)
                         me.renderFacet(true);
                     });
