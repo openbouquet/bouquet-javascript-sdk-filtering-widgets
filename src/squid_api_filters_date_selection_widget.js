@@ -93,16 +93,17 @@
 
             if (selection) {
                 var facets = selection.facets;
-                for (i=0; i<facets.length; i++) {
-                    // obtain current facet from config if exists
-                    if (configPeriod) {
-                        if (configPeriod[domain]) {
-                            if (facets[i].id == configPeriod[domain]) {
-                                facet = facets[i];
+                if (facets) {
+                    for (i=0; i<facets.length; i++) {
+                        // obtain current facet from config if exists
+                        if (configPeriod) {
+                            if (configPeriod[domain]) {
+                                if (facets[i].id == configPeriod[domain]) {
+                                    facet = facets[i];
+                                }
                             }
                         }
                     }
-
                 }
             }
             if (facet) {
