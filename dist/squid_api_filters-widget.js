@@ -2425,7 +2425,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     var domain = this.config.get("domain");
                     for (var i=0; i<facets.length; i++) {
                         var facet = facets[i];
-                        if (facet.dimension.type === "CONTINUOUS" && facet.dimension.valueType === "DATE") {
+                        if (facet.dimension.valueType === "DATE") {
                             if (facet.id !== period[domain]) {
                                 changed = true;
                                 facets.splice(i, 1);
