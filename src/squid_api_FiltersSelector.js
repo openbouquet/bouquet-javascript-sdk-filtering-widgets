@@ -71,7 +71,7 @@
 
         onRemoveItem : function(facetId, itemId) {
             // Copy model selection object properties to remove object reference
-            var selectionClone = $.extend(true, {}, this.model.get("selection"));
+            var selectionClone = $.extend(true, {}, this.config.get("selection"));
             if (selectionClone) {
                 var facets = selectionClone.facets;
                 if (facets) {

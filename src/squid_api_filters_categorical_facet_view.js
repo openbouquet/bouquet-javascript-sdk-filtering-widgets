@@ -80,6 +80,9 @@
                     var type = target.attr("data-type");
                     var id = target.attr("data-id");
                     var attributes = target.attr("data-attr");
+                    
+                    var configSelection = $.extend(true, {}, squid_api.model.config.get("selection"));
+                    var configSelectionFacets = configSelection.facets;
 
                     // Get selected Filters
                     var selectionClone = $.extend(true, {}, this.filters.get("selection"));
@@ -107,7 +110,7 @@
 
                         // Push new filters to selectedItems array
                         var selectedFacet;
-                        for (i=0; i<facets.length; i++) {
+                        for (var i=0; i<facets.length; i++) {
                             var facet = facets[i];
                             if (facet.id === selectedFilter) {
                                 selectedFacet = facet;
@@ -118,17 +121,32 @@
                                 }
                             }
                         }
+                        
+                        var configSelectedFacet;
+                        var selectedFacet1;
+                        for (var i1=0; i1<configSelectionFacets.length; i1++) {
+                            var facet1 = configSelectionFacets[i1];
+                            if (facet1.id === selectedFilter) {
+                                selectedFacet1 = facet1;
+                                facet1.selectedItems = selectedFacet.selectedItems;
+                            }
+                        }
+                        if (!selectedFacet1) {
+                            configSelectionFacets.push(selectedFacet);
+                        }
+                        
+                        
                         // Remove selected items from children
-                        squid_api.controller.facetjob.unSelectChildren(facets, selectedFacet, false);
+                        squid_api.controller.facetjob.unSelectChildren(configSelectionFacets, selectedFacet, false);
 
                         //Handle callback when selection changed
                         if (this.onChange) {
-                        	this.onChange(facets, selectedFacet);
+                        	this.onChange(configSelectionFacets, selectedFacet);
                         }
                     }
 
                     // Set the updated filters model
-                    squid_api.model.config.set("selection", squid_api.utils.buildCleanSelection(selectionClone));
+                    squid_api.model.config.set("selection", squid_api.utils.buildCleanSelection(configSelection));
 
                 }
             },
