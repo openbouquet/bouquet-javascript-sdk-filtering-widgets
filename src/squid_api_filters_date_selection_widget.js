@@ -136,13 +136,8 @@
                                     if (filtersFacets[ix].selectedItems) {
                                         selectedItems = filtersFacets[ix].selectedItems[0];
                                         if (selectedItems) {
-                                            // if currently selected date is outside of the min-max range then force an update
-                                            if ((minMax.type) && (moment(selectedItems.upperBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.upperBound).isBefore(dates.minDate.startOf("day")) || moment(selectedItems.lowerBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.lowerBound).isBefore(dates.minDate.startOf("day")))) {
-                                                this.updateFacet(filtersFacets[ix], dates.minDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000", dates.maxDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000");
-                                            } else {
-                                                dates.currentStartDate = moment(selectedItems.lowerBound).utc();
-                                                dates.currentEndDate = moment(selectedItems.upperBound).utc();
-                                            }
+                                            dates.currentStartDate = moment(selectedItems.lowerBound).utc();
+                                            dates.currentEndDate = moment(selectedItems.upperBound).utc();
                                         }
                                     }
                                 }

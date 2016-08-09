@@ -777,7 +777,7 @@ function program4(depth0,data) {
 
         onRemoveItem : function(facetId, itemId) {
             // Copy model selection object properties to remove object reference
-            var selectionClone = $.extend(true, {}, this.model.get("selection"));
+            var selectionClone = $.extend(true, {}, this.config.get("selection"));
             if (selectionClone) {
                 var facets = selectionClone.facets;
                 if (facets) {
@@ -943,6 +943,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     var type = target.attr("data-type");
                     var id = target.attr("data-id");
                     var attributes = target.attr("data-attr");
+                    
+                    var configSelection = $.extend(true, {}, squid_api.model.config.get("selection"));
+                    var configSelectionFacets = configSelection.facets;
 
                     // Get selected Filters
                     var selectionClone = $.extend(true, {}, this.filters.get("selection"));
@@ -970,7 +973,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
                         // Push new filters to selectedItems array
                         var selectedFacet;
-                        for (i=0; i<facets.length; i++) {
+                        for (var i=0; i<facets.length; i++) {
                             var facet = facets[i];
                             if (facet.id === selectedFilter) {
                                 selectedFacet = facet;
@@ -981,12 +984,27 @@ $.widget( "ui.dialog", $.ui.dialog, {
                                 }
                             }
                         }
+                        
+                        var configSelectedFacet;
+                        var selectedFacet1;
+                        for (var i1=0; i1<configSelectionFacets.length; i1++) {
+                            var facet1 = configSelectionFacets[i1];
+                            if (facet1.id === selectedFilter) {
+                                selectedFacet1 = facet1;
+                                facet1.selectedItems = selectedFacet.selectedItems;
+                            }
+                        }
+                        if (!selectedFacet1) {
+                            configSelectionFacets.push(selectedFacet);
+                        }
+                        
+                        
                         // Remove selected items from children
-                        squid_api.controller.facetjob.unSelectChildren(facets, selectedFacet, false);
+                        squid_api.controller.facetjob.unSelectChildren(configSelectionFacets, selectedFacet, false);
 
                         //Handle callback when selection changed
                         if (this.onChange) {
-                        	this.onChange(facets, selectedFacet);
+                        	this.onChange(configSelectionFacets, selectedFacet);
                         }
                     }
 
@@ -2697,7 +2715,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
             // listen for global status change
             this.listenTo(this.status, "change:status", this.statusUpdate);
-            this.render();
         },
 
         events: {
@@ -2785,13 +2802,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
                                     if (filtersFacets[ix].selectedItems) {
                                         selectedItems = filtersFacets[ix].selectedItems[0];
                                         if (selectedItems) {
-                                            // if currently selected date is outside of the min-max range then force an update
-                                            if ((minMax.type) && (moment(selectedItems.upperBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.upperBound).isBefore(dates.minDate.startOf("day")) || moment(selectedItems.lowerBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.lowerBound).isBefore(dates.minDate.startOf("day")))) {
-                                                this.updateFacet(filtersFacets[ix], dates.minDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000", dates.maxDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000");
-                                            } else {
-                                                dates.currentStartDate = moment(selectedItems.lowerBound).utc();
-                                                dates.currentEndDate = moment(selectedItems.upperBound).utc();
-                                            }
+                                            dates.currentStartDate = moment(selectedItems.lowerBound).utc();
+                                            dates.currentEndDate = moment(selectedItems.upperBound).utc();
                                         }
                                     }
                                 }
