@@ -127,9 +127,8 @@
                         }
                     }
 
-                    // Set the updated filters model
-                    squid_api.model.config.set("selection", squid_api.utils.buildCleanSelection(selectionClone));
-
+                    // set config with updated selection
+                    squid_api.setConfigSelection(selectionClone);
                 }
             },
         },

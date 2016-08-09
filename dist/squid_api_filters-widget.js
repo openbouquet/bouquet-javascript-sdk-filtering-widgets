@@ -783,7 +783,7 @@ function program4(depth0,data) {
                 if (facets) {
                     // Remove selected item from facet
                     squid_api.controller.facetjob.unSelect(facets, facetId, itemId);
-                    squid_api.model.config.set("selection", selectionClone);
+                    squid_api.setConfigSelection(selectionClone);
                 }
             }
         },
@@ -990,9 +990,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         }
                     }
 
-                    // Set the updated filters model
-                    squid_api.model.config.set("selection", squid_api.utils.buildCleanSelection(selectionClone));
-
+                    // set config with updated selection
+                    squid_api.setConfigSelection(selectionClone);
                 }
             },
         },
@@ -1275,7 +1274,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     if (facets) {
                         // Remove selected item from facet
                         squid_api.controller.facetjob.unSelect(facets, facetName, itemId);
-                        squid_api.model.config.set("selection", selectionClone);
+                        // set config with updated selection
+                        squid_api.setConfigSelection(selectionClone);
                     }
                 }
                 //squid_api.model.config.trigger("change:domain", squid_api.model.config);
@@ -2697,6 +2697,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
             // listen for global status change
             this.listenTo(this.status, "change:status", this.statusUpdate);
+            this.render();
         },
 
         events: {
