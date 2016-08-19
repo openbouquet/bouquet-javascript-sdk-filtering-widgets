@@ -94,7 +94,7 @@
                     var period = me.config.get("period");
                     for (var dimIdx=0; dimIdx<facets.length; dimIdx++) {
                         var facet = facets[dimIdx];
-                        if (facet.dimension.valueType == "DATE" && ! facet.error) {
+                        if (facet.dimension.valueType == "DATE" && facet.dimension.type === "CONTINUOUS" && ! facet.error) {
                             var option = {"label" : facet.name, "value" : facet.id, "error" : facets[dimIdx].error, "selected" : false};
                             // if currently selected within config
                             if (periodConfig) {
