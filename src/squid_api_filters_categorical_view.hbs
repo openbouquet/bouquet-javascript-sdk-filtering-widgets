@@ -7,10 +7,11 @@
 	{{/unless}}
 	<div id="search">
 		<div class="input-group">
+		      <span class="input-group-addon">
+		        <i id="search-in-progress" class="fa fa-refresh fa-spin hidden"></i>
+		        <i id="search-not-in-progress" class="fa fa-search"></i>
+		      </span>
 			<input class="form-control" id="searchbox" type="search" placeholder="Search for">
-				<span class="input-group-addon">
-					<i class="fa fa-search"></i>
-				</span>
 		</div>
 	</div>
 	<div id="filter-display-results">

@@ -28,6 +28,7 @@
         facetViewOnly : null,
         template: null,
         facetViewTemplate: null,
+        keyupCount:0,
 
         initialize : function(options) {
             var me = this;
@@ -299,7 +300,15 @@
         },
 
         search : function(event) {
-            this.filterStore.set("search", event.target.value);
+            var me = this;
+            me.keyupCount++;
+            setTimeout(function(){
+                me.keyupCount--;
+                // trigger the action only if this is the latest keyup
+                if (me.keyupCount === 0) {
+                    me.filterStore.set("search", event.target.value);
+                }
+            }, 200);
         },
 
         getButtonLabel : function() {
@@ -322,7 +331,6 @@
         },
 
         render : function() {
-
             // Button which opens filter Panel
             var buttonLabel = this.getButtonLabel();
 
@@ -343,6 +351,7 @@
                 });
             } else {
                 // Print Base Filter Panel Layout
+                this.keyupCount = 0;
                 $(this.filterPanel).addClass("squid_api_filters_categorical_filter_panel").html(this.filterPanelTemplate({
                     "popup" : this.popup,
                     "data-target" : this.filterPanel,
@@ -397,8 +406,6 @@
                     mandatory : this.mandatory
                 });
 
-                $(this.filterPanel).find("#searchbox").keyup(_.bind(this.search, this));
-
                 var me = this;
                 if (this.panelButtons) {
                     $(this.filterPanel).find(".apply-selection").click(function() {
@@ -408,8 +415,6 @@
                         me.cancelSelection();
                     });
                 }
-
-                $(this.filterPanel).find("#searchbox").keyup(_.bind(this.search, this));
 
                 if (this.popup) {
                     if (buttonLabel) {
@@ -648,9 +653,15 @@
                     // due to timeOut for the success handler
                     this.setFakeFacet();
                 }
+                var searchInProgess = this.$el.find("#search-in-progress");
+                var searchNotInProgess = this.$el.find("#search-not-in-progress");
+                searchInProgess.removeClass("hidden");
+                searchNotInProgess.addClass("hidden");
                 facetJob.fetch({
                     error: function(model, response) {
                         console.error(response);
+                        searchInProgess.addClass("hidden");
+                        searchNotInProgess.removeClass("hidden");
                     },
                     success: function(model, response) {
                         if (me.filterStore.get("selectedFilter") === model.get("oid")) {
@@ -663,7 +674,7 @@
                                     }
                                     // reset currentModel ID
                                     facetJob.set("id",me.currentModel.get("id"));
-                                    // retry every 5 seconds
+                                    // retry every 20 seconds
                                     setTimeout(function () {
                                         me.facetJobFetch(facetJob, startIndex);
                                     }, 20000);
@@ -681,6 +692,8 @@
                             }
                             // manually trigger if previously set
                             me.filterStore.trigger("change:facet");
+                            searchInProgess.addClass("hidden");
+                            searchNotInProgess.removeClass("hidden");
                         }
                     }
                 });

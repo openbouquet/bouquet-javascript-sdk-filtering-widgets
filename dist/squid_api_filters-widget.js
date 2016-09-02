@@ -329,7 +329,7 @@ function program1(depth0,data) {
   buffer += "\n<div class=\"squid_api_filters-categorical-panel-view popup\">\n	";
   stack1 = helpers.unless.call(depth0, (depth0 && depth0.initialFacet), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	<div id=\"search\">\n		<div class=\"input-group\">\n			<input class=\"form-control\" id=\"searchbox\" type=\"search\" placeholder=\"Search for\">\n				<span class=\"input-group-addon\">\n					<i class=\"fa fa-search\"></i>\n				</span>\n		</div>\n	</div>\n	<div id=\"filter-display-results\">\n	</div>\n	<div id=\"selected\">\n	</div>\n	<div id=\"pagination-container\">\n</div>\n";
+  buffer += "\n	<div id=\"search\">\n		<div class=\"input-group\">\n		      <span class=\"input-group-addon\">\n		        <i id=\"search-in-progress\" class=\"fa fa-refresh fa-spin hidden\"></i>\n		        <i id=\"search-not-in-progress\" class=\"fa fa-search\"></i>\n		      </span>\n			<input class=\"form-control\" id=\"searchbox\" type=\"search\" placeholder=\"Search for\">\n		</div>\n	</div>\n	<div id=\"filter-display-results\">\n	</div>\n	<div id=\"selected\">\n	</div>\n	<div id=\"pagination-container\">\n</div>\n";
   return buffer;
   }
 function program2(depth0,data) {
@@ -1507,6 +1507,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         facetViewOnly : null,
         template: null,
         facetViewTemplate: null,
+        keyupCount:0,
 
         initialize : function(options) {
             var me = this;
@@ -1778,7 +1779,15 @@ $.widget( "ui.dialog", $.ui.dialog, {
         },
 
         search : function(event) {
-            this.filterStore.set("search", event.target.value);
+            var me = this;
+            me.keyupCount++;
+            setTimeout(function(){
+                me.keyupCount--;
+                // trigger the action only if this is the latest keyup
+                if (me.keyupCount === 0) {
+                    me.filterStore.set("search", event.target.value);
+                }
+            }, 200);
         },
 
         getButtonLabel : function() {
@@ -1801,7 +1810,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
         },
 
         render : function() {
-
             // Button which opens filter Panel
             var buttonLabel = this.getButtonLabel();
 
@@ -1822,6 +1830,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 });
             } else {
                 // Print Base Filter Panel Layout
+                this.keyupCount = 0;
                 $(this.filterPanel).addClass("squid_api_filters_categorical_filter_panel").html(this.filterPanelTemplate({
                     "popup" : this.popup,
                     "data-target" : this.filterPanel,
@@ -1876,8 +1885,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     mandatory : this.mandatory
                 });
 
-                $(this.filterPanel).find("#searchbox").keyup(_.bind(this.search, this));
-
                 var me = this;
                 if (this.panelButtons) {
                     $(this.filterPanel).find(".apply-selection").click(function() {
@@ -1887,8 +1894,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         me.cancelSelection();
                     });
                 }
-
-                $(this.filterPanel).find("#searchbox").keyup(_.bind(this.search, this));
 
                 if (this.popup) {
                     if (buttonLabel) {
@@ -2127,9 +2132,15 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     // due to timeOut for the success handler
                     this.setFakeFacet();
                 }
+                var searchInProgess = this.$el.find("#search-in-progress");
+                var searchNotInProgess = this.$el.find("#search-not-in-progress");
+                searchInProgess.removeClass("hidden");
+                searchNotInProgess.addClass("hidden");
                 facetJob.fetch({
                     error: function(model, response) {
                         console.error(response);
+                        searchInProgess.addClass("hidden");
+                        searchNotInProgess.removeClass("hidden");
                     },
                     success: function(model, response) {
                         if (me.filterStore.get("selectedFilter") === model.get("oid")) {
@@ -2142,7 +2153,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                                     }
                                     // reset currentModel ID
                                     facetJob.set("id",me.currentModel.get("id"));
-                                    // retry every 5 seconds
+                                    // retry every 20 seconds
                                     setTimeout(function () {
                                         me.facetJobFetch(facetJob, startIndex);
                                     }, 20000);
@@ -2160,6 +2171,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
                             }
                             // manually trigger if previously set
                             me.filterStore.trigger("change:facet");
+                            searchInProgess.addClass("hidden");
+                            searchNotInProgess.removeClass("hidden");
                         }
                     }
                 });
