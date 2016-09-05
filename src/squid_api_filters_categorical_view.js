@@ -665,35 +665,38 @@
                     },
                     success: function(model, response) {
                         if (me.filterStore.get("selectedFilter") === model.get("oid")) {
-                            if ((model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) || model.get("done") === false) {
-                                if (model.get("done") === true) {
-                                    me.filterStore.set("facet", model);
-                                } else {
-                                    if (model.get("done") === false) {
+                            // make sure this request matches the current search
+                            if (!model.has("filter") || (me.filterStore.get("search") === model.get("filter"))) {
+                                if ((model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) || model.get("done") === false) {
+                                    if (model.get("done") === true) {
                                         me.filterStore.set("facet", model);
+                                    } else {
+                                        if (model.get("done") === false) {
+                                            me.filterStore.set("facet", model);
+                                        }
+                                        // reset currentModel ID
+                                        facetJob.set("id",me.currentModel.get("id"));
+                                        // retry every 20 seconds
+                                        setTimeout(function () {
+                                            me.facetJobFetch(facetJob, startIndex);
+                                        }, 20000);
                                     }
-                                    // reset currentModel ID
-                                    facetJob.set("id",me.currentModel.get("id"));
-                                    // retry every 20 seconds
-                                    setTimeout(function () {
-                                        me.facetJobFetch(facetJob, startIndex);
-                                    }, 20000);
+                                } else {
+                                    me.filterStore.set("itemIndex", startIndex);
+                                    me.filterStore.set("facet", model);
                                 }
-                            } else {
-                                me.filterStore.set("itemIndex", startIndex);
-                                me.filterStore.set("facet", model);
-                            }
-                            // set error message if exists
-                            var errorMessage = model.get("errorMessage");
-                            if (model.get("error")) {
-                                if (errorMessage) {
-                                    squid_api.model.status.set("message", errorMessage);
+                                // set error message if exists
+                                var errorMessage = model.get("errorMessage");
+                                if (model.get("error")) {
+                                    if (errorMessage) {
+                                        squid_api.model.status.set("message", errorMessage);
+                                    }
                                 }
+                                // manually trigger if previously set
+                                me.filterStore.trigger("change:facet");
+                                searchInProgess.addClass("hidden");
+                                searchNotInProgess.removeClass("hidden");
                             }
-                            // manually trigger if previously set
-                            me.filterStore.trigger("change:facet");
-                            searchInProgess.addClass("hidden");
-                            searchNotInProgess.removeClass("hidden");
                         }
                     }
                 });
