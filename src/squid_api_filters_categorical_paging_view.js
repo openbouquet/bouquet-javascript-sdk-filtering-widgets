@@ -68,10 +68,17 @@
                 var nbPages = this.model.get("nbPages");
                 var itemIndex = this.model.get("itemIndex");
 
+                var pageCount = Math.min((facetItems.length / pageSize)+(itemIndex/pageSize),10);
                 var firstPageIndex = Math.round(itemIndex / pageSize);
-
+                if (firstPageIndex>4 && pageCount >= nbPages) {
+                	firstPageIndex = firstPageIndex - 4;
+                	if (facetItems && facetItems.length < 100) {
+                		firstPageIndex = firstPageIndex - Math.round((100 - facetItems.length) / pageSize);
+                	}
+                } else {
+                	firstPageIndex = 0;
+                }
                 var pages = [];
-                var pageCount = facetItems.length / pageSize;
                 if (pageCount>1 || pageIndex>0) {
                     if (pageCount>nbPages) {
                         pageCount = nbPages;
