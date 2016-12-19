@@ -90,6 +90,9 @@
 	                		next = true;
 	                	}
 	                } else {
+	                	if ((facetItems.length + (firstPageIndex * pageSize))>100 && next === false) {
+	                		next = true;
+	                	}
 	                	firstPageIndex = 0;
 	                }
 	                
