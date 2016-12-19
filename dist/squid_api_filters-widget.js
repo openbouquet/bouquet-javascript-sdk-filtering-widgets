@@ -1177,6 +1177,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     next = true;
                 }
 
+                //Sometimes initial facet jobs continue to be rendered even after page click
                 if (pageIndex * pageSize === itemIndex) {
 	                var pageCount = Math.min((facetItems.length / pageSize)+(itemIndex/pageSize),10);
 	                var firstPageIndex = Math.round(itemIndex / pageSize);
@@ -1192,7 +1193,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
 	                } else {
 	                	firstPageIndex = 0;
 	                }
-	                console.log(firstPageIndex + pageIndex +"\t"+facetItems.length +"\t"+itemIndex +"\t"+(50 - facetItems.length) +"\t"+facet.get("hasMore"));
 	                
 	                var pages = [];
 	                if (pageCount>1 || pageIndex>0) {
