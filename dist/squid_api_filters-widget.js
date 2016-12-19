@@ -329,7 +329,7 @@ function program1(depth0,data) {
   buffer += "\n<div class=\"squid_api_filters-categorical-panel-view popup\">\n	";
   stack1 = helpers.unless.call(depth0, (depth0 && depth0.initialFacet), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	<div id=\"search\">\n		<div class=\"input-group\">\n			<input class=\"form-control\" id=\"searchbox\" type=\"search\" placeholder=\"Search for\">\n				<span class=\"input-group-addon\">\n					<i class=\"fa fa-search\"></i>\n				</span>\n		</div>\n	</div>\n	<div id=\"filter-display-results\">\n	</div>\n	<div id=\"selected\">\n	</div>\n	<div id=\"pagination-container\">\n</div>\n";
+  buffer += "\n	<div id=\"search\">\n		<div class=\"input-group\">\n		      <span class=\"input-group-addon\">\n		        <i id=\"search-in-progress\" class=\"fa fa-refresh fa-spin hidden\"></i>\n		        <i id=\"search-not-in-progress\" class=\"fa fa-search\"></i>\n		      </span>\n			<input class=\"form-control\" id=\"searchbox\" type=\"search\" placeholder=\"Search for\">\n		</div>\n	</div>\n	<div id=\"filter-display-results\">\n	</div>\n	<div id=\"selected\">\n	</div>\n	<div id=\"pagination-container\">\n</div>\n";
   return buffer;
   }
 function program2(depth0,data) {
@@ -714,6 +714,8 @@ function program4(depth0,data) {
         template : template,
 
         initialize : function(options) {
+            this.config = squid_api.model.config;
+
             if (!this.model) {
                 this.model = squid_api.model.filters;
             }
@@ -745,18 +747,43 @@ function program4(depth0,data) {
                 if (this.onSelectFacet) {
                     this.onSelectFacet(facetId, facetName);
                 }
+            },
+            "click .reset-filters" : function() {
+                var me = this;
+                var projectId = this.config.get("project");
+                var bookmarkId = this.config.get("bookmark");
+
+                // get the Bookmark
+                squid_api.getCustomer().then(function(customer) {
+                    customer.get("projects").load(projectId).then(function(project) {
+                        project.get("bookmarks").load(bookmarkId).done(function(bookmark) {
+                            var forcedConfig = {};
+                            var config = me.config.toJSON();
+                            // exclude the selection from re-setting the config
+                            for (var x in config) {
+                                if (x !== "selection") {
+                                    forcedConfig[x] = config[x];
+                                }
+                            }
+                            // set bookmark
+                            squid_api.setBookmark(bookmark, forcedConfig);
+                        }).fail(function(model, response, options) {
+                            console.error("bookmark fetch failed : " + bookmarkId);
+                        });
+                    });
+                });
             }
         },
 
         onRemoveItem : function(facetId, itemId) {
             // Copy model selection object properties to remove object reference
-            var selectionClone = $.extend(true, {}, this.model.get("selection"));
+            var selectionClone = $.extend(true, {}, this.config.get("selection"));
             if (selectionClone) {
                 var facets = selectionClone.facets;
                 if (facets) {
                     // Remove selected item from facet
                     squid_api.controller.facetjob.unSelect(facets, facetId, itemId);
-                    squid_api.model.config.set("selection", selectionClone);
+                    squid_api.setConfigSelection(selectionClone);
                 }
             }
         },
@@ -916,6 +943,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     var type = target.attr("data-type");
                     var id = target.attr("data-id");
                     var attributes = target.attr("data-attr");
+                    
+                    var configSelection = $.extend(true, {}, squid_api.model.config.get("selection"));
+                    var configSelectionFacets = configSelection.facets;
 
                     // Get selected Filters
                     var selectionClone = $.extend(true, {}, this.filters.get("selection"));
@@ -943,7 +973,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
                         // Push new filters to selectedItems array
                         var selectedFacet;
-                        for (i=0; i<facets.length; i++) {
+                        for (var i=0; i<facets.length; i++) {
                             var facet = facets[i];
                             if (facet.id === selectedFilter) {
                                 selectedFacet = facet;
@@ -954,18 +984,32 @@ $.widget( "ui.dialog", $.ui.dialog, {
                                 }
                             }
                         }
+                        
+                        var configSelectedFacet;
+                        var selectedFacet1;
+                        for (var i1=0; i1<configSelectionFacets.length; i1++) {
+                            var facet1 = configSelectionFacets[i1];
+                            if (facet1.id === selectedFilter) {
+                                selectedFacet1 = facet1;
+                                facet1.selectedItems = selectedFacet.selectedItems;
+                            }
+                        }
+                        if (!selectedFacet1) {
+                            configSelectionFacets.push(selectedFacet);
+                        }
+                        
+                        
                         // Remove selected items from children
-                        squid_api.controller.facetjob.unSelectChildren(facets, selectedFacet, false);
+                        squid_api.controller.facetjob.unSelectChildren(configSelectionFacets, selectedFacet, false);
 
                         //Handle callback when selection changed
                         if (this.onChange) {
-                        	this.onChange(facets, selectedFacet);
+                        	this.onChange(configSelectionFacets, selectedFacet);
                         }
                     }
 
-                    // Set the updated filters model
-                    squid_api.model.config.set("selection", squid_api.utils.buildCleanSelection(selectionClone));
-
+                    // set config with updated selection
+                    squid_api.setConfigSelection(selectionClone);
                 }
             },
         },
@@ -1093,6 +1137,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 var itemIndex = this.model.get("itemIndex");
                 var pageSize = this.model.get("pageSize");
                 var firstPageIndex = Math.round(itemIndex / pageSize);
+                this.itemClicked = "number";
                 if (pageId == "prev") {
                     if (pageIndex > (firstPageIndex - nbPages)) {
                         // previous page
@@ -1101,6 +1146,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         // previous page group
                         this.model.set("pageIndex", firstPageIndex - nbPages);
                     }
+                    this.itemClicked = "prev";
                 } else if (pageId == "next") {
                     if (pageIndex < (firstPageIndex + nbPages)) {
                         // next page
@@ -1109,6 +1155,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         // next page group
                         this.model.set("pageIndex", firstPageIndex + nbPages);
                     }
+                    this.itemClicked = "next";
                 } else {
                     this.model.set("pageIndex", pageId-1);
                 }
@@ -1124,41 +1171,58 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 var nbPages = this.model.get("nbPages");
                 var itemIndex = this.model.get("itemIndex");
 
-                var pageCount = Math.min((facetItems.length / pageSize)+(itemIndex/pageSize),10);
-                var firstPageIndex = Math.round(itemIndex / pageSize);
-                if (firstPageIndex>4 && pageCount >= nbPages) {
-                	firstPageIndex = firstPageIndex - 4;
-                	if (facetItems && facetItems.length < 100) {
-                		firstPageIndex = firstPageIndex - Math.round((100 - facetItems.length) / pageSize);
-                	}
-                } else {
-                	firstPageIndex = 0;
+                var next = false;
+                if (facet.get("hasMore")) {
+                    next = true;
                 }
-                var pages = [];
-                if (pageCount>1 || pageIndex>0) {
-                    if (pageCount>nbPages) {
-                        pageCount = nbPages;
-                    }
-                    var prev = (firstPageIndex === 0) ? null : true;
-                    for (var i=firstPageIndex; i<(firstPageIndex+pageCount); i++) {
-                        var selected = null;
-                        if (i == pageIndex) {
-                            selected = true;
-                        }
-                        pages.push({ "id" : i+1, "selected" :  selected});
-                    }
-                    var next = null;
-                    if (facet.get("hasMore")) {
-                        next = true;
-                    }
 
-                    this.$el.html(squid_api.template.squid_api_filters_categorical_paging_view({
-                        "prev" : prev,
-                        "pages" : pages,
-                        "next" : next
-                    }));
-                } else {
-                    this.$el.html("");
+               //Sometimes initial facet jobs continue to be rendered even after page click
+                if (pageIndex * pageSize === itemIndex) {
+	                var pageCount = Math.min((facetItems.length / pageSize)+(itemIndex/pageSize),10);
+	                var firstPageIndex = Math.round(itemIndex / pageSize);
+	                if (firstPageIndex>4 && pageCount >= nbPages) {
+	                	var offset = 4;
+	                	if (facetItems && facetItems.length < 50) {
+	                		offset = offset + Math.ceil((50 - facetItems.length) / pageSize);
+	                	}
+	                	firstPageIndex = firstPageIndex - offset;
+	                	if ((facetItems.length + (offset * pageSize))>100 && next === false) {
+	                		next = true;
+	                	}
+	                } else {
+	                	firstPageIndex = 0;
+	                }
+	                
+	                var pages = [];
+	                if (pageCount>1 || pageIndex>0) {
+	                    if (pageCount>nbPages) {
+	                        pageCount = nbPages;
+	                    }
+	                    var prev = (firstPageIndex === 0) ? null : true;
+	
+	                    if (this.itemClicked === "prev" && (pageIndex + 1) % 2 === 0) {
+	                        firstPageIndex = ((firstPageIndex + 1) - (pageSize) >= 0) ?  (firstPageIndex + 1) - pageSize : firstPageIndex;
+	                        pageCount = nbPages;
+	                        if (firstPageIndex === 0) {
+	                            prev = false;
+	                        }
+	                    }
+	                    for (var i=firstPageIndex; i<(firstPageIndex+pageCount); i++) {
+	                        var selected = null;
+	                        if (i == pageIndex) {
+	                            selected = true;
+	                        }
+	                        pages.push({ "id" : i+1, "selected" :  selected});
+	                    }
+	
+	                    this.$el.html(squid_api.template.squid_api_filters_categorical_paging_view({
+	                        "prev" : prev,
+	                        "pages" : pages,
+	                        "next" : next
+	                    }));
+	                } else {
+	                    this.$el.html("");
+	                }
                 }
             }
         }
@@ -1243,7 +1307,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     if (facets) {
                         // Remove selected item from facet
                         squid_api.controller.facetjob.unSelect(facets, facetName, itemId);
-                        squid_api.model.config.set("selection", selectionClone);
+                        // set config with updated selection
+                        squid_api.setConfigSelection(selectionClone);
                     }
                 }
                 //squid_api.model.config.trigger("change:domain", squid_api.model.config);
@@ -1353,7 +1418,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             this.render();
             this.renderSelection();
         },
-        
+
         render : function() {
             var me = this;
 
@@ -1375,28 +1440,30 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 var facets = this.model.get("selection").facets;
                 var items = [];
                 if (this.model.get("selection")) {
-                    for (i=0; i<facets.length; i++) {
-                        var facet = facets[i];
-                        if ((facet.dimension.type == "CATEGORICAL") || (facet.dimension.type == "SEGMENTS")) {
-                            var selected = false;
-                            if (facet.id == selectedFilter) {
-                                selected = true;
-                            }
-                            var json = {
-                                label : facet.name,
-                                title : facet.name,
-                                value : facet.id,
-                                selected : selected
-                            };
-                            if (this.facetList) {
-                                for (ix=0; ix<this.facetList.length; ix++) {
-                                    if (this.facetList[ix] === facet.id) {
-                                        items.push(json);
+                    if (facets) {
+                        for (i=0; i<facets.length; i++) {
+                            var facet = facets[i];
+                            if ((facet.dimension.type == "CATEGORICAL") || (facet.dimension.type == "SEGMENTS")) {
+                                var selected = false;
+                                if (facet.id == selectedFilter) {
+                                    selected = true;
+                                }
+                                var json = {
+                                    label : facet.name,
+                                    title : facet.name,
+                                    value : facet.id,
+                                    selected : selected
+                                };
+                                if (this.facetList) {
+                                    for (ix=0; ix<this.facetList.length; ix++) {
+                                        if (this.facetList[ix] === facet.id) {
+                                            items.push(json);
+                                        }
                                     }
                                 }
-                            }
-                            else {
-                                items.push(json);
+                                else {
+                                    items.push(json);
+                                }
                             }
                         }
                     }
@@ -1455,6 +1522,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         facetViewOnly : null,
         template: null,
         facetViewTemplate: null,
+        keyupCount:0,
 
         initialize : function(options) {
             var me = this;
@@ -1726,7 +1794,15 @@ $.widget( "ui.dialog", $.ui.dialog, {
         },
 
         search : function(event) {
-            this.filterStore.set("search", event.target.value);
+            var me = this;
+            me.keyupCount++;
+            setTimeout(function(){
+                me.keyupCount--;
+                // trigger the action only if this is the latest keyup
+                if (me.keyupCount === 0) {
+                    me.filterStore.set("search", event.target.value);
+                }
+            }, 200);
         },
 
         getButtonLabel : function() {
@@ -1749,7 +1825,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
         },
 
         render : function() {
-
             // Button which opens filter Panel
             var buttonLabel = this.getButtonLabel();
 
@@ -1770,6 +1845,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 });
             } else {
                 // Print Base Filter Panel Layout
+                this.keyupCount = 0;
                 $(this.filterPanel).addClass("squid_api_filters_categorical_filter_panel").html(this.filterPanelTemplate({
                     "popup" : this.popup,
                     "data-target" : this.filterPanel,
@@ -1824,8 +1900,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     mandatory : this.mandatory
                 });
 
-                $(this.filterPanel).find("#searchbox").keyup(_.bind(this.search, this));
-
                 var me = this;
                 if (this.panelButtons) {
                     $(this.filterPanel).find(".apply-selection").click(function() {
@@ -1835,8 +1909,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         me.cancelSelection();
                     });
                 }
-
-                $(this.filterPanel).find("#searchbox").keyup(_.bind(this.search, this));
 
                 if (this.popup) {
                     if (buttonLabel) {
@@ -2075,37 +2147,54 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     // due to timeOut for the success handler
                     this.setFakeFacet();
                 }
-            }
-
-            facetJob.fetch({
-                error: function(model, response) {
-                    console.error(response);
-                },
-                success: function(model, response) {
-                    if (model.get("id") === me.filterStore.get("selectedFilter")) {
-                        if (model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) {
-                            if (! model.get("items")) {
-                                // set fake facet
-                                me.setFakeFacet();
-                                // retry every 5 seconds
-                                setInterval(me.facetJobFetch(facetJob, startIndex), 5000);
-                            } else {
-                                me.filterStore.set("facet", model);
-                            }
-                        } else {
-                            me.filterStore.set("itemIndex", startIndex);
-                            me.filterStore.set("facet", model);
-                        }
-                        // set error message if exists
-                        var errorMessage = model.get("errorMessage");
-                        if (model.get("error")) {
-                            if (errorMessage) {
-                                squid_api.model.status.set("message", errorMessage);
+                var searchInProgess = this.$el.find("#search-in-progress");
+                var searchNotInProgess = this.$el.find("#search-not-in-progress");
+                searchInProgess.removeClass("hidden");
+                searchNotInProgess.addClass("hidden");
+                facetJob.fetch({
+                    error: function(model, response) {
+                        console.error(response);
+                        searchInProgess.addClass("hidden");
+                        searchNotInProgess.removeClass("hidden");
+                    },
+                    success: function(model, response) {
+                        if (me.filterStore.get("selectedFilter") === model.get("oid")) {
+                            // make sure this request matches the current search
+                            if (!model.has("filter") || (me.filterStore.get("search") === model.get("filter"))) {
+                                if ((model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) || model.get("done") === false) {
+                                    if (model.get("done") === true) {
+                                        me.filterStore.set("facet", model);
+                                    } else {
+                                        if (model.get("done") === false) {
+                                            me.filterStore.set("facet", model);
+                                        }
+                                        // reset currentModel ID
+                                        facetJob.set("id",me.currentModel.get("id"));
+                                        // retry every 20 seconds
+                                        setTimeout(function () {
+                                            me.facetJobFetch(facetJob, startIndex);
+                                        }, 20000);
+                                    }
+                                } else {
+                                    me.filterStore.set("itemIndex", startIndex);
+                                    me.filterStore.set("facet", model);
+                                }
+                                // set error message if exists
+                                var errorMessage = model.get("errorMessage");
+                                if (model.get("error")) {
+                                    if (errorMessage) {
+                                        squid_api.model.status.set("message", errorMessage);
+                                    }
+                                }
+                                // manually trigger if previously set
+                                me.filterStore.trigger("change:facet");
+                                searchInProgess.addClass("hidden");
+                                searchNotInProgess.removeClass("hidden");
                             }
                         }
                     }
-                }
-            });
+                });
+            }
         },
 
         applySelection : function() {
@@ -2344,7 +2433,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     var period = me.config.get("period");
                     for (var dimIdx=0; dimIdx<facets.length; dimIdx++) {
                         var facet = facets[dimIdx];
-                        if (facet.dimension.valueType == "DATE" && facet.dimension.type == "CONTINUOUS"  && ! facet.error) {
+                        if (facet.dimension.valueType == "DATE" && facet.dimension.type === "CONTINUOUS" && ! facet.error) {
                             var option = {"label" : facet.name, "value" : facet.id, "error" : facets[dimIdx].error, "selected" : false};
                             // if currently selected within config
                             if (periodConfig) {
@@ -2385,7 +2474,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     var domain = this.config.get("domain");
                     for (var i=0; i<facets.length; i++) {
                         var facet = facets[i];
-                        if (facet.dimension.type === "CONTINUOUS" && facet.dimension.valueType === "DATE") {
+                        if (facet.dimension.valueType === "DATE") {
                             if (facet.id !== period[domain]) {
                                 changed = true;
                                 facets.splice(i, 1);
@@ -2449,6 +2538,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 }
             }
 
+            this.listenTo(this.config, "change:period", this.render);
             this.listenTo(this.config, "change:selection", this.render);
             this.render();
         },
@@ -2555,8 +2645,20 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
             return selected;
         },
+
+        disableSelector: function() {
+            if (this.$el.find(".disabled").length > 0) {
+                this.$el.find(".disabled").show();
+            } else {
+                this.$el.find("select").attr("disabled", true);
+            }
+        },
+
         render: function() {
             var selection = this.config.get("selection");
+            var domain = this.config.get("domain");
+            var period = this.config.get("period");
+
             var range;
             this.jsonData = {
                 ranges : []
@@ -2573,6 +2675,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
             // render html
             var html = this.template(this.jsonData);
             this.$el.html(html);
+
+            if (! period || ! period[domain]) {
+                this.disableSelector();
+            }
 
             // detect currently selected expression range
             for (i=0; i<this.ranges.length; i++) {
@@ -2684,16 +2790,17 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
             if (selection) {
                 var facets = selection.facets;
-                for (i=0; i<facets.length; i++) {
-                    // obtain current facet from config if exists
-                    if (configPeriod) {
-                        if (configPeriod[domain]) {
-                            if (facets[i].id == configPeriod[domain]) {
-                                facet = facets[i];
+                if (facets) {
+                    for (i=0; i<facets.length; i++) {
+                        // obtain current facet from config if exists
+                        if (configPeriod) {
+                            if (configPeriod[domain]) {
+                                if (facets[i].id == configPeriod[domain]) {
+                                    facet = facets[i];
+                                }
                             }
                         }
                     }
-
                 }
             }
             if (facet) {
@@ -2726,13 +2833,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
                                     if (filtersFacets[ix].selectedItems) {
                                         selectedItems = filtersFacets[ix].selectedItems[0];
                                         if (selectedItems) {
-                                            // if currently selected date is outside of the min-max range then force an update
-                                            if ((minMax.type) && (moment(selectedItems.upperBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.upperBound).isBefore(dates.minDate.startOf("day")) || moment(selectedItems.lowerBound).isAfter(dates.maxDate.endOf("day")) || moment(selectedItems.lowerBound).isBefore(dates.minDate.startOf("day")))) {
-                                                this.updateFacet(filtersFacets[ix], dates.minDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000", dates.maxDate.format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000");
-                                            } else {
-                                                dates.currentStartDate = moment(selectedItems.lowerBound).utc();
-                                                dates.currentEndDate = moment(selectedItems.upperBound).utc();
-                                            }
+                                            dates.currentStartDate = moment(selectedItems.lowerBound).utc();
+                                            dates.currentEndDate = moment(selectedItems.upperBound).utc();
                                         }
                                     }
                                 }

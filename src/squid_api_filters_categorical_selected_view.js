@@ -74,7 +74,8 @@
                     if (facets) {
                         // Remove selected item from facet
                         squid_api.controller.facetjob.unSelect(facets, facetName, itemId);
-                        squid_api.model.config.set("selection", selectionClone);
+                        // set config with updated selection
+                        squid_api.setConfigSelection(selectionClone);
                     }
                 }
                 //squid_api.model.config.trigger("change:domain", squid_api.model.config);

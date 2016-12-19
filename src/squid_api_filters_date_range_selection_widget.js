@@ -45,6 +45,7 @@
                 }
             }
 
+            this.listenTo(this.config, "change:period", this.render);
             this.listenTo(this.config, "change:selection", this.render);
             this.render();
         },
@@ -151,8 +152,20 @@
             }
             return selected;
         },
+
+        disableSelector: function() {
+            if (this.$el.find(".disabled").length > 0) {
+                this.$el.find(".disabled").show();
+            } else {
+                this.$el.find("select").attr("disabled", true);
+            }
+        },
+
         render: function() {
             var selection = this.config.get("selection");
+            var domain = this.config.get("domain");
+            var period = this.config.get("period");
+
             var range;
             this.jsonData = {
                 ranges : []
@@ -169,6 +182,10 @@
             // render html
             var html = this.template(this.jsonData);
             this.$el.html(html);
+
+            if (! period || ! period[domain]) {
+                this.disableSelector();
+            }
 
             // detect currently selected expression range
             for (i=0; i<this.ranges.length; i++) {
