@@ -1170,51 +1170,60 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 var pageSize = this.model.get("pageSize");
                 var nbPages = this.model.get("nbPages");
                 var itemIndex = this.model.get("itemIndex");
+                
 
-                var pageCount = Math.min((facetItems.length / pageSize)+(itemIndex/pageSize),10);
-                var firstPageIndex = Math.round(itemIndex / pageSize);
-                if (firstPageIndex>4 && pageCount >= nbPages) {
-                	firstPageIndex = firstPageIndex - 4;
-                	if (facetItems && facetItems.length < 100) {
-                		firstPageIndex = firstPageIndex - Math.round((100 - facetItems.length) / pageSize);
-                	}
-                } else {
-                	firstPageIndex = 0;
+                var next = false;
+                if (facet.get("hasMore")) {
+                    next = true;
                 }
-                var pages = [];
-                if (pageCount>1 || pageIndex>0) {
-                    if (pageCount>nbPages) {
-                        pageCount = nbPages;
-                    }
-                    var prev = (firstPageIndex === 0) ? null : true;
 
-                    if (this.itemClicked === "prev" && (pageIndex + 1) % 2 === 0) {
-                        firstPageIndex = ((firstPageIndex + 1) - (pageSize) >= 0) ?  (firstPageIndex + 1) - pageSize : firstPageIndex;
-                        pageCount = nbPages;
-                        if (firstPageIndex === 0) {
-                            prev = false;
-                        }
-                    }
-                    for (var i=firstPageIndex; i<(firstPageIndex+pageCount); i++) {
-                        var selected = null;
-                        if (i == pageIndex) {
-                            selected = true;
-                        }
-                        pages.push({ "id" : i+1, "selected" :  selected});
-                    }
-
-                    var next = null;
-                    if (facet.get("hasMore")) {
-                        next = true;
-                    }
-
-                    this.$el.html(squid_api.template.squid_api_filters_categorical_paging_view({
-                        "prev" : prev,
-                        "pages" : pages,
-                        "next" : next
-                    }));
-                } else {
-                    this.$el.html("");
+                if (pageIndex * pageSize === itemIndex) {
+	                var pageCount = Math.min((facetItems.length / pageSize)+(itemIndex/pageSize),10);
+	                var firstPageIndex = Math.round(itemIndex / pageSize);
+	                if (firstPageIndex>4 && pageCount >= nbPages) {
+	                	var offset = 4;
+	                	if (facetItems && facetItems.length < 50) {
+	                		offset = offset + Math.ceil((50 - facetItems.length) / pageSize);
+	                	}
+	                	firstPageIndex = firstPageIndex - offset;
+	                	if ((facetItems.length + (offset * pageSize))>100 && next === false) {
+	                		next = true;
+	                	}
+	                } else {
+	                	firstPageIndex = 0;
+	                }
+	                console.log(firstPageIndex + pageIndex +"\t"+facetItems.length +"\t"+itemIndex +"\t"+(50 - facetItems.length) +"\t"+facet.get("hasMore"));
+	                
+	                var pages = [];
+	                if (pageCount>1 || pageIndex>0) {
+	                    if (pageCount>nbPages) {
+	                        pageCount = nbPages;
+	                    }
+	                    var prev = (firstPageIndex === 0) ? null : true;
+	
+	                    if (this.itemClicked === "prev" && (pageIndex + 1) % 2 === 0) {
+	                        firstPageIndex = ((firstPageIndex + 1) - (pageSize) >= 0) ?  (firstPageIndex + 1) - pageSize : firstPageIndex;
+	                        pageCount = nbPages;
+	                        if (firstPageIndex === 0) {
+	                            prev = false;
+	                        }
+	                    }
+	                    for (var i=firstPageIndex; i<(firstPageIndex+pageCount); i++) {
+	                        var selected = null;
+	                        if (i == pageIndex) {
+	                            selected = true;
+	                        }
+	                        pages.push({ "id" : i+1, "selected" :  selected});
+	                    }
+	
+	                    this.$el.html(squid_api.template.squid_api_filters_categorical_paging_view({
+	                        "prev" : prev,
+	                        "pages" : pages,
+	                        "next" : next
+	                    }));
+	                } else {
+	                    this.$el.html("");
+	                }
                 }
             }
         }
