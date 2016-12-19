@@ -70,15 +70,14 @@
                 var pageSize = this.model.get("pageSize");
                 var nbPages = this.model.get("nbPages");
                 var itemIndex = this.model.get("itemIndex");
-                
-
-                var next = false;
-                if (facet.get("hasMore")) {
-                    next = true;
-                }
 
                 //Sometimes initial facet jobs continue to be rendered even after page click
                 if (pageIndex * pageSize === itemIndex) {
+                    var next = false;
+                    if (facet.get("hasMore")) {
+                        next = true;
+                    }
+
 	                var pageCount = Math.min((facetItems.length / pageSize)+(itemIndex/pageSize),10);
 	                var firstPageIndex = Math.round(itemIndex / pageSize);
 	                if (firstPageIndex>4 && pageCount >= nbPages) {
