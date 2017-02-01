@@ -944,8 +944,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     var id = target.attr("data-id");
                     var attributes = target.attr("data-attr");
                     
-                    var configSelection = $.extend(true, {}, squid_api.model.config.get("selection"));
-                    var configSelectionFacets = configSelection.facets;
+                    //T2726: useless as selectionClone is saved at the end, not this copy
+                    //var configSelection = $.extend(true, {}, squid_api.model.config.get("selection"));
+                    //var configSelectionFacets = configSelection.facets;
 
                     // Get selected Filters
                     var selectionClone = $.extend(true, {}, this.filters.get("selection"));
@@ -985,6 +986,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                             }
                         }
                         
+                        /*
                         var configSelectedFacet;
                         var selectedFacet1;
                         for (var i1=0; i1<configSelectionFacets.length; i1++) {
@@ -997,14 +999,15 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         if (!selectedFacet1) {
                             configSelectionFacets.push(selectedFacet);
                         }
-                        
+                        */
                         
                         // Remove selected items from children
-                        squid_api.controller.facetjob.unSelectChildren(configSelectionFacets, selectedFacet, false);
+                        //T2726: this has to be done on selectionClone.facets to be effective
+                        squid_api.controller.facetjob.unSelectChildren(facets, selectedFacet, false);
 
                         //Handle callback when selection changed
                         if (this.onChange) {
-                        	this.onChange(configSelectionFacets, selectedFacet);
+                        	this.onChange(facets, selectedFacet);
                         }
                     }
 
@@ -1912,7 +1915,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     });
                 }
 
-                if (this.popup) {
+				//T2726: must put back the call back to launch a search on keyeup
+                //This has been removed at a point, for an unknown reason
+                $(this.filterPanel).find("#searchbox").keyup(_.bind(this.search, this));
+               
+				if (this.popup) {
                     if (buttonLabel) {
                         this.$el
                             .html("<button type='button' class='btn btn-default form-control squid_api_filters_categorical_button'>" + buttonLabel + "<span class='caret'></span></button>");

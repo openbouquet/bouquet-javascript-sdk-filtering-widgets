@@ -416,7 +416,11 @@
                     });
                 }
 
-                if (this.popup) {
+				//T2726: must put back the call back to launch a search on keyeup
+                //This has been removed at a point, for an unknown reason
+                $(this.filterPanel).find("#searchbox").keyup(_.bind(this.search, this));
+               
+				if (this.popup) {
                     if (buttonLabel) {
                         this.$el
                             .html("<button type='button' class='btn btn-default form-control squid_api_filters_categorical_button'>" + buttonLabel + "<span class='caret'></span></button>");
