@@ -628,8 +628,9 @@
                     }
                     if (search) {
                         facetJob.addParameter("filter", search);
-                        this.filterStore.set("searchPrevious", search);
                     }
+                    //always update searchPrevious even with null so text box ctrl+X is properly handled
+                    this.filterStore.set("searchPrevious", search);
                     // get the results from API
                     this.facetJobFetch(facetJob, startIndex);
                 } else {
