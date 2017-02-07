@@ -2170,7 +2170,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     success: function(model, response) {
                         if (me.filterStore.get("selectedFilter") === model.get("oid")) {
                             // make sure this request matches the current search
-                            if ((!model.has("filter") && me.filterStore.get("search") === "") || (me.filterStore.get("search") === model.get("filter"))) {
+                            if ((!model.has("filter") && (me.filterStore.get("search") === "" || me.filterStore.get("search") === null)) || (me.filterStore.get("search") === model.get("filter"))) {
                                 if ((model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) || model.get("done") === false) {
                                     if (model.get("done") === true) {
                                         me.filterStore.set("facet", model);
