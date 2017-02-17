@@ -65,7 +65,7 @@
                     var facets = filtersSelection[this.facetsAttribute];
                     if (facets) {
                         for (ix=0; ix<facets.length; ix++) {
-                            if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].dimension.valueType === "DATE") {
+                            if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].selectedItems.length > 0 && facets[ix].selectedItems[0].lowerBound) {
                                 if (facets[ix].selectedItems.length > 0) {
                                     this.updateSelection(facets[ix].selectedItems[0].lowerBound, facets[ix].selectedItems[0].upperBound);
                                 }
@@ -141,7 +141,7 @@
                 var facets = selection[this.facetsAttribute];
                 if (facets) {
                     for (ix=0; ix<facets.length; ix++) {
-                        if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].dimension.valueType === "DATE" && facets[ix].selectedItems.length > 0) {
+                        if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].selectedItems.length > 0 && facets[ix].selectedItems[0].lowerBound) {
                             if (facets[ix].selectedItems[0].lowerBound === range.lowerExpression && facets[ix].selectedItems[0].upperBound === range.upperExpression) {
                                 selected = true;
                                 break;
