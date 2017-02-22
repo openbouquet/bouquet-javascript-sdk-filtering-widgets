@@ -48,6 +48,7 @@
             }
 
             this.listenTo(this.filters, "change:selection", this.render);
+            this.listenTo(this.model, "change:itemIndex", this.render);
             this.listenTo(this.model, "change:pageIndex", this.render);
             this.listenTo(this.model, "change:facet", this.render);
             this.listenTo(this.status, "change", this.widgetState);
@@ -169,7 +170,7 @@
                 var itemIndex = this.model.get("itemIndex");
 
                 // display current facet members
-                var startIndex = (pageIndex * pageSize) - itemIndex;
+                var startIndex = itemIndex -(pageIndex * pageSize);
                 var endIndex = startIndex + pageSize;
 
                 var selectedFilter = this.model.get("selectedFilter");

@@ -22,6 +22,7 @@
                 }
             }
 
+            this.listenTo(this.model, "change:itemIndex", this.render);
             this.listenTo(this.model, "change:pageIndex", this.render);
             this.listenTo(this.model, "change:facet", this.render);
             this.render();
@@ -36,28 +37,21 @@
                 var nbPages = this.model.get("nbPages");
                 var itemIndex = this.model.get("itemIndex");
                 var pageSize = this.model.get("pageSize");
-                var firstPageIndex = Math.round(itemIndex / pageSize);
                 this.itemClicked = "number";
                 if (pageId == "prev") {
-                    if (pageIndex > (firstPageIndex - nbPages)) {
-                        // previous page
-                        this.model.set("pageIndex", pageIndex-1);
-                    } else {
-                        // previous page group
-                        this.model.set("pageIndex", firstPageIndex - nbPages);
-                    }
+                	if (pageIndex>0) {
+                        this.model.set("itemIndex", 0, {silent: true});
+                		this.model.set("pageIndex", Math.max(pageIndex - nbPages, 0));
+                	}
                     this.itemClicked = "prev";
                 } else if (pageId == "next") {
-                    if (pageIndex < (firstPageIndex + nbPages)) {
-                        // next page
-                        this.model.set("pageIndex", pageIndex+1);
-                    } else {
-                        // next page group
-                        this.model.set("pageIndex", firstPageIndex + nbPages);
-                    }
+                	if (this.model.get("facet").get("hasMore") === true) {
+                        this.model.set("itemIndex", 0, {silent: true});
+                		this.model.set("pageIndex", pageIndex + nbPages);
+                	}
                     this.itemClicked = "next";
                 } else {
-                    this.model.set("pageIndex", pageId-1);
+                    this.model.set("itemIndex", (pageId-1)*pageSize);
                 }
             }
         },
@@ -72,52 +66,30 @@
                 var itemIndex = this.model.get("itemIndex");
 
                 //Sometimes initial facet jobs continue to be rendered even after page click
-                if (pageIndex * pageSize === itemIndex) {
+                if (facetItems && facetItems.length>0) {
                     var next = false;
                     if (facet.get("hasMore")) {
                         next = true;
                     }
-
-	                var pageCount = Math.min((facetItems.length / pageSize)+(itemIndex/pageSize),10);
-	                var firstPageIndex = Math.round(itemIndex / pageSize);
-	                if (firstPageIndex>4 && pageCount >= nbPages) {
-	                	var offset = 4;
-	                	if (facetItems && facetItems.length < 50) {
-	                		offset = offset + Math.ceil((50 - facetItems.length) / pageSize);
-	                	}
-	                	firstPageIndex = firstPageIndex - offset;
-	                	if ((facetItems.length + (offset * pageSize))>100 && next === false) {
-	                		next = true;
-	                	}
-	                } else {
-	                	if ((facetItems.length + (firstPageIndex * pageSize))>100 && next === false) {
-	                		next = true;
-	                	}
-	                	firstPageIndex = 0;
-	                }
-	                
+                    
+                    firstPageIndex=pageIndex;
+	                var pageCount = facetItems.length / pageSize;
+ 
 	                var pages = [];
 	                if (pageCount>1 || pageIndex>0) {
 	                    if (pageCount>nbPages) {
 	                        pageCount = nbPages;
 	                    }
-	                    var prev = (firstPageIndex === 0) ? null : true;
-	
-	                    if (this.itemClicked === "prev" && (pageIndex + 1) % 2 === 0) {
-	                        firstPageIndex = ((firstPageIndex + 1) - (pageSize) >= 0) ?  (firstPageIndex + 1) - pageSize : firstPageIndex;
-	                        pageCount = nbPages;
-	                        if (firstPageIndex === 0) {
-	                            prev = false;
-	                        }
-	                    }
+	                    var prev = (firstPageIndex === 0) ? false : true;
+
 	                    for (var i=firstPageIndex; i<(firstPageIndex+pageCount); i++) {
 	                        var selected = null;
-	                        if (i == pageIndex) {
+	                        if (i == itemIndex/pageSize) {
 	                            selected = true;
 	                        }
 	                        pages.push({ "id" : i+1, "selected" :  selected});
 	                    }
-	
+
 	                    this.$el.html(squid_api.template.squid_api_filters_categorical_paging_view({
 	                        "prev" : prev,
 	                        "pages" : pages,

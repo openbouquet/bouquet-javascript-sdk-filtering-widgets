@@ -591,7 +591,7 @@
 
                 // compute required index range
                 var startIndex = pageIndex * pageSize;
-                var endIndex = startIndex + pageSize;
+                var endIndex = startIndex + (pageSize *nbPages);
 
                 // check if we need to fetch more items
                 var searchStale =  false;
@@ -602,7 +602,9 @@
                 }
                 if ((facet) && (facet.get("id") == selectedFacetId) && (!searchStale)) {
                     var itemIndex = this.filterStore.get("itemIndex");
-
+                    if (facet.getParameter("startIndex")>=0) {
+                    	itemIndex = facet.getParameter("startIndex");
+                    }
                     // compute what's the max index
                     var maxItem = itemIndex + facet.get("items").length;
                     if (startIndex < itemIndex) {
@@ -611,8 +613,11 @@
                     if ((endIndex > maxItem) && (facet.get("hasMore") === true)) {
                         fetch = true;
                     }
-                } else {
+                } else if (facet === null || searchStale) {
+                	//Launch facet once only, it was done 4 times elswhere
                     fetch = true;
+                } else {
+                    fetch = false;
                 }
 
                 if ((fetch === true) && (selectedFacetId) && (this.currentModel.get("id").facetJobId)) {
@@ -675,9 +680,11 @@
                                 if ((model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) || model.get("done") === false) {
                                     if (model.get("done") === true) {
                                         me.filterStore.set("facet", model);
+                                        me.filterStore.trigger("change:facet");
                                     } else {
                                         if (model.get("done") === false) {
                                             me.filterStore.set("facet", model);
+                                            me.filterStore.trigger("change:facet");
                                         }
                                         // reset currentModel ID
                                         facetJob.set("id",me.currentModel.get("id"));
@@ -689,6 +696,7 @@
                                 } else {
                                     me.filterStore.set("itemIndex", startIndex);
                                     me.filterStore.set("facet", model);
+                                    me.filterStore.trigger("change:facet");
                                 }
                                 // set error message if exists
                                 var errorMessage = model.get("errorMessage");
@@ -698,7 +706,6 @@
                                     }
                                 }
                                 // manually trigger if previously set
-                                me.filterStore.trigger("change:facet");
                                 searchInProgess.addClass("hidden");
                                 searchNotInProgess.removeClass("hidden");
                             }

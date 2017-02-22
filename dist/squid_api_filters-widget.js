@@ -911,6 +911,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
 
             this.listenTo(this.filters, "change:selection", this.render);
+            this.listenTo(this.model, "change:itemIndex", this.render);
             this.listenTo(this.model, "change:pageIndex", this.render);
             this.listenTo(this.model, "change:facet", this.render);
             this.listenTo(this.status, "change", this.widgetState);
@@ -1032,7 +1033,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 var itemIndex = this.model.get("itemIndex");
 
                 // display current facet members
-                var startIndex = (pageIndex * pageSize) - itemIndex;
+                var startIndex = itemIndex -(pageIndex * pageSize);
                 var endIndex = startIndex + pageSize;
 
                 var selectedFilter = this.model.get("selectedFilter");
@@ -1125,6 +1126,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 }
             }
 
+            this.listenTo(this.model, "change:itemIndex", this.render);
             this.listenTo(this.model, "change:pageIndex", this.render);
             this.listenTo(this.model, "change:facet", this.render);
             this.render();
@@ -1139,28 +1141,21 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 var nbPages = this.model.get("nbPages");
                 var itemIndex = this.model.get("itemIndex");
                 var pageSize = this.model.get("pageSize");
-                var firstPageIndex = Math.round(itemIndex / pageSize);
                 this.itemClicked = "number";
                 if (pageId == "prev") {
-                    if (pageIndex > (firstPageIndex - nbPages)) {
-                        // previous page
-                        this.model.set("pageIndex", pageIndex-1);
-                    } else {
-                        // previous page group
-                        this.model.set("pageIndex", firstPageIndex - nbPages);
-                    }
+                	if (pageIndex>0) {
+                        this.model.set("itemIndex", 0, {silent: true});
+                		this.model.set("pageIndex", Math.max(pageIndex - nbPages, 0));
+                	}
                     this.itemClicked = "prev";
                 } else if (pageId == "next") {
-                    if (pageIndex < (firstPageIndex + nbPages)) {
-                        // next page
-                        this.model.set("pageIndex", pageIndex+1);
-                    } else {
-                        // next page group
-                        this.model.set("pageIndex", firstPageIndex + nbPages);
-                    }
+                	if (this.model.get("facet").get("hasMore") === true) {
+                        this.model.set("itemIndex", 0, {silent: true});
+                		this.model.set("pageIndex", pageIndex + nbPages);
+                	}
                     this.itemClicked = "next";
                 } else {
-                    this.model.set("pageIndex", pageId-1);
+                    this.model.set("itemIndex", (pageId-1)*pageSize);
                 }
             }
         },
@@ -1175,52 +1170,30 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 var itemIndex = this.model.get("itemIndex");
 
                 //Sometimes initial facet jobs continue to be rendered even after page click
-                if (pageIndex * pageSize === itemIndex) {
+                if (facetItems && facetItems.length>0) {
                     var next = false;
                     if (facet.get("hasMore")) {
                         next = true;
                     }
-
-	                var pageCount = Math.min((facetItems.length / pageSize)+(itemIndex/pageSize),10);
-	                var firstPageIndex = Math.round(itemIndex / pageSize);
-	                if (firstPageIndex>4 && pageCount >= nbPages) {
-	                	var offset = 4;
-	                	if (facetItems && facetItems.length < 50) {
-	                		offset = offset + Math.ceil((50 - facetItems.length) / pageSize);
-	                	}
-	                	firstPageIndex = firstPageIndex - offset;
-	                	if ((facetItems.length + (offset * pageSize))>100 && next === false) {
-	                		next = true;
-	                	}
-	                } else {
-	                	if ((facetItems.length + (firstPageIndex * pageSize))>100 && next === false) {
-	                		next = true;
-	                	}
-	                	firstPageIndex = 0;
-	                }
-	                
+                    
+                    firstPageIndex=pageIndex;
+	                var pageCount = facetItems.length / pageSize;
+ 
 	                var pages = [];
 	                if (pageCount>1 || pageIndex>0) {
 	                    if (pageCount>nbPages) {
 	                        pageCount = nbPages;
 	                    }
-	                    var prev = (firstPageIndex === 0) ? null : true;
-	
-	                    if (this.itemClicked === "prev" && (pageIndex + 1) % 2 === 0) {
-	                        firstPageIndex = ((firstPageIndex + 1) - (pageSize) >= 0) ?  (firstPageIndex + 1) - pageSize : firstPageIndex;
-	                        pageCount = nbPages;
-	                        if (firstPageIndex === 0) {
-	                            prev = false;
-	                        }
-	                    }
+	                    var prev = (firstPageIndex === 0) ? false : true;
+
 	                    for (var i=firstPageIndex; i<(firstPageIndex+pageCount); i++) {
 	                        var selected = null;
-	                        if (i == pageIndex) {
+	                        if (i == itemIndex/pageSize) {
 	                            selected = true;
 	                        }
 	                        pages.push({ "id" : i+1, "selected" :  selected});
 	                    }
-	
+
 	                    this.$el.html(squid_api.template.squid_api_filters_categorical_paging_view({
 	                        "prev" : prev,
 	                        "pages" : pages,
@@ -2090,7 +2063,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
                 // compute required index range
                 var startIndex = pageIndex * pageSize;
-                var endIndex = startIndex + pageSize;
+                var endIndex = startIndex + (pageSize *nbPages);
 
                 // check if we need to fetch more items
                 var searchStale =  false;
@@ -2101,7 +2074,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 }
                 if ((facet) && (facet.get("id") == selectedFacetId) && (!searchStale)) {
                     var itemIndex = this.filterStore.get("itemIndex");
-
+                    if (facet.getParameter("startIndex")>=0) {
+                    	itemIndex = facet.getParameter("startIndex");
+                    }
                     // compute what's the max index
                     var maxItem = itemIndex + facet.get("items").length;
                     if (startIndex < itemIndex) {
@@ -2110,8 +2085,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     if ((endIndex > maxItem) && (facet.get("hasMore") === true)) {
                         fetch = true;
                     }
-                } else {
+                } else if (facet === null || searchStale) {
+                	//Launch facet once only, it was done 4 times elswhere
                     fetch = true;
+                } else {
+                    fetch = false;
                 }
 
                 if ((fetch === true) && (selectedFacetId) && (this.currentModel.get("id").facetJobId)) {
@@ -2174,9 +2152,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
                                 if ((model.get("apiError") && (model.get("apiError") == "COMPUTING_IN_PROGRESS")) || model.get("done") === false) {
                                     if (model.get("done") === true) {
                                         me.filterStore.set("facet", model);
+                                        me.filterStore.trigger("change:facet");
                                     } else {
                                         if (model.get("done") === false) {
                                             me.filterStore.set("facet", model);
+                                            me.filterStore.trigger("change:facet");
                                         }
                                         // reset currentModel ID
                                         facetJob.set("id",me.currentModel.get("id"));
@@ -2188,6 +2168,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                                 } else {
                                     me.filterStore.set("itemIndex", startIndex);
                                     me.filterStore.set("facet", model);
+                                    me.filterStore.trigger("change:facet");
                                 }
                                 // set error message if exists
                                 var errorMessage = model.get("errorMessage");
@@ -2197,7 +2178,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
                                     }
                                 }
                                 // manually trigger if previously set
-                                me.filterStore.trigger("change:facet");
                                 searchInProgess.addClass("hidden");
                                 searchNotInProgess.removeClass("hidden");
                             }
