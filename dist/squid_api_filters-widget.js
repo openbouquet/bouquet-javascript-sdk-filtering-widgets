@@ -1763,8 +1763,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 if (this.currentModel !== this.model) {
                     this.currentModel = this.model;
                     this.listenTo(this.currentModel, 'change', function() {
+                    	
                         // force facet fetch (because the selection has changed)
-                        me.renderFacet(true);
+                    	// Do not relaunch a facet job when few attributes changed, no need & it generate extra calls
+                        me.renderFacet(me.currentModel.hasChanged("statistics") === false && me.currentModel.hasChanged("id") === false && me.currentModel.hasChanged("oid") === false && me.currentModel.hasChanged("status") === false);
                     });
                 }
             }
