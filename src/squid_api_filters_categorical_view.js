@@ -641,8 +641,9 @@
                     // get the results from API
                     this.facetJobFetch(facetJob, startIndex);
                 } else {
-                    // trigger facet render
-                    me.filterStore.trigger("change:facet");
+                   // trigger facet render
+                   // T2778 remove this call it looks duplicating rendering
+                   // me.filterStore.trigger("change:facet");
                 }
             }
         },
@@ -659,7 +660,16 @@
             var facetJobId = facetJob.get("oid");
             var selectedFilter = this.filterStore.get("selectedFilter");
             var selectedFacet = this.filterStore.get("facet");
-
+            var itemIndex = this.filterStore.get("itemIndex");
+            var refresh = false;
+            if (this.filterStore.hasChanged("pageIndex") || this.filterStore.hasChanged("oid") || this.filterStore.hasChanged("oid") || this.filterStore.hasChanged("search")) {
+            	refresh = true;
+            }
+            if (itemIndex >= this.filterStore.get("pageIndex") * this.filterStore.get("pageSize")) {
+                if (itemIndex < (this.filterStore.get("pageIndex")+this.filterStore.get("nbPages")) * this.filterStore.get("pageSize")) {
+                	startIndex = itemIndex;
+                }
+            }
             if (facetJobId === selectedFilter) {
                 if (! selectedFacet) {
                     // due to timeOut for the success handler
@@ -696,9 +706,10 @@
                                         }, 20000);
                                     }
                                 } else {
-                                    me.filterStore.set("itemIndex", startIndex);
-                                    me.filterStore.set("facet", model);
-                                    me.filterStore.trigger("change:facet");
+                                	if (refresh) {
+                                		me.filterStore.set("itemIndex", startIndex);
+                                		me.filterStore.set("facet", model);
+	                                }
                                 }
                                 // set error message if exists
                                 var errorMessage = model.get("errorMessage");
