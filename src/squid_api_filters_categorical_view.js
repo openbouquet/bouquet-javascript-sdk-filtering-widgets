@@ -183,7 +183,7 @@
                 }
                 if (me.currentModel !== me.model) {
                     var selectionClone = $.extend(true, {}, filters.get("selection"));
-                    me.currentModel.set("selection", selectionClone);
+                    me.currentModel.set("selection", selectionClone, {silent: true});
                 }
                 if (me.displayFacetQuantity) {
                     me.updateFacetQuantityDisplay();

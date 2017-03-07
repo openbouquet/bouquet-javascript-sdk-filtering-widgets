@@ -910,7 +910,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 this.onChange = options.onChange;
             }
 
-            this.listenTo(this.filters, "change:selection", this.render);
+            //this.listenTo(this.filters, "change:selection", this.render);
             this.listenTo(this.model, "change:itemIndex", this.render);
             this.listenTo(this.model, "change:pageIndex", this.render);
             this.listenTo(this.model, "change:facet", this.render);
@@ -1655,7 +1655,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 }
                 if (me.currentModel !== me.model) {
                     var selectionClone = $.extend(true, {}, filters.get("selection"));
-                    me.currentModel.set("selection", selectionClone);
+                    me.currentModel.set("selection", selectionClone, {silent: true});
                 }
                 if (me.displayFacetQuantity) {
                     me.updateFacetQuantityDisplay();

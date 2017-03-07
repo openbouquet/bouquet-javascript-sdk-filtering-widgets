@@ -47,7 +47,7 @@
                 this.onChange = options.onChange;
             }
 
-            this.listenTo(this.filters, "change:selection", this.render);
+            //this.listenTo(this.filters, "change:selection", this.render);
             this.listenTo(this.model, "change:itemIndex", this.render);
             this.listenTo(this.model, "change:pageIndex", this.render);
             this.listenTo(this.model, "change:facet", this.render);
