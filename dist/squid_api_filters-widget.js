@@ -2134,7 +2134,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             var selectedFacet = this.filterStore.get("facet");
             var itemIndex = this.filterStore.get("itemIndex");
             var refresh = false;
-            if (this.filterStore.hasChanged("pageIndex") || this.filterStore.hasChanged("oid") || this.filterStore.hasChanged("oid") || this.filterStore.hasChanged("search")) {
+            if (this.filterStore.hasChanged("pageIndex") || this.filterStore.hasChanged("oid") || this.filterStore.hasChanged("oid") || this.filterStore.hasChanged("search") || (this.filterStore.get("searchPrevious") === null && this.filterStore.get("search") === null)) {
             	refresh = true;
             }
             if (itemIndex >= this.filterStore.get("pageIndex") * this.filterStore.get("pageSize")) {
