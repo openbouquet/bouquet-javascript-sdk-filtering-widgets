@@ -82,9 +82,23 @@
             }
         },
 
+        isFilteredFacet: function(elements, id) {
+        	if (elements === null) {
+        		return true;
+        	}
+        	for (var i=0; i<elements.length; i++) {
+        		if (elements[i] === id) { return true; }
+        	}
+        	return false;
+        },
+        
         render : function() {
             var selFacets = [];
             var noData = true;
+            var filteredFacets  = null;
+            if (squid_api && squid_api.model.config.get("chosenFacets")) {
+            	filteredFacets = squid_api.model.config.get("chosenFacets");
+            }
             if (this.model) {
                 var selection = this.model.get("selection");
                 if (selection) {
@@ -93,20 +107,22 @@
                         var facets = selection.facets;
                         for (i = 0; i < facets.length; i++) {
                             var facet = facets[i];
-                            var selFacet = {
-                                    "id" : facet.id,
-                                    "name" : facet.name ? facet.name : facet.dimension.name,
-                                    "items" : []
-                            };
-                            var selectedItems = facet.selectedItems;
-                            for (ix = 0; ix < selectedItems.length; ix++) {
-                                selFacet.items.push({
-                                        "id" : selectedItems[ix].id,
-                                        "name" : selectedItems[ix].value
-                                });
-                            }
-                            selFacet.available = (facet.dimension.type === "CATEGORICAL" || facet.dimension.type === "SEGMENTS" || selFacet.items.length > 0) && facet.dimension.valueType !== "DATE";
-                            selFacets.push(selFacet);
+                        	if (this.isFilteredFacet(filteredFacets, facet.id)) {
+	                            var selFacet = {
+	                                    "id" : facet.id,
+	                                    "name" : facet.name ? facet.name : facet.dimension.name,
+	                                    "items" : []
+	                            };
+	                            var selectedItems = facet.selectedItems;
+	                            for (ix = 0; ix < selectedItems.length; ix++) {
+	                                selFacet.items.push({
+	                                        "id" : selectedItems[ix].id,
+	                                        "name" : selectedItems[ix].value
+	                                });
+	                            }
+	                            selFacet.available = (facet.dimension.type === "CATEGORICAL" || facet.dimension.type === "SEGMENTS" || selFacet.items.length > 0) && facet.dimension.valueType !== "DATE";
+	                            selFacets.push(selFacet);
+                        	}
                         }
                     }
                 }
