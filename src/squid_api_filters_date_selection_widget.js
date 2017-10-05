@@ -19,6 +19,7 @@
             }
         },
         monthsOnlyDisplay : false,
+        dateLimit: false,
         datePickerPosition: null,
 
         initialize: function(options) {
@@ -35,7 +36,10 @@
             if (options.ranges) {
                 this.ranges = options.ranges;
             }
-            if (options.datePickerPosition) {
+            if (options.dateLimit) {
+                this.dateLimit = options.dateLimit;
+            }
+           if (options.datePickerPosition) {
                 this.datePickerPosition  = options.datePickerPosition;
             } else {
                 this.datePickerPosition = "right";
@@ -252,6 +256,7 @@
                 format: 'YYYY-MM-DD',
                 opens: this.datePickerPosition,
                 showDropdowns: true,
+                dateLimit: this.dateLimit,
                 startDate: dates.currentStartDate ? dates.currentStartDate.format('YYYY-MM-DD') : null,
                 endDate: dates.currentEndDate ? dates.currentEndDate.format('YYYY-MM-DD') : null,
                 minDate : dates.minDate ? dates.minDate.format('YYYY-MM-DD') : moment().utc().subtract("50", "years").format("YYYY-MM-DD"),
