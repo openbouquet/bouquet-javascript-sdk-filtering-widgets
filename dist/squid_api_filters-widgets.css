@@ -27,6 +27,11 @@
 .squid-api-range-selection-widget select {
   cursor: pointer; }
 
+.checkbox input {
+  right: 15px;
+  opacity: unset;
+  pointer-events: unset; }
+
 .squid-api-date-selection-widget #date-picker {
   float: left; }
   .squid-api-date-selection-widget #date-picker .sq-content {
