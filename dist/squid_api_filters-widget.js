@@ -321,7 +321,7 @@ function program5(depth0,data) {
 this["squid_api"]["template"]["squid_api_filters_categorical_view"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var stack1, self=this, functionType="function", escapeExpression=this.escapeExpression;
+  var buffer = "", stack1, self=this, functionType="function", escapeExpression=this.escapeExpression;
 
 function program1(depth0,data) {
   
@@ -329,7 +329,7 @@ function program1(depth0,data) {
   buffer += "\n<div class=\"squid_api_filters-categorical-panel-view popup\">\n	";
   stack1 = helpers.unless.call(depth0, (depth0 && depth0.initialFacet), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	<div id=\"search\">\n		<div class=\"input-group\">\n		      <span class=\"input-group-addon\">\n		        <i id=\"search-in-progress\" class=\"fa fa-refresh fa-spin hidden\"></i>\n		        <i id=\"search-not-in-progress\" class=\"fa fa-search\"></i>\n		      </span>\n			<input class=\"form-control\" id=\"searchbox\" type=\"search\" placeholder=\"Search for\">\n		</div>\n	</div>\n	<div id=\"filter-display-results\">\n	</div>\n	<div id=\"selected\">\n	</div>\n	<div id=\"pagination-container\">\n</div>\n";
+  buffer += "\n	<div id=\"search\">\n		<div class=\"input-group\">\n		      <span class=\"input-group-addon\">\n		        <i id=\"search-in-progress\" class=\"fa fa-refresh fa-spin hidden\"></i>\n		        <i id=\"search-not-in-progress\" class=\"fa fa-search\"></i>\n		      </span>\n			<input class=\"form-control\" id=\"searchbox\" type=\"search\" placeholder=\"Search for\">\n		</div>\n	</div>\n	<div id=\"filter-display-results\">\n	</div>\n	<div id=\"selected\">\n	</div>\n	<div id=\"close\">\n		<ul class=\"pagination\"><li class=\"active button\"><a href=\"#\">Close</a></li><ul>\n	</div>\n	<div id=\"pagination-container\">\n</div>\n";
   return buffer;
   }
 function program2(depth0,data) {
@@ -350,7 +350,7 @@ function program4(depth0,data) {
   buffer += "\n			<div class=\"col-md-7\">\n				";
   stack1 = helpers.unless.call(depth0, (depth0 && depth0.initialFacet), {hash:{},inverse:self.noop,fn:self.program(11, program11, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n				<div id=\"search\">\n                  <div class=\"input-group\">\n                    <input class=\"form-control\" id=\"searchbox\" type=\"search\" placeholder=\"Search for\">\n                    <span class=\"input-group-addon\">\n                      <i class=\"fa fa-search\"></i>\n                    </span>\n                  </div>\n				</div>\n			</div>\n		</div>\n		<div class=\"row\">\n			<div class=\"col-md-7\">\n				<div id=\"filter-display-results\">\n				</div>\n			</div>\n			<div class=\"col-md-5\">\n				<div id=\"selected\">\n				</div>\n			</div>\n		</div>\n		<div class=\"row\">\n			<div id=\"pagination-container\">\n					\n			</div>\n		</div>\n		<div class=\"row\">\n		<div class=\"col-md-4\">\n		</div>\n		<div class=\"col-md-8\">\n				\n			</div>\n	</div>\n\n	";
+  buffer += "\n				<div id=\"search\">\n                  <div class=\"input-group\">\n                    <input class=\"form-control\" id=\"searchbox\" type=\"search\" placeholder=\"Search for\">\n                    <span class=\"input-group-addon\">\n                      <i class=\"fa fa-search\"></i>\n                    </span>\n                  </div>\n				</div>\n			</div>\n		</div>\n		<div class=\"row\">\n			<div class=\"col-md-7\">\n				<div id=\"filter-display-results\">\n				</div>\n			</div>\n			<div class=\"col-md-5\">\n				<div id=\"selected\">\n				</div>\n			</div>\n		</div>\n		<div class=\"row\">\n			<div id=\"pagination-container\">\n\n			</div>\n		</div>\n		<div class=\"row\">\n		<div class=\"col-md-4\">\n		</div>\n		<div class=\"col-md-8\">\n\n			</div>\n	</div>\n\n	";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0['panel-buttons']), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</div>\n";
@@ -401,8 +401,9 @@ function program13(depth0,data) {
   }
 
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.popup), {hash:{},inverse:self.program(4, program4, data),fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { return stack1; }
-  else { return ''; }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n";
+  return buffer;
   });
 
 this["squid_api"]["template"]["squid_api_filters_categorical_view_hover_template"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -1909,6 +1910,14 @@ $.widget( "ui.dialog", $.ui.dialog, {
 				//T2726: must put back the call back to launch a search on keyeup
                 //This has been removed at a point, for an unknown reason
                 $(this.filterPanel).find("#searchbox").keyup(_.bind(this.search, this));
+                
+                $(this.filterPanel).find("li.button").on("click", function() {
+                    if ($(me.filterPanel).dialog("isOpen")) {
+                        $(me.filterPanel).dialog( "close" );
+                    } else {
+                        $(me.filterPanel).dialog( "open" );
+                    }
+                });
                
 				if (this.popup) {
                     if (buttonLabel) {
@@ -2063,7 +2072,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     }
                 }
             }
-        },
+         },
 
         /**
          * Render a facet.

@@ -421,6 +421,14 @@
 				//T2726: must put back the call back to launch a search on keyeup
                 //This has been removed at a point, for an unknown reason
                 $(this.filterPanel).find("#searchbox").keyup(_.bind(this.search, this));
+                
+                $(this.filterPanel).find("li.button").on("click", function() {
+                    if ($(me.filterPanel).dialog("isOpen")) {
+                        $(me.filterPanel).dialog( "close" );
+                    } else {
+                        $(me.filterPanel).dialog( "open" );
+                    }
+                });
                
 				if (this.popup) {
                     if (buttonLabel) {
@@ -575,7 +583,7 @@
                     }
                 }
             }
-        },
+         },
 
         /**
          * Render a facet.

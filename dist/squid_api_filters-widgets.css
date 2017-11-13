@@ -27,11 +27,6 @@
 .squid-api-range-selection-widget select {
   cursor: pointer; }
 
-.checkbox input {
-  right: 15px;
-  opacity: unset;
-  pointer-events: unset; }
-
 .squid-api-date-selection-widget #date-picker {
   float: left; }
   .squid-api-date-selection-widget #date-picker .sq-content {
@@ -102,6 +97,12 @@
   margin-bottom: 20px;
   padding: 10px;
   margin-left: 3px; }
+.squid_api_filters_categorical_filter_panel #close {
+  position: absolute;
+  right: 25px;
+  top: 0px; }
+  .squid_api_filters_categorical_filter_panel #close li.closable {
+    border-radius: 4px; }
 .squid_api_filters_categorical_filter_panel #search {
   min-width: 350px; }
   .squid_api_filters_categorical_filter_panel #search .input-group {
@@ -175,6 +176,8 @@
       .squid_api_filters_categorical_filter_panel #pagination-container .pagination li.active.previous a, .squid_api_filters_categorical_filter_panel #pagination-container .pagination li.active.previous span, .squid_api_filters_categorical_filter_panel #pagination-container .pagination li.active.previous a:hover, .squid_api_filters_categorical_filter_panel #pagination-container .pagination li.active.previous span:hover, .squid_api_filters_categorical_filter_panel #pagination-container .pagination li.active.previous a:focus, .squid_api_filters_categorical_filter_panel #pagination-container .pagination li.active.previous span:focus, .squid_api_filters_categorical_filter_panel #pagination-container .pagination li.active.next a, .squid_api_filters_categorical_filter_panel #pagination-container .pagination li.active.next span, .squid_api_filters_categorical_filter_panel #pagination-container .pagination li.active.next a:hover, .squid_api_filters_categorical_filter_panel #pagination-container .pagination li.active.next span:hover, .squid_api_filters_categorical_filter_panel #pagination-container .pagination li.active.next a:focus, .squid_api_filters_categorical_filter_panel #pagination-container .pagination li.active.next span:focus {
         color: #fff;
         background-color: #3498db; }
+      .squid_api_filters_categorical_filter_panel #pagination-container .pagination li:only-child {
+        border-radius: 4px; }
       .squid_api_filters_categorical_filter_panel #pagination-container .pagination li:first-child a, .squid_api_filters_categorical_filter_panel #pagination-container .pagination li:first-child span {
         border-left: none;
         border-radius: 4px 0 0 4px; }

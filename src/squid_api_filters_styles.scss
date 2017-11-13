@@ -39,11 +39,6 @@
     }
 }
 
-.checkbox input {
-	right: 15px;
-	opacity: unset;
-	pointer-events: unset;
-}
 .squid-api-date-selection-widget {
     #date-picker {
         float: left;
@@ -146,6 +141,14 @@
         padding: 10px;
         margin-left: 3px;
     }
+    #close {
+	    position: absolute;
+	    right: 25px;
+	    top: 0px;
+	    li.closable {
+	    	border-radius: 4px;
+	    }
+ 	}
     #search {
         min-width: 350px;
         .input-group {
@@ -165,7 +168,7 @@
             }
         }
     }
-    .panel-body {
+     .panel-body {
         padding: 0px;
         background: #f3f3f3;
     }
@@ -245,6 +248,9 @@
                           background-color: #3498db;
                         }
                     }
+                    &:only-child {
+                         border-radius: 4px;
+                    }
                     &:first-child {
                         a, span {
                             border-left: none;
@@ -262,7 +268,7 @@
                             border-radius: 0 4px 4px 0;
                         }
                     }
-                    &.previous, &.next {
+                     &.previous, &.next {
                         a, span {
                             min-width: auto;
                             font-size: 16px;
@@ -281,7 +287,7 @@
                             cursor: not-allowed;
                             background-color: rgba(255, 255, 255, .3);
                             border-right-color: #dfe2e5;
-                        }
+                    }                    
                     a:hover, span:hover, span:focus, a:active, span:active {
                             color: #fff;
                             background-color: rgba(255, 255, 255, .4);
