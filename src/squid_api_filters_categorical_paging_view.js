@@ -24,7 +24,7 @@
 
             this.listenTo(this.model, "change:itemIndex", this.render);
             this.listenTo(this.model, "change:pageIndex", this.render);
-            this.listenTo(this.model, "change:facet", this.render);
+            this.listenTo(this.model, "change:facet", this.resetAndRender);
             this.render();
         },
 
@@ -56,6 +56,11 @@
             }
         },
 
+        resetAndRender : function() {
+        	this.model.set("itemIndex", 0, {silent: true});
+        	this.render();
+        },
+        
         render : function() {
             var facet = this.model.get("facet");
             if (facet) {
