@@ -210,7 +210,7 @@
 
                 // set the message
                 if (facet.get("done") === true) {
-                    if ((facet.get("hasMore") === true) && (updatedItems < pageSize)) {
+                    if ((facet.get("hasMore") === true) && (updatedItems.length < pageSize)) {
                         message = "Partial results (computation pending)";
                     } else if (!facetItems || facetItems.length === 0) {
                         message = "No Items";

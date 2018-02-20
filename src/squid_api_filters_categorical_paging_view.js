@@ -40,13 +40,13 @@
                 this.itemClicked = "number";
                 if (pageId == "prev") {
                 	if (pageIndex>0) {
-                        this.model.set("itemIndex", 0, {silent: true});
-                		this.model.set("pageIndex", Math.max(pageIndex - nbPages, 0));
+                        this.model.set("itemIndex", Math.max(pageIndex - nbPages, 0) * pageSize, {silent: true});
+                        this.model.set("pageIndex", Math.max(pageIndex - nbPages, 0));
                 	}
                     this.itemClicked = "prev";
                 } else if (pageId == "next") {
                 	if (this.model.get("facet").get("hasMore") === true) {
-                        this.model.set("itemIndex", 0, {silent: true});
+                        this.model.set("itemIndex", (pageIndex + nbPages) * pageSize, {silent: true});
                 		this.model.set("pageIndex", pageIndex + nbPages);
                 	}
                     this.itemClicked = "next";
@@ -57,7 +57,12 @@
         },
 
         resetAndRender : function() {
-        	this.model.set("itemIndex", 0, {silent: true});
+        	if (this.model.hasChanged("facet")) {
+        		var previousFacet = this.model.previousAttributes().facet;
+        		if (previousFacet === null || previousFacet.get("id") !== this.model.get("facet").get("id")) {
+        			this.model.set("itemIndex", 0, {silent: true});
+        		}
+        	}
         	this.render();
         },
         
