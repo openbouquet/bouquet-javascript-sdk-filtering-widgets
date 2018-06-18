@@ -635,6 +635,15 @@ function program6(depth0,data) {
   return buffer;
   });
 
+this["squid_api"]["template"]["squid_api_filters_my_selections"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<div class=\"modal-content\">\n    <div class=\"modal-header\">\n        <h1>My Selections</h1>\n    </div>\n    <div class=\"modal-body\">\n    </div>\n    <div class=\"modal-footer\">\n        <button  type=\"button\" class=\"btn\">Save</button>\n        <button type=\"button\" class=\"btn\" data-dismiss=\"modal\">Cancel</button>\n    </div>\n</div>";
+  });
+
 this["squid_api"]["template"]["squid_api_filters_segment_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -773,6 +782,23 @@ function program4(depth0,data) {
                         });
                     });
                 });
+            },
+            "click .my-selections" : function() {
+                var me = this;
+                var projectId = this.config.get("project");
+                var bookmarkId = this.config.get("bookmark");
+
+                console.log(projectId, bookmarkId);
+
+                if (!this.selectionsModal) {
+                    var mySelectionsWidget = new squid_api.view.MySelectionsWidget({
+                        template : squid_api.template.squid_api_filters_my_selections
+                    });
+                    this.selectionsModal = new squid_api.view.ModalView({
+                        view : mySelectionsWidget
+                    });
+                }
+                this.selectionsModal.render();
             }
         },
 
@@ -798,7 +824,7 @@ function program4(depth0,data) {
         	}
         	return false;
         },
-        
+
         render : function() {
             var selFacets = [];
             var noData = true;
@@ -3033,6 +3059,33 @@ $.widget( "ui.dialog", $.ui.dialog, {
     return View;
 }));
 
+(function (root, factory) {
+    "use strict";
+    root.squid_api.view.MySelectionsWidget = factory(root.Backbone, root.squid_api);
+}(this, function (Backbone, squid_api) {
+    "use strict";
+    View = Backbone.View.extend( {
+
+        template : null,
+
+        initialize : function(options) {
+            // setup options
+            if (options) {
+                if (options.template) {
+                    this.template = options.template;
+                }
+            }
+        },
+
+        render : function() {
+            this.$el.html(this.template);
+            return this;
+        }
+
+    });
+
+    return View;
+}));
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD.

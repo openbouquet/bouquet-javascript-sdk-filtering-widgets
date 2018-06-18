@@ -66,6 +66,23 @@
                         });
                     });
                 });
+            },
+            "click .my-selections" : function() {
+                var me = this;
+                var projectId = this.config.get("project");
+                var bookmarkId = this.config.get("bookmark");
+
+                console.log(projectId, bookmarkId);
+
+                if (!this.selectionsModal) {
+                    var mySelectionsWidget = new squid_api.view.MySelectionsWidget({
+                        template : squid_api.template.squid_api_filters_my_selections
+                    });
+                    this.selectionsModal = new squid_api.view.ModalView({
+                        view : mySelectionsWidget
+                    });
+                }
+                this.selectionsModal.render();
             }
         },
 
@@ -91,7 +108,7 @@
         	}
         	return false;
         },
-        
+
         render : function() {
             var selFacets = [];
             var noData = true;
