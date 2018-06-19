@@ -9,7 +9,7 @@
 
         initialize : function(options) {
             this.config = squid_api.model.config;
-
+            this.message = "";
             // setup options
             if (options) {
                 if (options.template) {
@@ -54,16 +54,36 @@
                     name: name,
                     selection: squid_api.model.config.attributes.selection
                 };
-                $.ajax({
-                    url: this.getSelectionsUrl(),
-                    method: "POST",
-                    contentType: "text/json",
-                    data: JSON.stringify(newSelection),
-                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
-                }).done(function(newSelection) {
-                    me.data.selections.push(newSelection);
-                    me.render();
+
+                var existingSelections = $.grep(this.data.selections, function(elem) {
+                    return elem.name === name;
                 });
+
+                if (existingSelections.length > 0) {
+                    $.ajax({
+                        url: this.getSelectionsUrl() + "/" + existingSelections[0].id.myBookmarkSelectionId,
+                        method: "UPDATE",
+                        contentType: "text/json",
+                        data: JSON.stringify(newSelection),
+                        headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
+                    }).done(function(newSelection) {
+                        me.message = "Selection '" + existingSelections[0].name + "' updated";
+                        me.render();
+                    });
+                }
+                else {
+                    $.ajax({
+                        url: this.getSelectionsUrl(),
+                        method: "POST",
+                        contentType: "text/json",
+                        data: JSON.stringify(newSelection),
+                        headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
+                    }).done(function(newSelection) {
+                        me.message = "";
+                        me.data.selections.push(newSelection);
+                        me.render();
+                    });
+                }
             },
 
             "click .my-selection-name" : function(event) {
@@ -76,8 +96,8 @@
                     return elem.id.myBookmarkSelectionId === myBookmarkSelectionId;}
                 )[0].selection;
 
-                console.log(this.data.selections[0]);
-                console.log(mySelection);
+                // console.log(this.data.selections[0]);
+                // console.log(mySelection);
 
                 squid_api.model.config.attributes.selection = mySelection;
 
@@ -116,6 +136,7 @@
                     method: "DELETE",
                     headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                 }).done(function() {
+                    me.message = "";
                     me.data.selections = $.grep(me.data.selections, function(elem) {
                         return elem.id.myBookmarkSelectionId !== myBookmarkSelectionId;
                     });

@@ -638,7 +638,7 @@ function program6(depth0,data) {
 this["squid_api"]["template"]["squid_api_filters_my_selections"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
 
 function program1(depth0,data) {
   
@@ -656,7 +656,11 @@ function program1(depth0,data) {
   buffer += "<div class=\"modal-content\">\n    <div class=\"modal-header\">\n        <h3>My Selections</h3>\n    </div>\n    <div class=\"modal-body\">\n        <div class=\"row filter-selections\">\n            <ul>\n                ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.selections), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            </ul>\n        </div>\n        <div class=\"row\">\n            <div class=\"form-group col-md-9\">\n                <input type=\"text\" id=\"new-selection\" class=\"form-control\" placeholder=\"Selection's name\">\n            </div>\n            <div class=\"col-md-3\">\n                <button id=\"create-selection\" type=\"button\" class=\"btn\" disabled>Create</button>\n            </div>\n        </div>\n    </div>\n    <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn\" data-dismiss=\"modal\">Cancel</button>\n    </div>\n</div>";
+  buffer += "\n            </ul>\n        </div>\n        <div class=\"row\">\n            <div class=\"form-group col-md-9\">\n                <input type=\"text\" id=\"new-selection\" class=\"form-control\" placeholder=\"Selection's name\">\n            </div>\n            <div class=\"col-md-3\">\n                <button id=\"create-selection\" type=\"button\" class=\"btn\" disabled>Create</button>\n            </div>\n        </div>\n        <div class=\"row\">";
+  if (helper = helpers.message) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.message); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</div>\n    </div>\n    <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn\" data-dismiss=\"modal\">Cancel</button>\n    </div>\n</div>";
   return buffer;
   });
 
@@ -3101,7 +3105,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
         initialize : function(options) {
             this.config = squid_api.model.config;
-
+            this.message = "";
             // setup options
             if (options) {
                 if (options.template) {
@@ -3146,16 +3150,36 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     name: name,
                     selection: squid_api.model.config.attributes.selection
                 };
-                $.ajax({
-                    url: this.getSelectionsUrl(),
-                    method: "POST",
-                    contentType: "text/json",
-                    data: JSON.stringify(newSelection),
-                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
-                }).done(function(newSelection) {
-                    me.data.selections.push(newSelection);
-                    me.render();
+
+                var existingSelections = $.grep(this.data.selections, function(elem) {
+                    return elem.name === name;
                 });
+
+                if (existingSelections.length > 0) {
+                    $.ajax({
+                        url: this.getSelectionsUrl() + "/" + existingSelections[0].id.myBookmarkSelectionId,
+                        method: "UPDATE",
+                        contentType: "text/json",
+                        data: JSON.stringify(newSelection),
+                        headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
+                    }).done(function(newSelection) {
+                        me.message = "Selection '" + existingSelections[0].name + "' updated";
+                        me.render();
+                    });
+                }
+                else {
+                    $.ajax({
+                        url: this.getSelectionsUrl(),
+                        method: "POST",
+                        contentType: "text/json",
+                        data: JSON.stringify(newSelection),
+                        headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
+                    }).done(function(newSelection) {
+                        me.message = "";
+                        me.data.selections.push(newSelection);
+                        me.render();
+                    });
+                }
             },
 
             "click .my-selection-name" : function(event) {
@@ -3207,9 +3231,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId,
                     method: "DELETE",
                     headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
-                }).done(function(data) {
-                    console.log(data);
-
+                }).done(function() {
+                    me.message = "";
                     me.data.selections = $.grep(me.data.selections, function(elem) {
                         return elem.id.myBookmarkSelectionId !== myBookmarkSelectionId;
                     });
