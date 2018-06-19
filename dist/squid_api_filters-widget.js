@@ -643,9 +643,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n                <li class=\"my-selection\" data-id=\""
+  buffer += "\n                <li class=\"list-group-item my-selection\" data-id=\""
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.id)),stack1 == null || stack1 === false ? stack1 : stack1.myBookmarkSelectionId)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">\n                    <span class=\"my-selection-name\">";
+    + "\">\n                    <span class=\"glyphicon glyphicon-edit selection-edit\" aria-hidden=\"true\"></span>\n                    <span class=\"my-selection-name\">";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -653,14 +653,14 @@ function program1(depth0,data) {
   return buffer;
   }
 
-  buffer += "<div class=\"modal-content\">\n    <div class=\"modal-header\">\n        <h3>My Selections</h3>\n    </div>\n    <div class=\"modal-body\">\n        <div class=\"row filter-selections\">\n            <ul>\n                ";
+  buffer += "<div class=\"modal-content\">\n    <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button>\n        <h4 class=\"modal-title\">My Selections</h4>\n    </div>\n    <div class=\"modal-body\">\n        <div class=\"results min-filter-height filter-selections\">\n            <ul class=\"list-group\">\n                ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.selections), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            </ul>\n        </div>\n        <div class=\"row\">\n            <div class=\"form-group col-md-9\">\n                <input type=\"text\" id=\"new-selection\" class=\"form-control\" placeholder=\"Selection's name\">\n            </div>\n            <div class=\"col-md-3\">\n                <button id=\"create-selection\" type=\"button\" class=\"btn\" disabled>Create</button>\n            </div>\n        </div>\n        <div class=\"row\">";
+  buffer += "\n            </ul>\n        </div>\n        <div class=\"row\">\n            <div class=\"form-group col-md-9\">\n                <input type=\"text\" id=\"new-selection\" class=\"form-control\" placeholder=\"Selection's name\">\n            </div>\n            <div class=\"col-md-3\">\n                <button id=\"create-selection\" type=\"button\" class=\"btn btn-default\" disabled>Create</button>\n            </div>\n        </div>\n        <div class=\"row\">";
   if (helper = helpers.message) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.message); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</div>\n    </div>\n    <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn\" data-dismiss=\"modal\">Cancel</button>\n    </div>\n</div>";
+    + "</div>\n    </div>\n    <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Cancel</button>\n    </div>\n</div>";
   return buffer;
   });
 
@@ -3157,13 +3157,12 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
                 if (existingSelections.length > 0) {
                     $.ajax({
-                        url: this.getSelectionsUrl() + "/" + existingSelections[0].id.myBookmarkSelectionId +
-                            "?access_token=" + squid_api.model.login.get("accessToken"),
+                        url: this.getSelectionsUrl() + "/" + existingSelections[0].id.myBookmarkSelectionId,
                         method: "PUT",
                         contentType: "text/json",
                         data: JSON.stringify(newSelection),
                         headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
-                    }).done(function(newSelection) {
+                    }).done(function() {
                         me.message = "Selection '" + existingSelections[0].name + "' updated";
                         me.render();
                     });
@@ -3220,6 +3219,37 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 });
 
                 this.close();
+            },
+
+            "click .selection-edit" : function(event) {
+                var me = this;
+                var projectId = this.config.get("project");
+                var bookmarkId = this.config.get("bookmark");
+                var myBookmarkSelectionId = $(event.target).parent().data("id");
+
+                var name = $.grep(this.data.selections, function(elem) {
+                    return elem.id.myBookmarkSelectionId === myBookmarkSelectionId;
+                })[0].name;
+
+                var newSelection = {
+                    id: {
+                      projectId: projectId,
+                      bookmarkId: bookmarkId
+                    },
+                    name: name,
+                    selection: squid_api.model.config.attributes.selection
+                };
+
+                $.ajax({
+                    url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId,
+                    method: "PUT",
+                    contentType: "text/json",
+                    data: JSON.stringify(newSelection),
+                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
+                }).done(function() {
+                    me.message = "Selection '" + existingSelections[0].name + "' updated";
+                    me.render();
+                });
             },
 
             "click .selection-remove" : function(event) {

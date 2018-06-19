@@ -61,13 +61,12 @@
 
                 if (existingSelections.length > 0) {
                     $.ajax({
-                        url: this.getSelectionsUrl() + "/" + existingSelections[0].id.myBookmarkSelectionId +
-                            "?access_token=" + squid_api.model.login.get("accessToken"),
+                        url: this.getSelectionsUrl() + "/" + existingSelections[0].id.myBookmarkSelectionId,
                         method: "PUT",
                         contentType: "text/json",
                         data: JSON.stringify(newSelection),
                         headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
-                    }).done(function(newSelection) {
+                    }).done(function() {
                         me.message = "Selection '" + existingSelections[0].name + "' updated";
                         me.render();
                     });
@@ -124,6 +123,37 @@
                 });
 
                 this.close();
+            },
+
+            "click .selection-edit" : function(event) {
+                var me = this;
+                var projectId = this.config.get("project");
+                var bookmarkId = this.config.get("bookmark");
+                var myBookmarkSelectionId = $(event.target).parent().data("id");
+
+                var name = $.grep(this.data.selections, function(elem) {
+                    return elem.id.myBookmarkSelectionId === myBookmarkSelectionId;
+                })[0].name;
+
+                var newSelection = {
+                    id: {
+                      projectId: projectId,
+                      bookmarkId: bookmarkId
+                    },
+                    name: name,
+                    selection: squid_api.model.config.attributes.selection
+                };
+
+                $.ajax({
+                    url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId,
+                    method: "PUT",
+                    contentType: "text/json",
+                    data: JSON.stringify(newSelection),
+                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
+                }).done(function() {
+                    me.message = "Selection '" + existingSelections[0].name + "' updated";
+                    me.render();
+                });
             },
 
             "click .selection-remove" : function(event) {
