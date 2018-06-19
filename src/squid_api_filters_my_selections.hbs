@@ -1,0 +1,29 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h3>My Selections</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row filter-selections">
+            <ul>
+                {{#each selections}}
+                <li class="my-selection" data-id="{{id.myBookmarkSelectionId}}">
+                    <span class="my-selection-name">{{name}}</span>
+                    <span class="glyphicon glyphicon-remove selection-remove" aria-hidden="true"></span>
+                </li>
+                {{/each}}
+            </ul>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-9">
+                <input type="text" id="new-selection" class="form-control" placeholder="Selection's name">
+            </div>
+            <div class="col-md-3">
+                <button id="create-selection" type="button" class="btn" disabled>Create</button>
+            </div>
+        </div>
+        <div class="row">{{message}}</div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">Cancel</button>
+    </div>
+</div>

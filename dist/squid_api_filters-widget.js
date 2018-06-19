@@ -635,6 +635,35 @@ function program6(depth0,data) {
   return buffer;
   });
 
+this["squid_api"]["template"]["squid_api_filters_my_selections"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                <li class=\"my-selection\" data-id=\""
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.id)),stack1 == null || stack1 === false ? stack1 : stack1.myBookmarkSelectionId)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">\n                    <span class=\"my-selection-name\">";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</span>\n                    <span class=\"glyphicon glyphicon-remove selection-remove\" aria-hidden=\"true\"></span>\n                </li>\n                ";
+  return buffer;
+  }
+
+  buffer += "<div class=\"modal-content\">\n    <div class=\"modal-header\">\n        <h3>My Selections</h3>\n    </div>\n    <div class=\"modal-body\">\n        <div class=\"row filter-selections\">\n            <ul>\n                ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.selections), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            </ul>\n        </div>\n        <div class=\"row\">\n            <div class=\"form-group col-md-9\">\n                <input type=\"text\" id=\"new-selection\" class=\"form-control\" placeholder=\"Selection's name\">\n            </div>\n            <div class=\"col-md-3\">\n                <button id=\"create-selection\" type=\"button\" class=\"btn\" disabled>Create</button>\n            </div>\n        </div>\n        <div class=\"row\">";
+  if (helper = helpers.message) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.message); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</div>\n    </div>\n    <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn\" data-dismiss=\"modal\">Cancel</button>\n    </div>\n</div>";
+  return buffer;
+  });
+
 this["squid_api"]["template"]["squid_api_filters_segment_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -733,6 +762,15 @@ function program4(depth0,data) {
             this.render();
         },
 
+        getSelectionsUrl : function() {
+            var projectId = this.config.get("project");
+            var bookmarkId = this.config.get("bookmark");
+
+            var selectionsUrl =  squid_api.apiBaseURL + "/rs/projects/" + projectId +
+                "/bookmarks/" + bookmarkId + "/myselections";
+            return selectionsUrl;
+        },
+
         events: {
             "click .facet-remove": function(event) {
                 // Obtain facet name / value
@@ -773,6 +811,29 @@ function program4(depth0,data) {
                         });
                     });
                 });
+            },
+            "click .my-selections" : function() {
+                var me = this;
+                $.ajax({url: this.getSelectionsUrl(),
+                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}})
+                    .done(function(selections) {
+                        var options = {
+                            template : squid_api.template.squid_api_filters_my_selections,
+                            data : {selections: selections},
+                            close : function() { me.selectionsModal.close(); }
+                        };
+
+                        if (!me.selectionsModal) {
+                            me.mySelectionsWidget = new squid_api.view.MySelectionsWidget(options);
+                            me.selectionsModal = new squid_api.view.ModalView({
+                                view : me.mySelectionsWidget
+                            });
+                        }
+                        else {
+                            me.mySelectionsWidget.initialize(options);
+                        }
+                        me.selectionsModal.render();
+                });
             }
         },
 
@@ -798,7 +859,7 @@ function program4(depth0,data) {
         	}
         	return false;
         },
-        
+
         render : function() {
             var selFacets = [];
             var noData = true;
@@ -3033,6 +3094,162 @@ $.widget( "ui.dialog", $.ui.dialog, {
     return View;
 }));
 
+(function (root, factory) {
+    "use strict";
+    root.squid_api.view.MySelectionsWidget = factory(root.Backbone, root.squid_api);
+}(this, function (Backbone, squid_api) {
+    "use strict";
+    View = Backbone.View.extend( {
+
+        template : null,
+
+        initialize : function(options) {
+            this.config = squid_api.model.config;
+            this.message = "";
+            // setup options
+            if (options) {
+                if (options.template) {
+                    this.template = options.template;
+                }
+                if (options.data) {
+                    this.data = options.data;
+                }
+                if (options.close) {
+                    this.close = options.close;
+                }
+            }
+        },
+
+        getSelectionsUrl : function() {
+            var projectId = this.config.get("project");
+            var bookmarkId = this.config.get("bookmark");
+
+            var selectionsUrl =  squid_api.apiBaseURL + "/rs/projects/" + projectId +
+                "/bookmarks/" + bookmarkId + "/myselections";
+            return selectionsUrl;
+        },
+
+        events : {
+
+            "input #new-selection" : function(event) {
+                var name = $(event.target).val();
+                $("#create-selection").attr("disabled", name.length === 0);
+            },
+
+            "click #create-selection" : function(event) {
+                var me = this;
+                var projectId = this.config.get("project");
+                var bookmarkId = this.config.get("bookmark");
+
+                var name = $("#new-selection").val();
+                var newSelection = {
+                    id: {
+                      projectId: projectId,
+                      bookmarkId: bookmarkId
+                    },
+                    name: name,
+                    selection: squid_api.model.config.attributes.selection
+                };
+
+                var existingSelections = $.grep(this.data.selections, function(elem) {
+                    return elem.name === name;
+                });
+
+                if (existingSelections.length > 0) {
+                    $.ajax({
+                        url: this.getSelectionsUrl() + "/" + existingSelections[0].id.myBookmarkSelectionId,
+                        method: "UPDATE",
+                        contentType: "text/json",
+                        data: JSON.stringify(newSelection),
+                        headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
+                    }).done(function(newSelection) {
+                        me.message = "Selection '" + existingSelections[0].name + "' updated";
+                        me.render();
+                    });
+                }
+                else {
+                    $.ajax({
+                        url: this.getSelectionsUrl(),
+                        method: "POST",
+                        contentType: "text/json",
+                        data: JSON.stringify(newSelection),
+                        headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
+                    }).done(function(newSelection) {
+                        me.message = "";
+                        me.data.selections.push(newSelection);
+                        me.render();
+                    });
+                }
+            },
+
+            "click .my-selection-name" : function(event) {
+                var me = this;
+                var projectId = this.config.get("project");
+                var bookmarkId = this.config.get("bookmark");
+                var myBookmarkSelectionId = $(event.target).parent().data("id");
+
+                var mySelection = $.grep(this.data.selections, function(elem) {
+                    return elem.id.myBookmarkSelectionId === myBookmarkSelectionId;}
+                )[0].selection;
+
+                console.log(this.data.selections[0]);
+                console.log(mySelection);
+
+                squid_api.model.config.attributes.selection = mySelection;
+
+                // get the Bookmark
+                // squid_api.getCustomer().then(function(customer) {
+                //     customer.get("projects").load(projectId).then(function(project) {
+                //         project.get("bookmarks").load(bookmarkId).done(function(bookmark) {
+                //             var forcedConfig = {};
+                //             var config = me.config.toJSON();
+                //             // exclude the selection from re-setting the config
+                //             for (var x in config) {
+                //                 if (x !== "selection") {
+                //                     forcedConfig[x] = config[x];
+                //                 }
+                //                 else {
+                //                     forcedConfig[x] = mySelection.selection;
+                //                 }
+                //             }
+                //             // set bookmark
+                //             squid_api.setBookmark(bookmark, forcedConfig);
+                //         }).fail(function(model, response, options) {
+                //             console.error("bookmark fetch failed : " + bookmarkId);
+                //         });
+                //     });
+                // });
+
+                this.close();
+            },
+
+            "click .selection-remove" : function(event) {
+                var me = this;
+                var myBookmarkSelectionId = $(event.target).parent().data("id");
+
+                $.ajax({
+                    url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId,
+                    method: "DELETE",
+                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
+                }).done(function() {
+                    me.message = "";
+                    me.data.selections = $.grep(me.data.selections, function(elem) {
+                        return elem.id.myBookmarkSelectionId !== myBookmarkSelectionId;
+                    });
+                    me.render();
+                });
+            }
+        },
+
+        render : function() {
+            this.$el.html(this.template(this.data));
+            return this;
+        }
+
+    });
+
+    return View;
+}));
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD.

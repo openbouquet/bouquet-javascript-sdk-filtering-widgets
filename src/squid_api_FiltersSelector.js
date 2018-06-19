@@ -26,6 +26,15 @@
             this.render();
         },
 
+        getSelectionsUrl : function() {
+            var projectId = this.config.get("project");
+            var bookmarkId = this.config.get("bookmark");
+
+            var selectionsUrl =  squid_api.apiBaseURL + "/rs/projects/" + projectId +
+                "/bookmarks/" + bookmarkId + "/myselections";
+            return selectionsUrl;
+        },
+
         events: {
             "click .facet-remove": function(event) {
                 // Obtain facet name / value
@@ -66,6 +75,29 @@
                         });
                     });
                 });
+            },
+            "click .my-selections" : function() {
+                var me = this;
+                $.ajax({url: this.getSelectionsUrl(),
+                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}})
+                    .done(function(selections) {
+                        var options = {
+                            template : squid_api.template.squid_api_filters_my_selections,
+                            data : {selections: selections},
+                            close : function() { me.selectionsModal.close(); }
+                        };
+
+                        if (!me.selectionsModal) {
+                            me.mySelectionsWidget = new squid_api.view.MySelectionsWidget(options);
+                            me.selectionsModal = new squid_api.view.ModalView({
+                                view : me.mySelectionsWidget
+                            });
+                        }
+                        else {
+                            me.mySelectionsWidget.initialize(options);
+                        }
+                        me.selectionsModal.render();
+                });
             }
         },
 
@@ -91,7 +123,7 @@
         	}
         	return false;
         },
-        
+
         render : function() {
             var selFacets = [];
             var noData = true;
