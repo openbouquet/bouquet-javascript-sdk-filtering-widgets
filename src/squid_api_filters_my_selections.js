@@ -108,9 +108,19 @@
             },
 
             "click .selection-remove" : function(event) {
+                var me = this;
                 var myBookmarkSelectionId = $(event.target).parent().data("id");
 
-                console.log(myBookmarkSelectionId);
+                $.ajax({
+                    url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId,
+                    method: "DELETE",
+                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
+                }).done(function() {
+                    me.data.selections = $.grep(me.data.selections, function(elem) {
+                        return elem.id.myBookmarkSelectionId !== myBookmarkSelectionId;
+                    });
+                    me.render();
+                });
             }
         },
 
