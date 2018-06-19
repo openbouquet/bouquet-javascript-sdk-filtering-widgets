@@ -535,3 +535,17 @@
     color: #170099;
     cursor: pointer;
 }
+
+.my-selection {
+    line-height: 16px;
+}
+
+.my-selection span {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+}
+
+.selection-remove {
+    margin-left: 8px;
+}

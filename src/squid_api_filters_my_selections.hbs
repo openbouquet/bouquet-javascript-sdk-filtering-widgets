@@ -6,7 +6,10 @@
         <div class="row filter-selections">
             <ul>
                 {{#each selections}}
-                <li class="my-selection" data-id="{{id.myBookmarkSelectionId}}">{{name}}</li>
+                <li class="my-selection" data-id="{{id.myBookmarkSelectionId}}">
+                    <span class="my-selection-name">{{name}}</span>
+                    <span class="glyphicon glyphicon-remove selection-remove" aria-hidden="true"></span>
+                </li>
                 {{/each}}
             </ul>
         </div>

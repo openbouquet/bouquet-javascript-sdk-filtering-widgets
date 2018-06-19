@@ -64,14 +64,20 @@
                 });
             },
 
-            "click .my-selection" : function(event) {
-                var myBookmarkSelectionId = $(event.target).data("id");
+            "click .my-selection-name" : function(event) {
+                var myBookmarkSelectionId = $(event.target).parent().data("id");
 
                 var selection = $.grep(this.data.selections, function(elem) {
                     return elem.id.myBookmarkSelectionId === myBookmarkSelectionId;}
                 )[0].selection;
 
                 this.close();
+            },
+
+            "click .selection-remove" : function(event) {
+                var myBookmarkSelectionId = $(event.target).parent().data("id");
+
+                console.log(myBookmarkSelectionId);
             }
         },
 

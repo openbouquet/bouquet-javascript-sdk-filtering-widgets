@@ -645,11 +645,11 @@ function program1(depth0,data) {
   var buffer = "", stack1, helper;
   buffer += "\n                <li class=\"my-selection\" data-id=\""
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.id)),stack1 == null || stack1 === false ? stack1 : stack1.myBookmarkSelectionId)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">";
+    + "\">\n                    <span class=\"my-selection-name\">";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</li>\n                ";
+    + "</span>\n                    <span class=\"glyphicon glyphicon-remove selection-remove\" aria-hidden=\"true\"></span>\n                </li>\n                ";
   return buffer;
   }
 
@@ -3156,15 +3156,20 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 });
             },
 
-            "click .my-selection" : function(event) {
-                var myBookmarkSelectionId = $(event.target).data("id");
+            "click .my-selection-name" : function(event) {
+                var myBookmarkSelectionId = $(event.target).parent().data("id");
 
                 var selection = $.grep(this.data.selections, function(elem) {
                     return elem.id.myBookmarkSelectionId === myBookmarkSelectionId;}
                 )[0].selection;
 
-                squid_api.model.config.attributes.selection = selection;
                 this.close();
+            },
+
+            "click .selection-remove" : function(event) {
+                var myBookmarkSelectionId = $(event.target).parent().data("id");
+
+                console.log(myBookmarkSelectionId);
             }
         },
 
