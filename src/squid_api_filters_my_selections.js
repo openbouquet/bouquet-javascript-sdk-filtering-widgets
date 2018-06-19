@@ -13,11 +13,14 @@
                 if (options.template) {
                     this.template = options.template;
                 }
+                if (options.data) {
+                    this.data = options.data;
+                }
             }
         },
 
         render : function() {
-            this.$el.html(this.template);
+            this.$el.html(this.template(this.data));
             return this;
         }
 

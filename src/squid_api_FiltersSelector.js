@@ -26,6 +26,15 @@
             this.render();
         },
 
+        getSelectionsUrl : function() {
+            var projectId = this.config.get("project");
+            var bookmarkId = this.config.get("bookmark");
+
+            var selectionsUrl =  squid_api.apiBaseURL + "/rs/projects/" + projectId +
+                "/bookmarks/" + bookmarkId + "/myselections";
+            return selectionsUrl;
+        },
+
         events: {
             "click .facet-remove": function(event) {
                 // Obtain facet name / value
@@ -68,21 +77,25 @@
                 });
             },
             "click .my-selections" : function() {
-                var me = this;
-                var projectId = this.config.get("project");
-                var bookmarkId = this.config.get("bookmark");
+                $.ajax({url: this.getSelectionsUrl(),
+                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}})
+                    .done(function(data) {
+                        var options = {
+                            template : squid_api.template.squid_api_filters_my_selections,
+                            data : data
+                        };
 
-                console.log(projectId, bookmarkId);
-
-                if (!this.selectionsModal) {
-                    var mySelectionsWidget = new squid_api.view.MySelectionsWidget({
-                        template : squid_api.template.squid_api_filters_my_selections
-                    });
-                    this.selectionsModal = new squid_api.view.ModalView({
-                        view : mySelectionsWidget
-                    });
-                }
-                this.selectionsModal.render();
+                        if (!this.selectionsModal) {
+                            this.mySelectionsWidget = new squid_api.view.MySelectionsWidget(options);
+                            this.selectionsModal = new squid_api.view.ModalView({
+                                view : this.mySelectionsWidget
+                            });
+                        }
+                        else {
+                            this.mySelectionsWidget.initialize(options);
+                        }
+                        this.selectionsModal.render();
+                });
             }
         },
 

@@ -641,7 +641,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"modal-content\">\n    <div class=\"modal-header\">\n        <h1>My Selections</h1>\n    </div>\n    <div class=\"modal-body\">\n    </div>\n    <div class=\"modal-footer\">\n        <button  type=\"button\" class=\"btn\">Save</button>\n        <button type=\"button\" class=\"btn\" data-dismiss=\"modal\">Cancel</button>\n    </div>\n</div>";
+  return "<div class=\"modal-content\">\n    <div class=\"modal-header\">\n        <h1>My Selections</h1>\n    </div>\n    <div class=\"modal-body\">\n    </div>\n    <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn\" data-dismiss=\"modal\">Cancel</button>\n    </div>\n</div>";
   });
 
 this["squid_api"]["template"]["squid_api_filters_segment_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -742,6 +742,15 @@ function program4(depth0,data) {
             this.render();
         },
 
+        getSelectionsUrl : function() {
+            var projectId = this.config.get("project");
+            var bookmarkId = this.config.get("bookmark");
+
+            var selectionsUrl =  squid_api.apiBaseURL + "/rs/projects/" + projectId +
+                "/bookmarks/" + bookmarkId + "/myselections";
+            return selectionsUrl;
+        },
+
         events: {
             "click .facet-remove": function(event) {
                 // Obtain facet name / value
@@ -784,21 +793,25 @@ function program4(depth0,data) {
                 });
             },
             "click .my-selections" : function() {
-                var me = this;
-                var projectId = this.config.get("project");
-                var bookmarkId = this.config.get("bookmark");
+                $.ajax({url: this.getSelectionsUrl(),
+                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}})
+                    .done(function(data) {
+                        var options = {
+                            template : squid_api.template.squid_api_filters_my_selections,
+                            data : data
+                        };
 
-                console.log(projectId, bookmarkId);
-
-                if (!this.selectionsModal) {
-                    var mySelectionsWidget = new squid_api.view.MySelectionsWidget({
-                        template : squid_api.template.squid_api_filters_my_selections
-                    });
-                    this.selectionsModal = new squid_api.view.ModalView({
-                        view : mySelectionsWidget
-                    });
-                }
-                this.selectionsModal.render();
+                        if (!this.selectionsModal) {
+                            this.mySelectionsWidget = new squid_api.view.MySelectionsWidget(options);
+                            this.selectionsModal = new squid_api.view.ModalView({
+                                view : this.mySelectionsWidget
+                            });
+                        }
+                        else {
+                            this.mySelectionsWidget.initialize(options);
+                        }
+                        this.selectionsModal.render();
+                });
             }
         },
 
@@ -3074,11 +3087,14 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 if (options.template) {
                     this.template = options.template;
                 }
+                if (options.data) {
+                    this.data = options.data;
+                }
             }
         },
 
         render : function() {
-            this.$el.html(this.template);
+            this.$el.html(this.template(this.data));
             return this;
         }
 
