@@ -62,7 +62,7 @@
                 if (existingSelections.length > 0) {
                     $.ajax({
                         url: this.getSelectionsUrl() + "/" + existingSelections[0].id.myBookmarkSelectionId,
-                        method: "UPDATE",
+                        method: "PUT",
                         contentType: "text/json",
                         data: JSON.stringify(newSelection),
                         headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
@@ -98,31 +98,11 @@
 
                 // console.log(this.data.selections[0]);
                 // console.log(mySelection);
-
+                var forcedConfig = me.config.toJSON();
+                forcedConfig.selection = mySelection;
                 squid_api.model.config.attributes.selection = mySelection;
 
-                // get the Bookmark
-                // squid_api.getCustomer().then(function(customer) {
-                //     customer.get("projects").load(projectId).then(function(project) {
-                //         project.get("bookmarks").load(bookmarkId).done(function(bookmark) {
-                //             var forcedConfig = {};
-                //             var config = me.config.toJSON();
-                //             // exclude the selection from re-setting the config
-                //             for (var x in config) {
-                //                 if (x !== "selection") {
-                //                     forcedConfig[x] = config[x];
-                //                 }
-                //                 else {
-                //                     forcedConfig[x] = mySelection.selection;
-                //                 }
-                //             }
-                //             // set bookmark
-                //             squid_api.setBookmark(bookmark, forcedConfig);
-                //         }).fail(function(model, response, options) {
-                //             console.error("bookmark fetch failed : " + bookmarkId);
-                //         });
-                //     });
-                // });
+                squid_api.setBookmarkId(bookmarkId, forcedConfig, [{"mySelection":true}]);
 
                 this.close();
             },
