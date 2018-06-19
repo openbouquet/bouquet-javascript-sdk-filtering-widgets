@@ -1,9 +1,15 @@
 <div class="modal-content">
     <div class="modal-header">
-        <h1>My Selections</h1>
+        <h3>My Selections</h3>
     </div>
     <div class="modal-body">
-        <div></div>
+        <div class="row filter-selections">
+            <ul>
+                {{#each selections}}
+                <li class="my-selection" data-id="{{id.myBookmarkSelectionId}}">{{name}}</li>
+                {{/each}}
+            </ul>
+        </div>
         <div class="row">
             <div class="form-group col-md-9">
                 <input type="text" id="new-selection" class="form-control" placeholder="Selection's name">

@@ -77,24 +77,26 @@
                 });
             },
             "click .my-selections" : function() {
+                var me = this;
                 $.ajax({url: this.getSelectionsUrl(),
                     headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}})
-                    .done(function(data) {
+                    .done(function(selections) {
                         var options = {
                             template : squid_api.template.squid_api_filters_my_selections,
-                            data : data
+                            data : {selections: selections},
+                            close : function() { me.selectionsModal.close(); }
                         };
 
-                        if (!this.selectionsModal) {
-                            this.mySelectionsWidget = new squid_api.view.MySelectionsWidget(options);
-                            this.selectionsModal = new squid_api.view.ModalView({
-                                view : this.mySelectionsWidget
+                        if (!me.selectionsModal) {
+                            me.mySelectionsWidget = new squid_api.view.MySelectionsWidget(options);
+                            me.selectionsModal = new squid_api.view.ModalView({
+                                view : me.mySelectionsWidget
                             });
                         }
                         else {
-                            this.mySelectionsWidget.initialize(options);
+                            me.mySelectionsWidget.initialize(options);
                         }
-                        this.selectionsModal.render();
+                        me.selectionsModal.render();
                 });
             }
         },

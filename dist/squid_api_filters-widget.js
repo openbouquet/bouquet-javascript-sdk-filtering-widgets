@@ -638,10 +638,26 @@ function program6(depth0,data) {
 this["squid_api"]["template"]["squid_api_filters_my_selections"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
   
+  var buffer = "", stack1, helper;
+  buffer += "\n                <li class=\"my-selection\" data-id=\""
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.id)),stack1 == null || stack1 === false ? stack1 : stack1.myBookmarkSelectionId)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</li>\n                ";
+  return buffer;
+  }
 
-
-  return "<div class=\"modal-content\">\n    <div class=\"modal-header\">\n        <h1>My Selections</h1>\n    </div>\n    <div class=\"modal-body\">\n        <div></div>\n        <div class=\"row\">\n            <div class=\"form-group col-md-9\">\n                <input type=\"text\" id=\"new-selection\" class=\"form-control\" placeholder=\"Selection's name\">\n            </div>\n            <div class=\"col-md-3\">\n                <button id=\"create-selection\" type=\"button\" class=\"btn\" disabled>Create</button>\n            </div>\n        </div>\n    </div>\n    <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn\" data-dismiss=\"modal\">Cancel</button>\n    </div>\n</div>";
+  buffer += "<div class=\"modal-content\">\n    <div class=\"modal-header\">\n        <h3>My Selections</h3>\n    </div>\n    <div class=\"modal-body\">\n        <div class=\"row filter-selections\">\n            <ul>\n                ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.selections), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            </ul>\n        </div>\n        <div class=\"row\">\n            <div class=\"form-group col-md-9\">\n                <input type=\"text\" id=\"new-selection\" class=\"form-control\" placeholder=\"Selection's name\">\n            </div>\n            <div class=\"col-md-3\">\n                <button id=\"create-selection\" type=\"button\" class=\"btn\" disabled>Create</button>\n            </div>\n        </div>\n    </div>\n    <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn\" data-dismiss=\"modal\">Cancel</button>\n    </div>\n</div>";
+  return buffer;
   });
 
 this["squid_api"]["template"]["squid_api_filters_segment_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -793,24 +809,26 @@ function program4(depth0,data) {
                 });
             },
             "click .my-selections" : function() {
+                var me = this;
                 $.ajax({url: this.getSelectionsUrl(),
                     headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}})
-                    .done(function(data) {
+                    .done(function(selections) {
                         var options = {
                             template : squid_api.template.squid_api_filters_my_selections,
-                            data : data
+                            data : {selections: selections},
+                            close : function() { me.selectionsModal.close(); }
                         };
 
-                        if (!this.selectionsModal) {
-                            this.mySelectionsWidget = new squid_api.view.MySelectionsWidget(options);
-                            this.selectionsModal = new squid_api.view.ModalView({
-                                view : this.mySelectionsWidget
+                        if (!me.selectionsModal) {
+                            me.mySelectionsWidget = new squid_api.view.MySelectionsWidget(options);
+                            me.selectionsModal = new squid_api.view.ModalView({
+                                view : me.mySelectionsWidget
                             });
                         }
                         else {
-                            this.mySelectionsWidget.initialize(options);
+                            me.mySelectionsWidget.initialize(options);
                         }
-                        this.selectionsModal.render();
+                        me.selectionsModal.render();
                 });
             }
         },
@@ -3092,6 +3110,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 if (options.data) {
                     this.data = options.data;
                 }
+                if (options.close) {
+                    this.close = options.close;
+                }
             }
         },
 
@@ -3133,6 +3154,17 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 }).done(function(data) {
                     console.log(data);
                 });
+            },
+
+            "click .my-selection" : function(event) {
+                var myBookmarkSelectionId = $(event.target).data("id");
+
+                var selection = $.grep(this.data.selections, function(elem) {
+                    return elem.id.myBookmarkSelectionId === myBookmarkSelectionId;}
+                )[0].selection;
+
+                squid_api.model.config.attributes.selection = selection;
+                this.close();
             }
         },
 

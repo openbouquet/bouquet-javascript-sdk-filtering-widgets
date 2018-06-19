@@ -18,6 +18,9 @@
                 if (options.data) {
                     this.data = options.data;
                 }
+                if (options.close) {
+                    this.close = options.close;
+                }
             }
         },
 
@@ -59,6 +62,16 @@
                 }).done(function(data) {
                     console.log(data);
                 });
+            },
+
+            "click .my-selection" : function(event) {
+                var myBookmarkSelectionId = $(event.target).data("id");
+
+                var selection = $.grep(this.data.selections, function(elem) {
+                    return elem.id.myBookmarkSelectionId === myBookmarkSelectionId;}
+                )[0].selection;
+
+                this.close();
             }
         },
 
