@@ -641,7 +641,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"modal-content\">\n    <div class=\"modal-header\">\n        <h1>My Selections</h1>\n    </div>\n    <div class=\"modal-body\">\n    </div>\n    <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn\" data-dismiss=\"modal\">Cancel</button>\n    </div>\n</div>";
+  return "<div class=\"modal-content\">\n    <div class=\"modal-header\">\n        <h1>My Selections</h1>\n    </div>\n    <div class=\"modal-body\">\n        <div></div>\n        <div class=\"row\">\n            <div class=\"form-group col-md-9\">\n                <input type=\"text\" id=\"new-selection\" class=\"form-control\" placeholder=\"Selection's name\">\n            </div>\n            <div class=\"col-md-3\">\n                <button id=\"create-selection\" type=\"button\" class=\"btn\" disabled>Create</button>\n            </div>\n        </div>\n    </div>\n    <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn\" data-dismiss=\"modal\">Cancel</button>\n    </div>\n</div>";
   });
 
 this["squid_api"]["template"]["squid_api_filters_segment_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -3082,6 +3082,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
         template : null,
 
         initialize : function(options) {
+            this.config = squid_api.model.config;
+
             // setup options
             if (options) {
                 if (options.template) {
@@ -3090,6 +3092,47 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 if (options.data) {
                     this.data = options.data;
                 }
+            }
+        },
+
+        getSelectionsUrl : function() {
+            var projectId = this.config.get("project");
+            var bookmarkId = this.config.get("bookmark");
+
+            var selectionsUrl =  squid_api.apiBaseURL + "/rs/projects/" + projectId +
+                "/bookmarks/" + bookmarkId + "/myselections";
+            return selectionsUrl;
+        },
+
+        events : {
+
+            "input #new-selection" : function(event) {
+                var name = $(event.target).val();
+                $("#create-selection").attr("disabled", name.length === 0);
+            },
+
+            "click #create-selection" : function(event) {
+                var projectId = this.config.get("project");
+                var bookmarkId = this.config.get("bookmark");
+
+                var name = $("#new-selection").val();
+                var newSelection = {
+                    id: {
+                      projectId: projectId,
+                      bookmarkId: bookmarkId
+                    },
+                    name: name,
+                    selection: squid_api.model.config.attributes.selection
+                };
+                $.ajax({
+                    url: this.getSelectionsUrl(),
+                    method: "POST",
+                    contentType: "text/json",
+                    data: JSON.stringify(newSelection),
+                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
+                }).done(function(data) {
+                    console.log(data);
+                });
             }
         },
 
