@@ -653,7 +653,11 @@ function program1(depth0,data) {
   return buffer;
   }
 
-  buffer += "<div class=\"modal-content\">\n    <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button>\n        <h4 class=\"modal-title\">My Selections</h4>\n    </div>\n    <div class=\"modal-body\">\n        <div class=\"results min-filter-height filter-selections\">\n            <ul class=\"list-group\">\n                ";
+  buffer += "<div class=\"modal-content\">\n    <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button>\n        <h4 class=\"modal-title\">My Selections</h4>\n    </div>\n    <div class=\"modal-body\">\n        <div class=\"search input-group\" style=\"margin: 10px 0 10px 0\">\n            <span class=\"input-group-addon\">\n                <i id=\"selections-search-in-progress\" class=\"glyphicon glyphicon-refresh glyphicon-spin hidden\"></i>\n                <i id=\"selections-search-not-in-progress\" class=\"glyphicon glyphicon-search\"></i>\n            </span>\n            <input id=\"selections-searchbox\" class=\"form-control search\" placeholder=\"Search\" value=\"";
+  if (helper = helpers.searchTerm) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.searchTerm); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" type=\"text\" autofocus>\n        </div>\n        <div class=\"results min-filter-height filter-selections\">\n            <ul class=\"list-group\">\n                ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.selections), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n            </ul>\n        </div>\n        <div class=\"row\">\n            <div class=\"form-group col-md-9\">\n                <input type=\"text\" id=\"new-selection\" class=\"form-control\" placeholder=\"Selection's name\">\n            </div>\n            <div class=\"col-md-3\">\n                <button id=\"create-selection\" type=\"button\" class=\"btn btn-default\" disabled>Create</button>\n            </div>\n        </div>\n        <div class=\"row\">";
@@ -3105,7 +3109,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
         initialize : function(options) {
             this.config = squid_api.model.config;
-            this.message = "";
             // setup options
             if (options) {
                 if (options.template) {
@@ -3113,6 +3116,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 }
                 if (options.data) {
                     this.data = options.data;
+                    this.data.message = "";
+                    this.data.searchTerm = "";
                 }
                 if (options.close) {
                     this.close = options.close;
@@ -3163,7 +3168,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         data: JSON.stringify(newSelection),
                         headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                     }).done(function() {
-                        me.message = "Selection '" + existingSelections[0].name + "' updated";
+                        me.data.message = "Selection '" + existingSelections[0].name + "' updated";
                         me.render();
                     });
                 }
@@ -3175,7 +3180,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         data: JSON.stringify(newSelection),
                         headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                     }).done(function(newSelection) {
-                        me.message = "";
+                        me.data.message = "";
                         me.data.selections.push(newSelection);
                         me.render();
                     });
@@ -3247,7 +3252,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     data: JSON.stringify(newSelection),
                     headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                 }).done(function() {
-                    me.message = "Selection '" + existingSelections[0].name + "' updated";
+                    me.data.message = "Selection '" + existingSelections[0].name + "' updated";
                     me.render();
                 });
             },
@@ -3261,17 +3266,41 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     method: "DELETE",
                     headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                 }).done(function() {
-                    me.message = "";
+                    me.data.message = "";
                     me.data.selections = $.grep(me.data.selections, function(elem) {
                         return elem.id.myBookmarkSelectionId !== myBookmarkSelectionId;
                     });
                     me.render();
                 });
+            },
+
+            "input #selections-searchbox" : function(event) {
+                var text = $(event.target).val();
+                this.data.searchTerm = text;
+                this.render();
             }
         },
 
         render : function() {
-            this.$el.html(this.template(this.data));
+
+            if (this.data.searchTerm.length > 0) {
+                var text = this.data.searchTerm.toLowerCase();
+                var filteredSelections = $.grep(this.data.selections, function(elem) {
+                    return elem.name.toLowerCase().indexOf(text) >= 0;
+                });
+                this.$el.html(this.template({
+                    message: this.data.message,
+                    searchTerm: this.data.searchTerm,
+                    selections: filteredSelections
+                }));
+                $("#selections-searchbox").focus();
+                var val = $("#selections-searchbox").val();
+                $("#selections-searchbox").val("");
+                $("#selections-searchbox").val(val);
+            }
+            else {
+                this.$el.html(this.template(this.data));
+            }
             return this;
         }
 

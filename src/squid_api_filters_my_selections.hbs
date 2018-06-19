@@ -4,6 +4,13 @@
         <h4 class="modal-title">My Selections</h4>
     </div>
     <div class="modal-body">
+        <div class="search input-group" style="margin: 10px 0 10px 0">
+            <span class="input-group-addon">
+                <i id="selections-search-in-progress" class="glyphicon glyphicon-refresh glyphicon-spin hidden"></i>
+                <i id="selections-search-not-in-progress" class="glyphicon glyphicon-search"></i>
+            </span>
+            <input id="selections-searchbox" class="form-control search" placeholder="Search" value="{{searchTerm}}" type="text" autofocus>
+        </div>
         <div class="results min-filter-height filter-selections">
             <ul class="list-group">
                 {{#each selections}}

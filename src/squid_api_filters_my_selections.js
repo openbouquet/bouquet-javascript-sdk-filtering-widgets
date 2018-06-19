@@ -9,7 +9,6 @@
 
         initialize : function(options) {
             this.config = squid_api.model.config;
-            this.message = "";
             // setup options
             if (options) {
                 if (options.template) {
@@ -17,6 +16,8 @@
                 }
                 if (options.data) {
                     this.data = options.data;
+                    this.data.message = "";
+                    this.data.searchTerm = "";
                 }
                 if (options.close) {
                     this.close = options.close;
@@ -67,7 +68,7 @@
                         data: JSON.stringify(newSelection),
                         headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                     }).done(function() {
-                        me.message = "Selection '" + existingSelections[0].name + "' updated";
+                        me.data.message = "Selection '" + existingSelections[0].name + "' updated";
                         me.render();
                     });
                 }
@@ -79,7 +80,7 @@
                         data: JSON.stringify(newSelection),
                         headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                     }).done(function(newSelection) {
-                        me.message = "";
+                        me.data.message = "";
                         me.data.selections.push(newSelection);
                         me.render();
                     });
@@ -151,7 +152,7 @@
                     data: JSON.stringify(newSelection),
                     headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                 }).done(function() {
-                    me.message = "Selection '" + existingSelections[0].name + "' updated";
+                    me.data.message = "Selection '" + existingSelections[0].name + "' updated";
                     me.render();
                 });
             },
@@ -165,17 +166,41 @@
                     method: "DELETE",
                     headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                 }).done(function() {
-                    me.message = "";
+                    me.data.message = "";
                     me.data.selections = $.grep(me.data.selections, function(elem) {
                         return elem.id.myBookmarkSelectionId !== myBookmarkSelectionId;
                     });
                     me.render();
                 });
+            },
+
+            "input #selections-searchbox" : function(event) {
+                var text = $(event.target).val();
+                this.data.searchTerm = text;
+                this.render();
             }
         },
 
         render : function() {
-            this.$el.html(this.template(this.data));
+
+            if (this.data.searchTerm.length > 0) {
+                var text = this.data.searchTerm.toLowerCase();
+                var filteredSelections = $.grep(this.data.selections, function(elem) {
+                    return elem.name.toLowerCase().indexOf(text) >= 0;
+                });
+                this.$el.html(this.template({
+                    message: this.data.message,
+                    searchTerm: this.data.searchTerm,
+                    selections: filteredSelections
+                }));
+                $("#selections-searchbox").focus();
+                var val = $("#selections-searchbox").val();
+                $("#selections-searchbox").val("");
+                $("#selections-searchbox").val(val);
+            }
+            else {
+                this.$el.html(this.template(this.data));
+            }
             return this;
         }
 
