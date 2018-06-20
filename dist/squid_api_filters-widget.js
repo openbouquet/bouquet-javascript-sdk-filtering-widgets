@@ -3181,6 +3181,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                     }).done(function(newSelection) {
                         me.data.message = "";
+                        me.data.searchTerm = "";
                         me.data.selections.push(newSelection);
                         me.render();
                     });
@@ -3233,6 +3234,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                 }).done(function() {
                     me.data.message = "Selection '" + existingSelections[0].name + "' updated";
+                    me.data.searchTerm = "";
                     me.render();
                 });
             },
@@ -3250,6 +3252,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     me.data.selections = $.grep(me.data.selections, function(elem) {
                         return elem.id.myBookmarkSelectionId !== myBookmarkSelectionId;
                     });
+                    me.data.searchTerm = "";
                     me.render();
                 });
             },
@@ -3257,30 +3260,28 @@ $.widget( "ui.dialog", $.ui.dialog, {
             "input #selections-searchbox" : function(event) {
                 var text = $(event.target).val();
                 this.data.searchTerm = text;
-                this.render();
+
+                if (text.length === 0) {
+                    $(".my-selection").show();
+                }
+                else {
+                    var ltext = text.toLowerCase();
+                    $(".my-selection").each(function() {
+                        var name = $(this).find(".my-selection-name").text().toLowerCase();
+                        if (name.indexOf(ltext) >= 0) {
+                            $(this).show();
+                        }
+                        else {
+                            $(this).hide();
+                        }
+                    });
+                }
+
             }
         },
 
         render : function() {
-
-            if (this.data.searchTerm.length > 0) {
-                var text = this.data.searchTerm.toLowerCase();
-                var filteredSelections = $.grep(this.data.selections, function(elem) {
-                    return elem.name.toLowerCase().indexOf(text) >= 0;
-                });
-                this.$el.html(this.template({
-                    message: this.data.message,
-                    searchTerm: this.data.searchTerm,
-                    selections: filteredSelections
-                }));
-                $("#selections-searchbox").focus();
-                var val = $("#selections-searchbox").val();
-                $("#selections-searchbox").val("");
-                $("#selections-searchbox").val(val);
-            }
-            else {
-                this.$el.html(this.template(this.data));
-            }
+            this.$el.html(this.template(this.data));
             return this;
         }
 
