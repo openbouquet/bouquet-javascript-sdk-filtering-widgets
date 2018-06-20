@@ -668,6 +668,10 @@ function program1(depth0,data) {
   if (helper = helpers.message) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.message); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
+    + "</div>\n        <div class=\"row\" style=\"margin-left: 15px;color:crimson\">";
+  if (helper = helpers.errorMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.errorMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
     + "</div>\n    </div>\n    <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Cancel</button>\n    </div>\n</div>";
   return buffer;
   });
@@ -3121,6 +3125,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 if (options.data) {
                     this.data = options.data;
                     this.data.message = "";
+                    this.data.errorMessage = "";
                     this.data.searchTerm = "";
                 }
                 if (options.close) {
@@ -3138,6 +3143,21 @@ $.widget( "ui.dialog", $.ui.dialog, {
             return selectionsUrl;
         },
 
+        startRequest: function() {
+            $("#selections-search-in-progress").removeClass("hidden");
+            $("#selections-search-not-in-progress").hide();
+        },
+
+        finishRequest: function(message, errorMessage) {
+            $("#selections-search-in-progress").addClass("hidden");
+            $("#selections-search-not-in-progress").show();
+
+            this.data.message = message;
+            this.data.searchTerm = "";
+            this.data.errorMessage = errorMessage;
+            this.render();
+        },
+
         updateSelection : function(myBookmarkSelectionId, name, selection) {
             var me = this;
             var projectId = this.config.get("project");
@@ -3152,6 +3172,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 selection: selection
             };
 
+            this.startRequest();
+
             $.ajax({
                 url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId,
                 method: "PUT",
@@ -3159,17 +3181,15 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 data: JSON.stringify(newSelection),
                 headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
             }).done(function() {
-
                 for(var i=0; i<me.data.selections.length; i++) {
                     if (me.data.selections[i].id.myBookmarkSelectionId === myBookmarkSelectionId) {
                         me.data.selections[i].name = name;
                         break;
                     }
                 }
-
-                me.data.message = "Selection '" + name + "' updated";
-                me.data.searchTerm = "";
-                me.render();
+                me.finishRequest("Selection '" + name + "' updated", "");
+            }).fail(function() {
+                me.finishRequest("", "Failed to update '" + name + "'!");
             });
         },
 
@@ -3200,18 +3220,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 });
 
                 if (existingSelections.length > 0) {
-                    $.ajax({
-                        url: this.getSelectionsUrl() + "/" + existingSelections[0].id.myBookmarkSelectionId,
-                        method: "PUT",
-                        contentType: "text/json",
-                        data: JSON.stringify(newSelection),
-                        headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
-                    }).done(function() {
-                        me.data.message = "Selection '" + existingSelections[0].name + "' updated";
-                        me.render();
-                    });
+                    this.updateSelection(existingSelections[0].id.myBookmarkSelectionId, name, newSelection);
                 }
                 else {
+                    this.startRequest();
+
                     $.ajax({
                         url: this.getSelectionsUrl(),
                         method: "POST",
@@ -3219,10 +3232,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         data: JSON.stringify(newSelection),
                         headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                     }).done(function(newSelection) {
-                        me.data.message = "";
-                        me.data.searchTerm = "";
                         me.data.selections.push(newSelection);
-                        me.render();
+                        me.finishRequest("", "");
+                    }).fail(function() {
+                        me.finishRequest("", "Failed to add new selection!");
                     });
                 }
             },
@@ -3261,8 +3274,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     return elem.id.myBookmarkSelectionId === myBookmarkSelectionId;
                 })[0].selection;
 
-                console.log(selection);
-
                 this.updateSelection(myBookmarkSelectionId, name, selection);
             },
 
@@ -3274,8 +3285,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
             "click .selection-update" : function(event) {
                 var name = $(event.target).parent().find(".my-selection-name ").text();
                 if (confirm("Are you sure you want to update '" + name + "' with the current selection?")) {
-                    console.log("Update");
-
                     $(event.target).parent().find(".selection-rename-control").hide();
                     $(event.target).parent().find(".selection-rename-control").show();
 
@@ -3291,17 +3300,19 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     var me = this;
                     var myBookmarkSelectionId = $(event.target).parent().data("id");
 
+                    this.startRequest();
+
                     $.ajax({
                         url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId,
                         method: "DELETE",
                         headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                     }).done(function() {
-                        me.data.message = "";
                         me.data.selections = $.grep(me.data.selections, function(elem) {
                             return elem.id.myBookmarkSelectionId !== myBookmarkSelectionId;
                         });
-                        me.data.searchTerm = "";
-                        me.render();
+                        me.finishRequest("", "");
+                    }).fail(function() {
+                        me.finishRequest("", "Failed to remove selection!");
                     });
                 }
             },
