@@ -9,7 +9,6 @@
 
         initialize : function(options) {
             this.config = squid_api.model.config;
-            this.message = "";
             // setup options
             if (options) {
                 if (options.template) {
@@ -17,6 +16,8 @@
                 }
                 if (options.data) {
                     this.data = options.data;
+                    this.data.message = "";
+                    this.data.searchTerm = "";
                 }
                 if (options.close) {
                     this.close = options.close;
@@ -66,8 +67,8 @@
                         contentType: "text/json",
                         data: JSON.stringify(newSelection),
                         headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
-                    }).done(function(newSelection) {
-                        me.message = "Selection '" + existingSelections[0].name + "' updated";
+                    }).done(function() {
+                        me.data.message = "Selection '" + existingSelections[0].name + "' updated";
                         me.render();
                     });
                 }
@@ -79,7 +80,8 @@
                         data: JSON.stringify(newSelection),
                         headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                     }).done(function(newSelection) {
-                        me.message = "";
+                        me.data.message = "";
+                        me.data.searchTerm = "";
                         me.data.selections.push(newSelection);
                         me.render();
                     });
@@ -96,8 +98,6 @@
                     return elem.id.myBookmarkSelectionId === myBookmarkSelectionId;}
                 )[0].selection;
 
-                // console.log(this.data.selections[0]);
-                // console.log(mySelection);
                 var forcedConfig = me.config.toJSON();
                 forcedConfig.selection = mySelection;
                 squid_api.model.config.attributes.selection = mySelection;
@@ -105,6 +105,57 @@
                 squid_api.setBookmarkId(bookmarkId, forcedConfig, [{"mySelection":true}]);
 
                 this.close();
+            },
+
+            "click .selection-edit" : function(event) {
+                $(event.target).parent().find(".selection-view-control").hide();
+                $(event.target).parent().find(".selection-edit-control").show();
+            },
+
+            "click .selection-edit-ok" : function(event) {
+                $(event.target).parent().find(".selection-edit-control").hide();
+                $(event.target).parent().find(".selection-view-control").show();
+
+                var me = this;
+                var projectId = this.config.get("project");
+                var bookmarkId = this.config.get("bookmark");
+                var myBookmarkSelectionId = $(event.target).parent().data("id");
+
+                var name = $(event.target).parent().find(".my-selection-name-edit").val();
+
+                var newSelection = {
+                    id: {
+                      projectId: projectId,
+                      bookmarkId: bookmarkId
+                    },
+                    name: name,
+                    selection: squid_api.model.config.attributes.selection
+                };
+
+                $.ajax({
+                    url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId,
+                    method: "PUT",
+                    contentType: "text/json",
+                    data: JSON.stringify(newSelection),
+                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
+                }).done(function() {
+
+                    for(var i=0; i<me.data.selections.length; i++) {
+                        if (me.data.selections[i].id.myBookmarkSelectionId === myBookmarkSelectionId) {
+                            me.data.selections[i].name = name;
+                            break;
+                        }
+                    }
+
+                    me.data.message = "Selection '" + name + "' updated";
+                    me.data.searchTerm = "";
+                    me.render();
+                });
+            },
+
+            "click .selection-edit-cancel" : function(event) {
+                $(event.target).parent().find(".selection-edit-control").hide();
+                $(event.target).parent().find(".selection-view-control").show();
             },
 
             "click .selection-remove" : function(event) {
@@ -116,12 +167,35 @@
                     method: "DELETE",
                     headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                 }).done(function() {
-                    me.message = "";
+                    me.data.message = "";
                     me.data.selections = $.grep(me.data.selections, function(elem) {
                         return elem.id.myBookmarkSelectionId !== myBookmarkSelectionId;
                     });
+                    me.data.searchTerm = "";
                     me.render();
                 });
+            },
+
+            "input #selections-searchbox" : function(event) {
+                var text = $(event.target).val();
+                this.data.searchTerm = text;
+
+                if (text.length === 0) {
+                    $(".my-selection").show();
+                }
+                else {
+                    var ltext = text.toLowerCase();
+                    $(".my-selection").each(function() {
+                        var name = $(this).find(".my-selection-name").text().toLowerCase();
+                        if (name.indexOf(ltext) >= 0) {
+                            $(this).show();
+                        }
+                        else {
+                            $(this).hide();
+                        }
+                    });
+                }
+
             }
         },
 
