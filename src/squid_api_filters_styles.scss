@@ -538,10 +538,11 @@
     line-height: normal;
 }
 
-.selection-edit {
+.selection-rename {
     margin-right: 10px;
 }
 
-.selection-remove {
+.selection-remove, .selection-update  {
     float: right;
+    margin-right: 15px;
 }
