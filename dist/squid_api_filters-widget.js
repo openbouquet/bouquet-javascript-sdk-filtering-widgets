@@ -645,11 +645,15 @@ function program1(depth0,data) {
   var buffer = "", stack1, helper;
   buffer += "\n                <li class=\"list-group-item my-selection\" data-id=\""
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.id)),stack1 == null || stack1 === false ? stack1 : stack1.myBookmarkSelectionId)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">\n                    <span class=\"glyphicon glyphicon-edit selection-edit\" aria-hidden=\"true\"></span>\n                    <span class=\"my-selection-name\">";
+    + "\">\n                    <span class=\"glyphicon glyphicon-edit selection-edit selection-view-control\" aria-hidden=\"true\"></span>\n                    <span class=\"my-selection-name selection-view-control\">";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span>\n                    <span class=\"glyphicon glyphicon-remove selection-remove\" aria-hidden=\"true\"></span>\n                </li>\n                ";
+    + "</span>\n                    <span class=\"glyphicon glyphicon-remove selection-remove selection-view-control\" aria-hidden=\"true\"></span>\n\n                    <span class=\"glyphicon glyphicon-ok selection-edit-ok selection-edit-control\" aria-hidden=\"true\" style=\"display:none;\"></span>\n                    <span class=\"glyphicon glyphicon-remove selection-edit-cancel selection-edit-control\" aria-hidden=\"true\" style=\"display:none;\"></span>\n                    <input class=\"my-selection-name-edit selection-edit-control\" type=\"text\" value=\"";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" style=\"display:none;\">\n                </li>\n                ";
   return buffer;
   }
 
@@ -660,7 +664,7 @@ function program1(depth0,data) {
     + "\" type=\"text\" autofocus>\n        </div>\n        <div class=\"results min-filter-height filter-selections\">\n            <ul class=\"list-group\">\n                ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.selections), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            </ul>\n        </div>\n        <div class=\"row\">\n            <div class=\"form-group col-md-9\">\n                <input type=\"text\" id=\"new-selection\" class=\"form-control\" placeholder=\"Selection's name\">\n            </div>\n            <div class=\"col-md-3\">\n                <button id=\"create-selection\" type=\"button\" class=\"btn btn-default\" disabled>Create</button>\n            </div>\n        </div>\n        <div class=\"row\">";
+  buffer += "\n            </ul>\n        </div>\n        <div class=\"row\">\n            <div class=\"form-group col-md-9\">\n                <input type=\"text\" id=\"new-selection\" class=\"form-control\" placeholder=\"Selection's name\">\n            </div>\n            <div class=\"col-md-3\">\n                <button id=\"create-selection\" type=\"button\" class=\"btn btn-default\" disabled>Create</button>\n            </div>\n        </div>\n        <div class=\"row\" style=\"margin-left: 15px;\">";
   if (helper = helpers.message) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.message); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -3208,14 +3212,20 @@ $.widget( "ui.dialog", $.ui.dialog, {
             },
 
             "click .selection-edit" : function(event) {
+                $(event.target).parent().find(".selection-view-control").hide();
+                $(event.target).parent().find(".selection-edit-control").show();
+            },
+
+            "click .selection-edit-ok" : function(event) {
+                $(event.target).parent().find(".selection-edit-control").hide();
+                $(event.target).parent().find(".selection-view-control").show();
+
                 var me = this;
                 var projectId = this.config.get("project");
                 var bookmarkId = this.config.get("bookmark");
                 var myBookmarkSelectionId = $(event.target).parent().data("id");
 
-                var name = $.grep(this.data.selections, function(elem) {
-                    return elem.id.myBookmarkSelectionId === myBookmarkSelectionId;
-                })[0].name;
+                var name = $(event.target).parent().find(".my-selection-name-edit").val();
 
                 var newSelection = {
                     id: {
@@ -3233,10 +3243,23 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     data: JSON.stringify(newSelection),
                     headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                 }).done(function() {
-                    me.data.message = "Selection '" + existingSelections[0].name + "' updated";
+
+                    for(var i=0; i<me.data.selections.length; i++) {
+                        if (me.data.selections[i].id.myBookmarkSelectionId === myBookmarkSelectionId) {
+                            me.data.selections[i].name = name;
+                            break;
+                        }
+                    }
+
+                    me.data.message = "Selection '" + name + "' updated";
                     me.data.searchTerm = "";
                     me.render();
                 });
+            },
+
+            "click .selection-edit-cancel" : function(event) {
+                $(event.target).parent().find(".selection-edit-control").hide();
+                $(event.target).parent().find(".selection-view-control").show();
             },
 
             "click .selection-remove" : function(event) {

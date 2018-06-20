@@ -108,14 +108,20 @@
             },
 
             "click .selection-edit" : function(event) {
+                $(event.target).parent().find(".selection-view-control").hide();
+                $(event.target).parent().find(".selection-edit-control").show();
+            },
+
+            "click .selection-edit-ok" : function(event) {
+                $(event.target).parent().find(".selection-edit-control").hide();
+                $(event.target).parent().find(".selection-view-control").show();
+
                 var me = this;
                 var projectId = this.config.get("project");
                 var bookmarkId = this.config.get("bookmark");
                 var myBookmarkSelectionId = $(event.target).parent().data("id");
 
-                var name = $.grep(this.data.selections, function(elem) {
-                    return elem.id.myBookmarkSelectionId === myBookmarkSelectionId;
-                })[0].name;
+                var name = $(event.target).parent().find(".my-selection-name-edit").val();
 
                 var newSelection = {
                     id: {
@@ -133,10 +139,23 @@
                     data: JSON.stringify(newSelection),
                     headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                 }).done(function() {
-                    me.data.message = "Selection '" + existingSelections[0].name + "' updated";
+
+                    for(var i=0; i<me.data.selections.length; i++) {
+                        if (me.data.selections[i].id.myBookmarkSelectionId === myBookmarkSelectionId) {
+                            me.data.selections[i].name = name;
+                            break;
+                        }
+                    }
+
+                    me.data.message = "Selection '" + name + "' updated";
                     me.data.searchTerm = "";
                     me.render();
                 });
+            },
+
+            "click .selection-edit-cancel" : function(event) {
+                $(event.target).parent().find(".selection-edit-control").hide();
+                $(event.target).parent().find(".selection-view-control").show();
             },
 
             "click .selection-remove" : function(event) {

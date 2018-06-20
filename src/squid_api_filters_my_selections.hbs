@@ -15,9 +15,13 @@
             <ul class="list-group">
                 {{#each selections}}
                 <li class="list-group-item my-selection" data-id="{{id.myBookmarkSelectionId}}">
-                    <span class="glyphicon glyphicon-edit selection-edit" aria-hidden="true"></span>
-                    <span class="my-selection-name">{{name}}</span>
-                    <span class="glyphicon glyphicon-remove selection-remove" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-edit selection-edit selection-view-control" aria-hidden="true"></span>
+                    <span class="my-selection-name selection-view-control">{{name}}</span>
+                    <span class="glyphicon glyphicon-remove selection-remove selection-view-control" aria-hidden="true"></span>
+
+                    <span class="glyphicon glyphicon-ok selection-edit-ok selection-edit-control" aria-hidden="true" style="display:none;"></span>
+                    <span class="glyphicon glyphicon-remove selection-edit-cancel selection-edit-control" aria-hidden="true" style="display:none;"></span>
+                    <input class="my-selection-name-edit selection-edit-control" type="text" value="{{name}}" style="display:none;">
                 </li>
                 {{/each}}
             </ul>
@@ -30,7 +34,7 @@
                 <button id="create-selection" type="button" class="btn btn-default" disabled>Create</button>
             </div>
         </div>
-        <div class="row">{{message}}</div>
+        <div class="row" style="margin-left: 15px;">{{message}}</div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
