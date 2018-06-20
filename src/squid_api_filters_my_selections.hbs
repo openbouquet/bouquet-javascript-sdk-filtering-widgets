@@ -15,13 +15,14 @@
             <ul class="list-group">
                 {{#each selections}}
                 <li class="list-group-item my-selection" data-id="{{id.myBookmarkSelectionId}}">
-                    <span class="glyphicon glyphicon-edit selection-edit selection-view-control" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-edit selection-rename selection-view-control" aria-hidden="true"></span>
                     <span class="my-selection-name selection-view-control">{{name}}</span>
-                    <span class="glyphicon glyphicon-remove selection-remove selection-view-control" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-trash selection-remove selection-view-control" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-pencil selection-update selection-view-control" aria-hidden="true"></span>
 
-                    <span class="glyphicon glyphicon-ok selection-edit-ok selection-edit-control" aria-hidden="true" style="display:none;"></span>
-                    <span class="glyphicon glyphicon-remove selection-edit-cancel selection-edit-control" aria-hidden="true" style="display:none;"></span>
-                    <input class="my-selection-name-edit selection-edit-control" type="text" value="{{name}}" style="display:none;">
+                    <span class="glyphicon glyphicon-ok selection-rename-ok selection-rename-control" aria-hidden="true" style="display:none;"></span>
+                    <span class="glyphicon glyphicon-remove selection-rename-cancel selection-rename-control" aria-hidden="true" style="display:none;"></span>
+                    <input class="my-selection-name-rename selection-rename-control" type="text" value="{{name}}" style="display:none;">
                 </li>
                 {{/each}}
             </ul>

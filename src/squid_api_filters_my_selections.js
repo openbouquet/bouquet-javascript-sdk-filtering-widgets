@@ -34,6 +34,41 @@
             return selectionsUrl;
         },
 
+        updateSelection : function(myBookmarkSelectionId, name, selection) {
+            var me = this;
+            var projectId = this.config.get("project");
+            var bookmarkId = this.config.get("bookmark");
+
+            var newSelection = {
+                id: {
+                  projectId: projectId,
+                  bookmarkId: bookmarkId
+                },
+                name: name,
+                selection: selection
+            };
+
+            $.ajax({
+                url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId,
+                method: "PUT",
+                contentType: "text/json",
+                data: JSON.stringify(newSelection),
+                headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
+            }).done(function() {
+
+                for(var i=0; i<me.data.selections.length; i++) {
+                    if (me.data.selections[i].id.myBookmarkSelectionId === myBookmarkSelectionId) {
+                        me.data.selections[i].name = name;
+                        break;
+                    }
+                }
+
+                me.data.message = "Selection '" + name + "' updated";
+                me.data.searchTerm = "";
+                me.render();
+            });
+        },
+
         events : {
 
             "input #new-selection" : function(event) {
@@ -90,7 +125,6 @@
 
             "click .my-selection-name" : function(event) {
                 var me = this;
-                var projectId = this.config.get("project");
                 var bookmarkId = this.config.get("bookmark");
                 var myBookmarkSelectionId = $(event.target).parent().data("id");
 
@@ -107,73 +141,65 @@
                 this.close();
             },
 
-            "click .selection-edit" : function(event) {
+            "click .selection-rename" : function(event) {
                 $(event.target).parent().find(".selection-view-control").hide();
-                $(event.target).parent().find(".selection-edit-control").show();
+                $(event.target).parent().find(".selection-rename-control").show();
             },
 
-            "click .selection-edit-ok" : function(event) {
-                $(event.target).parent().find(".selection-edit-control").hide();
-                $(event.target).parent().find(".selection-view-control").show();
+            "click .selection-rename-ok" : function(event) {
+                $(event.target).parent().find(".selection-rename-control").hide();
+                $(event.target).parent().find(".selection-rename-control").show();
 
-                var me = this;
-                var projectId = this.config.get("project");
-                var bookmarkId = this.config.get("bookmark");
                 var myBookmarkSelectionId = $(event.target).parent().data("id");
+                var name = $(event.target).parent().find(".my-selection-name-rename").val();
 
-                var name = $(event.target).parent().find(".my-selection-name-edit").val();
+                var selection = $.grep(this.data.selections, function(elem) {
+                    return elem.id.myBookmarkSelectionId === myBookmarkSelectionId;
+                })[0].selection;
 
-                var newSelection = {
-                    id: {
-                      projectId: projectId,
-                      bookmarkId: bookmarkId
-                    },
-                    name: name,
-                    selection: squid_api.model.config.attributes.selection
-                };
+                console.log(selection);
 
-                $.ajax({
-                    url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId,
-                    method: "PUT",
-                    contentType: "text/json",
-                    data: JSON.stringify(newSelection),
-                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
-                }).done(function() {
-
-                    for(var i=0; i<me.data.selections.length; i++) {
-                        if (me.data.selections[i].id.myBookmarkSelectionId === myBookmarkSelectionId) {
-                            me.data.selections[i].name = name;
-                            break;
-                        }
-                    }
-
-                    me.data.message = "Selection '" + name + "' updated";
-                    me.data.searchTerm = "";
-                    me.render();
-                });
+                this.updateSelection(myBookmarkSelectionId, name, selection);
             },
 
-            "click .selection-edit-cancel" : function(event) {
-                $(event.target).parent().find(".selection-edit-control").hide();
+            "click .selection-rename-cancel" : function(event) {
+                $(event.target).parent().find(".selection-rename-control").hide();
                 $(event.target).parent().find(".selection-view-control").show();
+            },
+
+            "click .selection-update" : function(event) {
+                var name = $(event.target).parent().find(".my-selection-name ").text();
+                if (confirm("Are you sure you want to update '" + name + "' with the current selection?")) {
+                    console.log("Update");
+
+                    $(event.target).parent().find(".selection-rename-control").hide();
+                    $(event.target).parent().find(".selection-rename-control").show();
+
+                    var myBookmarkSelectionId = $(event.target).parent().data("id");
+
+                    this.updateSelection(myBookmarkSelectionId, name, squid_api.model.config.attributes.selection);
+                }
             },
 
             "click .selection-remove" : function(event) {
-                var me = this;
-                var myBookmarkSelectionId = $(event.target).parent().data("id");
+                var name = $(event.target).parent().find(".my-selection-name ").text();
+                if (confirm("Are you sure you want to delete '" + name + "'?")) {
+                    var me = this;
+                    var myBookmarkSelectionId = $(event.target).parent().data("id");
 
-                $.ajax({
-                    url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId,
-                    method: "DELETE",
-                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
-                }).done(function() {
-                    me.data.message = "";
-                    me.data.selections = $.grep(me.data.selections, function(elem) {
-                        return elem.id.myBookmarkSelectionId !== myBookmarkSelectionId;
+                    $.ajax({
+                        url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId,
+                        method: "DELETE",
+                        headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
+                    }).done(function() {
+                        me.data.message = "";
+                        me.data.selections = $.grep(me.data.selections, function(elem) {
+                            return elem.id.myBookmarkSelectionId !== myBookmarkSelectionId;
+                        });
+                        me.data.searchTerm = "";
+                        me.render();
                     });
-                    me.data.searchTerm = "";
-                    me.render();
-                });
+                }
             },
 
             "input #selections-searchbox" : function(event) {

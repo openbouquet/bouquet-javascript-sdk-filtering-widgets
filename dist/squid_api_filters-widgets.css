@@ -391,8 +391,9 @@
   vertical-align: middle;
   line-height: normal; }
 
-.selection-edit {
+.selection-rename {
   margin-right: 10px; }
 
-.selection-remove {
-  float: right; }
+.selection-remove, .selection-update {
+  float: right;
+  margin-right: 15px; }
