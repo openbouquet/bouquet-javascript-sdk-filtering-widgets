@@ -1,6 +1,6 @@
 {
   "name": "squid_api_filters_widget",
-  "version": "3.9.6",
+  "version": "5.0.0",
   "homepage": "https://github.com/openbouquet/bouquet-javascript-sdk-filtering-widgets",
   "authors": [
     "obalbous <oba@squid>"
@@ -20,7 +20,7 @@
   "dependencies": {
       "squid_api": "https://github.com/openbouquet/bouquet-javascript-sdk.git#4.2.9",
       "handlebars": "~1.3.0",
-      "jquery-ui": "~1.10.0",
+      "jquery-ui": "~1.12.1",
       "bootstrap-multiselect":"*",
       "bootstrap-daterangepicker":"https://github.com/squidsolutions/bootstrap-daterangepicker.git#master",
       "d3" : "3"

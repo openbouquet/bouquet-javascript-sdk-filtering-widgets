@@ -1,91 +1,6 @@
 this["squid_api"] = this["squid_api"] || {};
 this["squid_api"]["template"] = this["squid_api"]["template"] || {};
 
-this["squid_api"]["template"]["squid_api_FiltersSelector"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, self=this, functionType="function", escapeExpression=this.escapeExpression;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n    <label class=\"noData ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.mandatory), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\">";
-  if (helper = helpers.noDataMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.noDataMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</label>\n";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return "warning fa fa-exclamation-circle";
-  }
-
-function program4(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n    <ul class=\"facets\">\n        ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.facets), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </ul>\n";
-  return buffer;
-  }
-function program5(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n            <li data-id=\"";
-  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" class=\"facet\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.available), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\n                <div class=\"facet-name\">\n                    ";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n                </div>\n                <ul class=\"items\" data-id=\"";
-  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\">\n                    ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.items), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                </ul>\n            </li>\n        ";
-  return buffer;
-  }
-function program6(depth0,data) {
-  
-  
-  return " class=\"facet available\" ";
-  }
-
-function program8(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                    <li data-id=\"";
-  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" class=\"item\">\n                        <div class=\"facet-value\">\n                            ";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n                        </div>\n                        <div class=\"facet-remove\">\n                            <i class=\"glyphicon glyphicon-remove\"></i>\n                        </div>\n                    </li>\n                    ";
-  return buffer;
-  }
-
-  buffer += "<div class=\"squid-api-FiltersSelector\">\n";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.noData), {hash:{},inverse:self.program(4, program4, data),fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n";
-  return buffer;
-  });
-
 this["squid_api"]["template"]["squid_api_filters_categorical_facet_view"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -318,6 +233,40 @@ function program5(depth0,data) {
   return buffer;
   });
 
+this["squid_api"]["template"]["squid_api_filters_categorical_view_hover_template"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n        <b>";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</b>\n        <ul>\n            ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.values), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n        </ul>\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  var buffer = "";
+  buffer += "\n                <li> "
+    + escapeExpression((typeof depth0 === functionType ? depth0.apply(depth0) : depth0))
+    + " </li>\n            ";
+  return buffer;
+  }
+
+  buffer += "<div class=\"squid-api-categorical-view-hover-view\">\n    ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.items), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>\n";
+  return buffer;
+  });
+
 this["squid_api"]["template"]["squid_api_filters_categorical_view"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -403,40 +352,6 @@ function program13(depth0,data) {
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.popup), {hash:{},inverse:self.program(4, program4, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_filters_categorical_view_hover_template"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n        <b>";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</b>\n        <ul>\n            ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.values), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </ul>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  var buffer = "";
-  buffer += "\n                <li> "
-    + escapeExpression((typeof depth0 === functionType ? depth0.apply(depth0) : depth0))
-    + " </li>\n            ";
-  return buffer;
-  }
-
-  buffer += "<div class=\"squid-api-categorical-view-hover-view\">\n    ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.items), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n";
   return buffer;
   });
 
@@ -698,6 +613,91 @@ function program1(depth0,data) {
   return buffer;
   });
 
+this["squid_api"]["template"]["squid_api_FiltersSelector"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, self=this, functionType="function", escapeExpression=this.escapeExpression;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n    <label class=\"noData ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.mandatory), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\">";
+  if (helper = helpers.noDataMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.noDataMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</label>\n";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return "warning fa fa-exclamation-circle";
+  }
+
+function program4(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n    <ul class=\"facets\">\n        ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.facets), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    </ul>\n";
+  return buffer;
+  }
+function program5(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n            <li data-id=\"";
+  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" class=\"facet\" ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.available), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">\n                <div class=\"facet-name\">\n                    ";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n                </div>\n                <ul class=\"items\" data-id=\"";
+  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">\n                    ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.items), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                </ul>\n            </li>\n        ";
+  return buffer;
+  }
+function program6(depth0,data) {
+  
+  
+  return " class=\"facet available\" ";
+  }
+
+function program8(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                    <li data-id=\"";
+  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" class=\"item\">\n                        <div class=\"facet-value\">\n                            ";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n                        </div>\n                        <div class=\"facet-remove\">\n                            <i class=\"glyphicon glyphicon-remove\"></i>\n                        </div>\n                    </li>\n                    ";
+  return buffer;
+  }
+
+  buffer += "<div class=\"squid-api-FiltersSelector\">\n";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.noData), {hash:{},inverse:self.program(4, program4, data),fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>\n";
+  return buffer;
+  });
+
 this["squid_api"]["template"]["squid_api_selection_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -746,179 +746,6 @@ function program4(depth0,data) {
   buffer += "\n</div>";
   return buffer;
   });
-(function (root, factory) {
-    root.squid_api.view.FiltersSelector = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_FiltersSelector);
-}(this, function (Backbone, squid_api, template) {
-
-    var View = Backbone.View.extend({
-
-        model : null,
-        template : template,
-
-        initialize : function(options) {
-            this.config = squid_api.model.config;
-
-            if (!this.model) {
-                this.model = squid_api.model.filters;
-            }
-            if (options.template) {
-                this.template = options.template;
-            }
-            if (options.onSelectFacet) {
-                this.onSelectFacet = options.onSelectFacet;
-            }
-
-            this.listenTo(this.model, "change", this.render);
-
-            // render view
-            this.render();
-        },
-
-        getSelectionsUrl : function() {
-            var projectId = this.config.get("project");
-            var bookmarkId = this.config.get("bookmark");
-
-            var selectionsUrl =  squid_api.apiBaseURL + "/rs/projects/" + projectId +
-                "/bookmarks/" + bookmarkId + "/myselections";
-            return selectionsUrl;
-        },
-
-        events: {
-            "click .facet-remove": function(event) {
-                // Obtain facet name / value
-                var parent = $(event.currentTarget).parent("li");
-                var facetId = parent.parent("ul").data("id");
-                var itemId = parent.data("id");
-                this.onRemoveItem(facetId, itemId);
-            },
-            "click .facet" : function(event) {
-                // Obtain facet name / value
-                var facetId = $(event.currentTarget).data("id");
-                var facetName = $(event.currentTarget).text();
-                if (this.onSelectFacet) {
-                    this.onSelectFacet(facetId, facetName);
-                }
-            },
-            "click .reset-filters" : function() {
-                var me = this;
-                var projectId = this.config.get("project");
-                var bookmarkId = this.config.get("bookmark");
-
-                // get the Bookmark
-                squid_api.getCustomer().then(function(customer) {
-                    customer.get("projects").load(projectId).then(function(project) {
-                        project.get("bookmarks").load(bookmarkId).done(function(bookmark) {
-                            var forcedConfig = {};
-                            var config = me.config.toJSON();
-                            // exclude the selection from re-setting the config
-                            for (var x in config) {
-                                if (x !== "selection") {
-                                    forcedConfig[x] = config[x];
-                                }
-                            }
-                            // set bookmark
-                            squid_api.setBookmark(bookmark, forcedConfig);
-                        }).fail(function(model, response, options) {
-                            console.error("bookmark fetch failed : " + bookmarkId);
-                        });
-                    });
-                });
-            },
-            "click .my-selections" : function() {
-                var me = this;
-                $.ajax({url: this.getSelectionsUrl(),
-                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}})
-                    .done(function(selections) {
-                        var options = {
-                            template : squid_api.template.squid_api_filters_my_selections,
-                            data : {selections: selections},
-                            close : function() { me.selectionsModal.close(); }
-                        };
-
-                        if (!me.selectionsModal) {
-                            me.mySelectionsWidget = new squid_api.view.MySelectionsWidget(options);
-                            me.selectionsModal = new squid_api.view.ModalView({
-                                view : me.mySelectionsWidget
-                            });
-                        }
-                        else {
-                            me.mySelectionsWidget.initialize(options);
-                        }
-                        me.selectionsModal.render();
-                });
-            }
-        },
-
-        onRemoveItem : function(facetId, itemId) {
-            // Copy model selection object properties to remove object reference
-            var selectionClone = $.extend(true, {}, this.config.get("selection"));
-            if (selectionClone) {
-                var facets = selectionClone.facets;
-                if (facets) {
-                    // Remove selected item from facet
-                    squid_api.controller.facetjob.unSelect(facets, facetId, itemId);
-                    squid_api.setConfigSelection(selectionClone);
-                }
-            }
-        },
-
-        isFilteredFacet: function(elements, id) {
-        	if (elements === null) {
-        		return true;
-        	}
-        	for (var i=0; i<elements.length; i++) {
-        		if (elements[i] === id) { return true; }
-        	}
-        	return false;
-        },
-
-        render : function() {
-            var selFacets = [];
-            var noData = true;
-            var filteredFacets  = null;
-            if (squid_api && squid_api.model.config.get("chosenFacets")) {
-            	filteredFacets = squid_api.model.config.get("chosenFacets");
-            }
-            if (this.model) {
-                var selection = this.model.get("selection");
-                if (selection) {
-                    if (selection.facets) {
-                        noData = false;
-                        var facets = selection.facets;
-                        for (i = 0; i < facets.length; i++) {
-                            var facet = facets[i];
-                        	if (this.isFilteredFacet(filteredFacets, facet.id)) {
-	                            var selFacet = {
-	                                    "id" : facet.id,
-	                                    "name" : facet.name ? facet.name : facet.dimension.name,
-	                                    "items" : []
-	                            };
-	                            var selectedItems = facet.selectedItems;
-	                            for (ix = 0; ix < selectedItems.length; ix++) {
-	                                selFacet.items.push({
-	                                        "id" : selectedItems[ix].id,
-	                                        "name" : selectedItems[ix].value
-	                                });
-	                            }
-	                            selFacet.available = (facet.dimension.type === "CATEGORICAL" || facet.dimension.type === "SEGMENTS" || selFacet.items.length > 0) && facet.dimension.valueType !== "DATE";
-	                            selFacets.push(selFacet);
-                        	}
-                        }
-                    }
-                }
-            }
-
-            this.$el.html(this.template({
-                facets : selFacets,
-                noData : noData,
-                noDataMessage : this.noDataMessage
-            }));
-        }
-    });
-
-    return View;
-}));
-
 $.widget( "ui.dialog", $.ui.dialog, {
     options: {
         clickOutside: false, // Determine if clicking outside the dialog shall close it
@@ -2372,7 +2199,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             var values = [];
             if (!val) {
                 // ignore
-            } else if (!val instanceof Array) {
+            } else if (val instanceof Array === false) {
                 values.push(val);
             } else {
                 values = val;
@@ -3515,6 +3342,179 @@ $.widget( "ui.dialog", $.ui.dialog, {
             return this;
         }
 
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.FiltersSelector = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_FiltersSelector);
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+
+        model : null,
+        template : template,
+
+        initialize : function(options) {
+            this.config = squid_api.model.config;
+
+            if (!this.model) {
+                this.model = squid_api.model.filters;
+            }
+            if (options.template) {
+                this.template = options.template;
+            }
+            if (options.onSelectFacet) {
+                this.onSelectFacet = options.onSelectFacet;
+            }
+
+            this.listenTo(this.model, "change", this.render);
+
+            // render view
+            this.render();
+        },
+
+        getSelectionsUrl : function() {
+            var projectId = this.config.get("project");
+            var bookmarkId = this.config.get("bookmark");
+
+            var selectionsUrl =  squid_api.apiBaseURL + "/rs/projects/" + projectId +
+                "/bookmarks/" + bookmarkId + "/myselections";
+            return selectionsUrl;
+        },
+
+        events: {
+            "click .facet-remove": function(event) {
+                // Obtain facet name / value
+                var parent = $(event.currentTarget).parent("li");
+                var facetId = parent.parent("ul").data("id");
+                var itemId = parent.data("id");
+                this.onRemoveItem(facetId, itemId);
+            },
+            "click .facet" : function(event) {
+                // Obtain facet name / value
+                var facetId = $(event.currentTarget).data("id");
+                var facetName = $(event.currentTarget).text();
+                if (this.onSelectFacet) {
+                    this.onSelectFacet(facetId, facetName);
+                }
+            },
+            "click .reset-filters" : function() {
+                var me = this;
+                var projectId = this.config.get("project");
+                var bookmarkId = this.config.get("bookmark");
+
+                // get the Bookmark
+                squid_api.getCustomer().then(function(customer) {
+                    customer.get("projects").load(projectId).then(function(project) {
+                        project.get("bookmarks").load(bookmarkId).done(function(bookmark) {
+                            var forcedConfig = {};
+                            var config = me.config.toJSON();
+                            // exclude the selection from re-setting the config
+                            for (var x in config) {
+                                if (x !== "selection") {
+                                    forcedConfig[x] = config[x];
+                                }
+                            }
+                            // set bookmark
+                            squid_api.setBookmark(bookmark, forcedConfig);
+                        }).fail(function(model, response, options) {
+                            console.error("bookmark fetch failed : " + bookmarkId);
+                        });
+                    });
+                });
+            },
+            "click .my-selections" : function() {
+                var me = this;
+                $.ajax({url: this.getSelectionsUrl(),
+                    headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}})
+                    .done(function(selections) {
+                        var options = {
+                            template : squid_api.template.squid_api_filters_my_selections,
+                            data : {selections: selections},
+                            close : function() { me.selectionsModal.close(); }
+                        };
+
+                        if (!me.selectionsModal) {
+                            me.mySelectionsWidget = new squid_api.view.MySelectionsWidget(options);
+                            me.selectionsModal = new squid_api.view.ModalView({
+                                view : me.mySelectionsWidget
+                            });
+                        }
+                        else {
+                            me.mySelectionsWidget.initialize(options);
+                        }
+                        me.selectionsModal.render();
+                });
+            }
+        },
+
+        onRemoveItem : function(facetId, itemId) {
+            // Copy model selection object properties to remove object reference
+            var selectionClone = $.extend(true, {}, this.config.get("selection"));
+            if (selectionClone) {
+                var facets = selectionClone.facets;
+                if (facets) {
+                    // Remove selected item from facet
+                    squid_api.controller.facetjob.unSelect(facets, facetId, itemId);
+                    squid_api.setConfigSelection(selectionClone);
+                }
+            }
+        },
+
+        isFilteredFacet: function(elements, id) {
+        	if (elements === null) {
+        		return true;
+        	}
+        	for (var i=0; i<elements.length; i++) {
+        		if (elements[i] === id) { return true; }
+        	}
+        	return false;
+        },
+
+        render : function() {
+            var selFacets = [];
+            var noData = true;
+            var filteredFacets  = null;
+            if (squid_api && squid_api.model.config.get("chosenFacets")) {
+            	filteredFacets = squid_api.model.config.get("chosenFacets");
+            }
+            if (this.model) {
+                var selection = this.model.get("selection");
+                if (selection) {
+                    if (selection.facets) {
+                        noData = false;
+                        var facets = selection.facets;
+                        for (i = 0; i < facets.length; i++) {
+                            var facet = facets[i];
+                        	if (this.isFilteredFacet(filteredFacets, facet.id)) {
+	                            var selFacet = {
+	                                    "id" : facet.id,
+	                                    "name" : facet.name ? facet.name : facet.dimension.name,
+	                                    "items" : []
+	                            };
+	                            var selectedItems = facet.selectedItems;
+	                            for (ix = 0; ix < selectedItems.length; ix++) {
+	                                selFacet.items.push({
+	                                        "id" : selectedItems[ix].id,
+	                                        "name" : selectedItems[ix].value
+	                                });
+	                            }
+	                            selFacet.available = (facet.dimension.type === "CATEGORICAL" || facet.dimension.type === "SEGMENTS" || selFacet.items.length > 0) && facet.dimension.valueType !== "DATE";
+	                            selFacets.push(selFacet);
+                        	}
+                        }
+                    }
+                }
+            }
+
+            this.$el.html(this.template({
+                facets : selFacets,
+                noData : noData,
+                noDataMessage : this.noDataMessage
+            }));
+        }
     });
 
     return View;

@@ -44,7 +44,7 @@
             var values = [];
             if (!val) {
                 // ignore
-            } else if (!val instanceof Array) {
+            } else if (val instanceof Array === false) {
                 values.push(val);
             } else {
                 values = val;
