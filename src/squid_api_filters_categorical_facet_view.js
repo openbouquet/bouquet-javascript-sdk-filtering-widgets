@@ -188,8 +188,9 @@
 
                     // Manipulate items to add a selected or not attribute
                     for (ix=0; ix<facets.length; ix++) {
-                        if (selectedFilter === facets[ix].id) {
-                            var selectedItems = facets[ix].selectedItems;
+                    	currentFacet = facets[ix];
+                        if (selectedFilter === currentFacet.id) {
+                            var selectedItems = currentFacet.selectedItems;
                             for (ix1=0; ix1<items.length; ix1++) {
                                 var obj = items[ix1];
                                 obj.selected = false;
@@ -203,6 +204,14 @@
                                     }
                                 }
                                 updatedItems.push(obj);
+                            }
+                            var options = currentFacet.dimension.options;
+                            if (Array.isArray(options)) {
+                            	for (ix1=0; ix1<options.length; ix1++) {
+                            		if (typeof options[ix1].singleSelection !== 'undefined' && options[ix1].singleSelection) {
+                            			this.singleSelect=options[ix1].singleSelection;
+                            		}
+                            	}
                             }
                         }
                     }
