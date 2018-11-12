@@ -46,6 +46,9 @@
             if (options.onChange) {
                 this.onChange = options.onChange;
             }
+            if (options.mandatorySelection) {
+                this.mandatorySelection = options.mandatorySelection;
+            }
 
             //this.listenTo(this.filters, "change:selection", this.render);
             this.listenTo(this.model, "change:itemIndex", this.render);
