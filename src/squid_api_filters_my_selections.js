@@ -24,6 +24,14 @@
                     this.close = options.close;
                 }
             }
+            this.data.placeHolderSearch="Search";
+            if (typeof $.i18n !== "undefined") {
+            	this.data.placeHolderSearch=$.i18n.t("filter_search");
+            	this.data.placeHolderNewName=$.i18n.t("myselections_new_name");
+            } else {
+            	this.data.placeHolderSearch="Search";
+            	this.data.placeHolderNewName="Selection's Name";
+            }
         },
 
         getSelectionsUrl : function() {
@@ -79,9 +87,17 @@
                         break;
                     }
                 }
-                me.finishRequest("Selection '" + name + "' updated", "");
+                if (typeof $.i18n !== "undefined") {
+                	me.finishRequest($.i18n.t("myselections_success_update", {"name": name}),"");
+                } else {
+                	me.finishRequest("Selection '" + name + "' updated", "");
+                }
             }).fail(function() {
-                me.finishRequest("", "Failed to update '" + name + "'!");
+                if (typeof $.i18n !== "undefined") {
+                	me.finishRequest($.i18n.t("myselections_error_update", {"name": name}));
+                } else {
+                    me.finishRequest("", "Failed to update '" + name + "'!");
+                }
             });
         },
 
@@ -125,9 +141,17 @@
                         headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                     }).done(function(newSelection) {
                         me.data.selections.push(newSelection);
-                        me.finishRequest("", "");
+                        if (typeof $.i18n !== "undefined") {
+                        	me.finishRequest($.i18n.t("myselections_success_create", {"name": name}),"");
+                        } else {
+                        	me.finishRequest("Selection '" + name + "' created", "");
+                        }
                     }).fail(function() {
-                        me.finishRequest("", "Failed to add new selection!");
+                        if (typeof $.i18n !== "undefined") {
+                        	me.finishRequest("",$.i18n.t("myselections_error_create", {"name": name}));
+                        } else {
+                            me.finishRequest("", "Failed to add the selection '" + name + "'!");
+                        }
                     });
                 }
             },
@@ -176,7 +200,11 @@
 
             "click .selection-update" : function(event) {
                 var name = $(event.target).parent().find(".my-selection-name ").text();
-                if (confirm("Are you sure you want to update '" + name + "' with the current selection?")) {
+                var confirmUpdateMsg = "Are you sure you want to update '" + name + "' with the current selection?";
+                if (typeof $.i18n !== "undefined") {
+                	confirmUpdateMsg = $.i18n.t("myselections_confirm_update", {"name": name});
+                }
+                if (confirm(confirmUpdateMsg)) {
                     $(event.target).parent().find(".selection-rename-control").hide();
                     $(event.target).parent().find(".selection-rename-control").show();
 
@@ -188,7 +216,11 @@
 
             "click .selection-remove" : function(event) {
                 var name = $(event.target).parent().find(".my-selection-name ").text();
-                if (confirm("Are you sure you want to delete '" + name + "'?")) {
+                var confirmDeleteMsg = "Are you sure you want to delete '" + name + "'?";
+                if (typeof $.i18n !== "undefined") {
+                	confirmDeleteMsg = $.i18n.t("myselections_confirm_delete", {"name": name});
+                }
+                if (confirm(confirmDeleteMsg)) {
                     var me = this;
                     var myBookmarkSelectionId = $(event.target).parent().data("id");
 
@@ -202,9 +234,17 @@
                         me.data.selections = $.grep(me.data.selections, function(elem) {
                             return elem.id.myBookmarkSelectionId !== myBookmarkSelectionId;
                         });
-                        me.finishRequest("", "");
+                        if (typeof $.i18n !== "undefined") {
+                        	me.finishRequest($.i18n.t("myselections_success_delete", {"name": name}),"");
+                        } else {
+                        	me.finishRequest("Selection '" + name + "' deleted", "");
+                        }
                     }).fail(function() {
-                        me.finishRequest("", "Failed to remove selection!");
+                        if (typeof $.i18n !== "undefined") {
+                        	me.finishRequest("",$.i18n.t("myselections_error_deleted", {"name": name}));
+                        } else {
+                            me.finishRequest("", "Failed to delete the selection '" + name + "'!");
+                        }
                     });
                 }
             },
@@ -234,6 +274,9 @@
 
         render : function() {
             this.$el.html(this.template(this.data));
+            if (typeof $.i18n !== "undefined") {
+            	$("#myselection-modal").localize();
+            }
             return this;
         }
 

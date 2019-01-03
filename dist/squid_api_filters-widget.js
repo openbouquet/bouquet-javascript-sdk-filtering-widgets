@@ -149,7 +149,7 @@ this["squid_api"]["template"]["squid_api_filters_categorical_view"] = Handlebars
 
   return "<div class=\"squid_api_filters-categorical-panel-view popup\">\n"
     + ((stack1 = helpers.unless.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.initialFacet : depth0),{"name":"unless","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "	<div id=\"search\">\n		<div class=\"input-group\">\n		      <span class=\"input-group-addon\">\n		        <i id=\"search-in-progress\" class=\"fa fa-refresh fa-spin hidden\"></i>\n		        <i id=\"search-not-in-progress\" class=\"fa fa-search\"></i>\n		      </span>\n			<input class=\"form-control\" id=\"searchbox\" type=\"search\" placeholder=\"Search for\">\n		</div>\n	</div>\n	<div id=\"filter-display-results\">\n	</div>\n	<div id=\"selected\">\n	</div>\n	<div id=\"close\">\n		<ul class=\"pagination\"><li class=\"active button\"><a href=\"#\">Close</a></li><ul>\n	</div>\n	<div id=\"pagination-container\">\n</div>\n";
+    + "	<div id=\"search\">\n		<div class=\"input-group\">\n		      <span class=\"input-group-addon\">\n		        <i id=\"search-in-progress\" class=\"fa fa-refresh fa-spin hidden\"></i>\n		        <i id=\"search-not-in-progress\" class=\"fa fa-search\"></i>\n		      </span>\n			<input class=\"form-control\" id=\"searchbox\" type=\"search\" placeholder=\"Search for\">\n		</div>\n	</div>\n	<div id=\"filter-display-results\">\n	</div>\n	<div id=\"selected\">\n	</div>\n	<div id=\"close\">\n		<ul class=\"pagination\"><li class=\"active button\"><a href=\"#\" data-i18n=\"button-close\">Close</a></li><ul>\n	</div>\n	<div id=\"pagination-container\">\n</div>\n";
 },"2":function(container,depth0,helpers,partials,data) {
     return "		<div id=\"filter-selection\">\n			<select class=\"btn btn-select-filter\" size=\"2\"></select>\n		</div>\n";
 },"4":function(container,depth0,helpers,partials,data) {
@@ -181,9 +181,9 @@ this["squid_api"]["template"]["squid_api_filters_categorical_view"] = Handlebars
 
   return "		<div class=\"panel-footer\">\n			<button type=\"button\" class=\"btn btn-primary apply-selection\" data-toggle=\"collapse\"\n				data-target=\""
     + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
-    + "\" data-clavier=\"true\">Apply</button>\n			<button type=\"button\" class=\"btn btn-default cancel-selection\" data-toggle=\"collapse\"\n				data-target=\""
+    + "\" data-clavier=\"true\"	data-i18n=\"button-apply\">Apply</button>\n			<button type=\"button\" class=\"btn btn-default cancel-selection\" data-toggle=\"collapse\"\n				data-target=\""
     + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
-    + "\" data-clavier=\"true\">Close</button>\n		</div>\n";
+    + "\" data-clavier=\"true\"	data-i18n=\"button-close\">Close</button>\n		</div>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
@@ -308,15 +308,17 @@ this["squid_api"]["template"]["squid_api_filters_my_selections"] = Handlebars.te
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "<div class=\"modal-content\">\n    <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button>\n        <h4 class=\"modal-title\">My Selections</h4>\n    </div>\n    <div class=\"modal-body\">\n        <div class=\"search input-group\" style=\"margin: 10px 0 10px 0\">\n            <span class=\"input-group-addon\">\n                <i id=\"selections-search-in-progress\" class=\"glyphicon glyphicon-refresh glyphicon-spin hidden\"></i>\n                <i id=\"selections-search-not-in-progress\" class=\"glyphicon glyphicon-search\"></i>\n            </span>\n            <input id=\"selections-searchbox\" class=\"form-control search\" placeholder=\"Search\" value=\""
+  return "<div class=\"modal-content\" id=\"myselection-modal\">\n    <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button>\n        <h4 class=\"modal-title\" data-i18n=\"myselections_title\">My Selections</h4>\n    </div>\n    <div class=\"modal-body\">\n        <div class=\"search input-group\" style=\"margin: 10px 0 10px 0\">\n            <span class=\"input-group-addon\">\n                <i id=\"selections-search-in-progress\" class=\"glyphicon glyphicon-refresh glyphicon-spin hidden\"></i>\n                <i id=\"selections-search-not-in-progress\" class=\"glyphicon glyphicon-search\"></i>\n            </span>\n            <input id=\"selections-searchbox\" class=\"form-control search\" data-i18n=\"[placeholder]filter_search\" value=\""
     + alias4(((helper = (helper = helpers.searchTerm || (depth0 != null ? depth0.searchTerm : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"searchTerm","hash":{},"data":data}) : helper)))
     + "\" type=\"text\" autofocus>\n        </div>\n        <div class=\"results min-filter-height filter-selections\">\n            <ul class=\"list-group\">\n"
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.selections : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "            </ul>\n        </div>\n        <div class=\"row\">\n            <div class=\"form-group col-md-9\">\n                <input type=\"text\" id=\"new-selection\" class=\"form-control\" placeholder=\"Selection's name\">\n            </div>\n            <div class=\"col-md-3\">\n                <button id=\"create-selection\" type=\"button\" class=\"btn btn-default\" disabled>Create</button>\n            </div>\n        </div>\n        <div class=\"row\" style=\"margin-left: 15px;\">"
+    + "            </ul>\n        </div>\n        <div class=\"row\">\n            <div class=\"form-group col-md-9\">\n                <input type=\"text\" id=\"new-selection\" class=\"form-control\" placeholder=\""
+    + alias4(((helper = (helper = helpers.placeHolderNewName || (depth0 != null ? depth0.placeHolderNewName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"placeHolderNewName","hash":{},"data":data}) : helper)))
+    + "\">\n            </div>\n            <div class=\"col-md-3\">\n                <button id=\"create-selection\" type=\"button\" class=\"btn btn-default\" data-i18n=\"button_create\" disabled>Create</button>\n            </div>\n        </div>\n        <div class=\"row\" style=\"margin-left: 15px;\">"
     + alias4(((helper = (helper = helpers.message || (depth0 != null ? depth0.message : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"message","hash":{},"data":data}) : helper)))
     + "</div>\n        <div class=\"row\" style=\"margin-left: 15px;color:crimson\">"
     + alias4(((helper = (helper = helpers.errorMessage || (depth0 != null ? depth0.errorMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"errorMessage","hash":{},"data":data}) : helper)))
-    + "</div>\n    </div>\n    <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Cancel</button>\n    </div>\n</div>";
+    + "</div>\n    </div>\n    <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\"  data-i18n=\"button_cancel\">Cancel</button>\n    </div>\n</div>\n";
 },"useData":true});
 
 this["squid_api"]["template"]["squid_api_filters_segment_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
@@ -661,14 +663,23 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 if (facet.get("done") === true) {
                     if ((facet.get("hasMore") === true) && (updatedItems.length < pageSize)) {
                         message = "Partial results (computation pending)";
-                    } else if (!facetItems || facetItems.length === 0) {
+                        if (typeof $.i18n !== "undefined") {
+                        	message = $.i18n.t("partialResults");
+                        }
+                   } else if (!facetItems || facetItems.length === 0) {
                         message = "No Items";
-                        this.$el.removeClass("min-filter-height");
+                        if (typeof $.i18n !== "undefined") {
+                        	message = $.i18n.t("noItems");
+                        }
+                       this.$el.removeClass("min-filter-height");
                     }
                     computingInProgress = false;
                 } else {
                     message = "Computing in progress";
-                    computingInProgress = true;
+                    if (typeof $.i18n !== "undefined") {
+                    	message = $.i18n.t("runningMessage");
+                    }
+                   computingInProgress = true;
                 }
 
             } else {
@@ -2628,6 +2639,14 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     this.close = options.close;
                 }
             }
+            this.data.placeHolderSearch="Search";
+            if (typeof $.i18n !== "undefined") {
+            	this.data.placeHolderSearch=$.i18n.t("filter_search");
+            	this.data.placeHolderNewName=$.i18n.t("myselections_new_name");
+            } else {
+            	this.data.placeHolderSearch="Search";
+            	this.data.placeHolderNewName="Selection's Name";
+            }
         },
 
         getSelectionsUrl : function() {
@@ -2683,9 +2702,17 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         break;
                     }
                 }
-                me.finishRequest("Selection '" + name + "' updated", "");
+                if (typeof $.i18n !== "undefined") {
+                	me.finishRequest($.i18n.t("myselections_success_update", {"name": name}),"");
+                } else {
+                	me.finishRequest("Selection '" + name + "' updated", "");
+                }
             }).fail(function() {
-                me.finishRequest("", "Failed to update '" + name + "'!");
+                if (typeof $.i18n !== "undefined") {
+                	me.finishRequest($.i18n.t("myselections_error_update", {"name": name}));
+                } else {
+                    me.finishRequest("", "Failed to update '" + name + "'!");
+                }
             });
         },
 
@@ -2729,9 +2756,17 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                     }).done(function(newSelection) {
                         me.data.selections.push(newSelection);
-                        me.finishRequest("", "");
+                        if (typeof $.i18n !== "undefined") {
+                        	me.finishRequest($.i18n.t("myselections_success_create", {"name": name}),"");
+                        } else {
+                        	me.finishRequest("Selection '" + name + "' created", "");
+                        }
                     }).fail(function() {
-                        me.finishRequest("", "Failed to add new selection!");
+                        if (typeof $.i18n !== "undefined") {
+                        	me.finishRequest("",$.i18n.t("myselections_error_create", {"name": name}));
+                        } else {
+                            me.finishRequest("", "Failed to add the selection '" + name + "'!");
+                        }
                     });
                 }
             },
@@ -2780,7 +2815,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
             "click .selection-update" : function(event) {
                 var name = $(event.target).parent().find(".my-selection-name ").text();
-                if (confirm("Are you sure you want to update '" + name + "' with the current selection?")) {
+                var confirmUpdateMsg = "Are you sure you want to update '" + name + "' with the current selection?";
+                if (typeof $.i18n !== "undefined") {
+                	confirmUpdateMsg = $.i18n.t("myselections_confirm_update", {"name": name});
+                }
+                if (confirm(confirmUpdateMsg)) {
                     $(event.target).parent().find(".selection-rename-control").hide();
                     $(event.target).parent().find(".selection-rename-control").show();
 
@@ -2792,7 +2831,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
             "click .selection-remove" : function(event) {
                 var name = $(event.target).parent().find(".my-selection-name ").text();
-                if (confirm("Are you sure you want to delete '" + name + "'?")) {
+                var confirmDeleteMsg = "Are you sure you want to delete '" + name + "'?";
+                if (typeof $.i18n !== "undefined") {
+                	confirmDeleteMsg = $.i18n.t("myselections_confirm_delete", {"name": name});
+                }
+                if (confirm(confirmDeleteMsg)) {
                     var me = this;
                     var myBookmarkSelectionId = $(event.target).parent().data("id");
 
@@ -2806,9 +2849,17 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         me.data.selections = $.grep(me.data.selections, function(elem) {
                             return elem.id.myBookmarkSelectionId !== myBookmarkSelectionId;
                         });
-                        me.finishRequest("", "");
+                        if (typeof $.i18n !== "undefined") {
+                        	me.finishRequest($.i18n.t("myselections_success_delete", {"name": name}),"");
+                        } else {
+                        	me.finishRequest("Selection '" + name + "' deleted", "");
+                        }
                     }).fail(function() {
-                        me.finishRequest("", "Failed to remove selection!");
+                        if (typeof $.i18n !== "undefined") {
+                        	me.finishRequest("",$.i18n.t("myselections_error_deleted", {"name": name}));
+                        } else {
+                            me.finishRequest("", "Failed to delete the selection '" + name + "'!");
+                        }
                     });
                 }
             },
@@ -2838,6 +2889,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
 
         render : function() {
             this.$el.html(this.template(this.data));
+            if (typeof $.i18n !== "undefined") {
+            	$("#myselection-modal").localize();
+            }
             return this;
         }
 
@@ -3183,6 +3237,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 noData : noData,
                 noDataMessage : this.noDataMessage
             }));
+            if (typeof $.i18n !== "undefined") {
+            	$(".squid-api-FiltersSelector").localize();
+            }
+
         }
     });
 

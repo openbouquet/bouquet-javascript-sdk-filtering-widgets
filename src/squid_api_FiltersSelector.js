@@ -165,6 +165,10 @@
                 noData : noData,
                 noDataMessage : this.noDataMessage
             }));
+            if (typeof $.i18n !== "undefined") {
+            	$(".squid-api-FiltersSelector").localize();
+            }
+
         }
     });
 

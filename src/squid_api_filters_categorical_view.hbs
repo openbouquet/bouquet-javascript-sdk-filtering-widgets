@@ -19,7 +19,7 @@
 	<div id="selected">
 	</div>
 	<div id="close">
-		<ul class="pagination"><li class="active button"><a href="#">Close</a></li><ul>
+		<ul class="pagination"><li class="active button"><a href="#" data-i18n="button-close">Close</a></li><ul>
 	</div>
 	<div id="pagination-container">
 </div>
@@ -80,9 +80,9 @@
 	{{#if panel-buttons}}
 		<div class="panel-footer">
 			<button type="button" class="btn btn-primary apply-selection" data-toggle="collapse"
-				data-target="{{data-target}}" data-clavier="true">Apply</button>
+				data-target="{{data-target}}" data-clavier="true"	data-i18n="button-apply">Apply</button>
 			<button type="button" class="btn btn-default cancel-selection" data-toggle="collapse"
-				data-target="{{data-target}}" data-clavier="true">Close</button>
+				data-target="{{data-target}}" data-clavier="true"	data-i18n="button-close">Close</button>
 		</div>
 	{{/if}}
 </div>

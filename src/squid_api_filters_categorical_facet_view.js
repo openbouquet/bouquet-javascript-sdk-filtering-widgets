@@ -224,14 +224,23 @@
                 if (facet.get("done") === true) {
                     if ((facet.get("hasMore") === true) && (updatedItems.length < pageSize)) {
                         message = "Partial results (computation pending)";
-                    } else if (!facetItems || facetItems.length === 0) {
+                        if (typeof $.i18n !== "undefined") {
+                        	message = $.i18n.t("partialResults");
+                        }
+                   } else if (!facetItems || facetItems.length === 0) {
                         message = "No Items";
-                        this.$el.removeClass("min-filter-height");
+                        if (typeof $.i18n !== "undefined") {
+                        	message = $.i18n.t("noItems");
+                        }
+                       this.$el.removeClass("min-filter-height");
                     }
                     computingInProgress = false;
                 } else {
                     message = "Computing in progress";
-                    computingInProgress = true;
+                    if (typeof $.i18n !== "undefined") {
+                    	message = $.i18n.t("runningMessage");
+                    }
+                   computingInProgress = true;
                 }
 
             } else {
