@@ -2,7 +2,7 @@
   "runningMessage":"Computing in progress",
   "failedMessage" : "An error has occurred",
   "partialResults":"Partial results (computation pending)",
-  "noItems":"The list is empty",
+  "noItems":"The search result is empty",
   "quick_date_range_title":"Quick Date Range",
   "filters_reset":"Reset",
   "filters_my_selections":"My Selections",
@@ -23,5 +23,9 @@
   "myselections_error_update":"Failed to update the selection '{{name}}'!",
   "myselections_success_create":"Selection '{{name}}' created",
   "myselections_success_delete":"Selection '{{name}}' deleted",
-  "myselections_success_update":"Selection '{{name}}' updated"
+  "myselections_success_update":"Selection '{{name}}' updated",
+  "applyLabel": "Apply",
+  "cancelLabel": "Cancel",
+  "fromLabel": "From",
+  "toLabel": "To"
 }

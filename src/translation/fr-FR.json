@@ -1,8 +1,8 @@
 {
   "runningMessage":"Calcul en cours",
   "failedMessage" : "Une erreur est survenue",
-  "partialResults":"La liste est incomplête (calcul en cours)",
-  "noItems":"La liste ne renvoie aucun résultat",
+  "partialResults":"La recherche est incomplête (calcul en cours)",
+  "noItems":"La recherche ne renvoie aucun résultat",
   "quick_date_range_title":"Présélections",
   "filters_reset":"Réinitialiser",
   "filters_my_selections":"Mes Sélections",
@@ -23,5 +23,9 @@
   "myselections_error_update":"La sélection '{{name}}' n'a pas été mise à jour!",
   "myselections_success_create":"Selection '{{name}}' créée'",
   "myselections_success_delete":"Selection '{{name}}' supprimée",
-  "myselections_success_update":"Selection '{{name}}' mise à jour"
+  "myselections_success_update":"Selection '{{name}}' mise à jour",
+  "applyLabel": "Ok",
+  "cancelLabel": "Annuler",
+  "fromLabel": "De",
+  "toLabel": "A"
 }

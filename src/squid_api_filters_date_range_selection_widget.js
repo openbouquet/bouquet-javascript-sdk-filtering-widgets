@@ -175,7 +175,12 @@
             for (i=0; i<this.ranges.length; i++) {
                 range = this.ranges[i];
                 range.selected = this.currentlySelected(range);
-                range.val = range.name.replace(" ", "-");
+                if (typeof range.val === "undefined") {
+                	range.val = range.name.replace(" ", "-");
+                }
+                if (typeof range.i18n === "undefined") {
+                	range.i18n = range.name;
+                } else 
                 this.jsonData.ranges.push(range);
             }
 
@@ -194,7 +199,9 @@
                     this.$el.find("select").val(range.val);
                 }
             }
-
+            if (typeof $.i18n !== "undefined") {
+            	this.$el.localize();
+            }
             return this;
         }
     });

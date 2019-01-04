@@ -258,6 +258,8 @@ this["squid_api"]["template"]["squid_api_filters_date_range_selection_widget"] =
     + alias4(((helper = (helper = helpers.val || (depth0 != null ? depth0.val : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"val","hash":{},"data":data}) : helper)))
     + "\" class=\"select\" data-attr=\""
     + alias4(((helper = (helper = helpers.val || (depth0 != null ? depth0.val : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"val","hash":{},"data":data}) : helper)))
+    + "\" data-i18n=\""
+    + alias4(((helper = (helper = helpers.i18n || (depth0 != null ? depth0.i18n : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"i18n","hash":{},"data":data}) : helper)))
     + "\">"
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
     + "</option>\n";
@@ -2286,7 +2288,12 @@ $.widget( "ui.dialog", $.ui.dialog, {
             for (i=0; i<this.ranges.length; i++) {
                 range = this.ranges[i];
                 range.selected = this.currentlySelected(range);
-                range.val = range.name.replace(" ", "-");
+                if (typeof range.val === "undefined") {
+                	range.val = range.name.replace(" ", "-");
+                }
+                if (typeof range.i18n === "undefined") {
+                	range.i18n = range.name;
+                } else 
                 this.jsonData.ranges.push(range);
             }
 
@@ -2305,7 +2312,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     this.$el.find("select").val(range.val);
                 }
             }
-
+            if (typeof $.i18n !== "undefined") {
+            	this.$el.localize();
+            }
             return this;
         }
     });
@@ -2521,6 +2530,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
             if (facet) {
                 this.renderPicker(facet, dates);
             }
+            if (typeof $.i18n !== "undefined") {
+            	this.$el.localize();
+            }
 
             return this;
         },
@@ -2567,8 +2579,27 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
 
             // Build Date Picker
+            var lang = navigator.language || navigator.userLanguage;
+            moment.locale(lang);
+            
+            var applyLabel= 'Apply',
+            cancelLabel= 'Cancel',
+            fromLabel= 'From',
+            toLabel= 'To';
+            if (typeof $.i18n !== "undefined") {
+            	applyLabel= $.i18n.t("applyLabel");
+                cancelLabel= $.i18n.t("cancelLabel");
+                fromLabel= $.i18n.t("fromLabel");
+                toLabel= $.i18n.t("toLabel");
+            }
             this.$el.find(".widget").daterangepicker({
                 format: 'YYYY-MM-DD',
+                locale: {
+                    applyLabel: applyLabel,
+                    cancelLabel: cancelLabel,
+                    fromLabel: fromLabel,
+                    toLabel: toLabel
+                },
                 opens: this.datePickerPosition,
                 showDropdowns: true,
                 dateLimit: this.dateLimit,
@@ -2577,7 +2608,6 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 minDate : dates.minDate ? dates.minDate.format('YYYY-MM-DD') : moment().utc().subtract("50", "years").format("YYYY-MM-DD"),
                 maxDate : dates.maxDate ? dates.maxDate.format('YYYY-MM-DD') : moment().utc().format("YYYY-MM-DD"),
             });
-
             // apply action
             this.$el.find("span").on('apply.daterangepicker', function(ev, picker) {
                 // Update Change Selection upon date widget close

@@ -206,6 +206,9 @@
             if (facet) {
                 this.renderPicker(facet, dates);
             }
+            if (typeof $.i18n !== "undefined") {
+            	this.$el.localize();
+            }
 
             return this;
         },
@@ -252,8 +255,27 @@
             }
 
             // Build Date Picker
+            var lang = navigator.language || navigator.userLanguage;
+            moment.locale(lang);
+            
+            var applyLabel= 'Apply',
+            cancelLabel= 'Cancel',
+            fromLabel= 'From',
+            toLabel= 'To';
+            if (typeof $.i18n !== "undefined") {
+            	applyLabel= $.i18n.t("applyLabel");
+                cancelLabel= $.i18n.t("cancelLabel");
+                fromLabel= $.i18n.t("fromLabel");
+                toLabel= $.i18n.t("toLabel");
+            }
             this.$el.find(".widget").daterangepicker({
                 format: 'YYYY-MM-DD',
+                locale: {
+                    applyLabel: applyLabel,
+                    cancelLabel: cancelLabel,
+                    fromLabel: fromLabel,
+                    toLabel: toLabel
+                },
                 opens: this.datePickerPosition,
                 showDropdowns: true,
                 dateLimit: this.dateLimit,
@@ -262,7 +284,6 @@
                 minDate : dates.minDate ? dates.minDate.format('YYYY-MM-DD') : moment().utc().subtract("50", "years").format("YYYY-MM-DD"),
                 maxDate : dates.maxDate ? dates.maxDate.format('YYYY-MM-DD') : moment().utc().format("YYYY-MM-DD"),
             });
-
             // apply action
             this.$el.find("span").on('apply.daterangepicker', function(ev, picker) {
                 // Update Change Selection upon date widget close
