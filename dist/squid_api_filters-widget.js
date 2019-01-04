@@ -1545,6 +1545,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     this.displayFacetsOnHover();
                 }
             }
+            if (typeof $.i18n !== "undefined") {
+            	this.$el.localize();
+            }
+
         },
 
         displayFacetsOnHover: function() {
@@ -2920,7 +2924,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         render : function() {
             this.$el.html(this.template(this.data));
             if (typeof $.i18n !== "undefined") {
-            	$("#myselection-modal").localize();
+            	this.$el.localize();
             }
             return this;
         }
@@ -3268,7 +3272,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 noDataMessage : this.noDataMessage
             }));
             if (typeof $.i18n !== "undefined") {
-            	$(".squid-api-FiltersSelector").localize();
+            	this.$el.localize();
             }
 
         }

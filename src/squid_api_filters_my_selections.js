@@ -275,7 +275,7 @@
         render : function() {
             this.$el.html(this.template(this.data));
             if (typeof $.i18n !== "undefined") {
-            	$("#myselection-modal").localize();
+            	this.$el.localize();
             }
             return this;
         }

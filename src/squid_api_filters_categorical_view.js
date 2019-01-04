@@ -464,6 +464,10 @@
                     this.displayFacetsOnHover();
                 }
             }
+            if (typeof $.i18n !== "undefined") {
+            	this.$el.localize();
+            }
+
         },
 
         displayFacetsOnHover: function() {

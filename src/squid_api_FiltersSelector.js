@@ -166,7 +166,7 @@
                 noDataMessage : this.noDataMessage
             }));
             if (typeof $.i18n !== "undefined") {
-            	$(".squid-api-FiltersSelector").localize();
+            	this.$el.localize();
             }
 
         }
