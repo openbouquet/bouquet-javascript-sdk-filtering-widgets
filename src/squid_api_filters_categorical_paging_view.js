@@ -16,7 +16,7 @@
                 this.format = options.format;
             } else {
                 if (d3) {
-                    this.format = d3.time.format("%Y-%m-%d");
+                    this.format = d3.timeFormat("%Y-%m-%d");
                 } else {
                     this.format = function(val){return val;};
                 }

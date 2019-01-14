@@ -23,7 +23,7 @@
       "jquery-ui": "~1.12.1",
       "bootstrap-multiselect":"*",
       "bootstrap-daterangepicker":"https://github.com/squidsolutions/bootstrap-daterangepicker.git#master",
-      "d3" : "3"
+      "d3": "5.7.0"
     },
   "resolutions": {
     "bootstrap-daterangepicker": "master"
