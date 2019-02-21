@@ -93,6 +93,7 @@
                         for (i=0; i<facets.length; i++) {
                             var facet = facets[i];
                             if (facet.dimension.type == "CATEGORICAL" || facet.dimension.type == "SEGMENTS") {
+                            	
                                 var selectedItems = facet.selectedItems;
                                 for (ix=0; ix<selectedItems.length; ix++) {
                                     if (this.initialFacet == facet.id || (!this.initialFacet && !this.initialDimension)) {
@@ -106,7 +107,27 @@
                                             obj.facetName = facet.dimension.name;
                                         }
                                         obj.facetNameId = facet.id;
-                                        selFacets.push(obj);
+                                        if (typeof facet.dimension.options !== "undefined" && facet.dimension.options.length>0) {
+                                        	for (var iy = 0 ; iy<facet.dimension.options.length; iy++) {
+                                        		if (facet.dimension.options[iy].mandatorySelection && facet.dimension.options[iy].singleSelection) {
+                                        			var found = false;
+                                        			for (var iz=0; iz<facet.items.length;iz++) {
+                                        				if (obj.facetItemId === facet.items[iz].id) {
+                                        					found = true;
+                                        				}
+                                        			}
+                                        			if (!found && facet.items.length>0) {
+                                        				obj.facetItemId = facet.items[0].id;
+                                                        obj.facetItem = facet.items[0].value;
+                                        			} else if (!found && facet.items.length === 0) {
+                                        				obj = null;
+                                        			}
+                                        		}
+                                        	}
+                                        } 
+                                        if (obj !== null) {
+                                        	selFacets.push(obj);
+                                        }
                                     }
                                 }
                             }
