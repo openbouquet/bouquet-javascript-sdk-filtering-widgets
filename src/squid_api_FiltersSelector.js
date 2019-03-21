@@ -78,7 +78,7 @@
             },
             "click .my-selections" : function() {
                 var me = this;
-                $.ajax({url: this.getSelectionsUrl(),
+                $.ajax({url: this.getSelectionsUrl() + "?access_token=" + squid_api.model.login.get("accessToken"),
                     headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}})
                     .done(function(selections) {
                         var options = {

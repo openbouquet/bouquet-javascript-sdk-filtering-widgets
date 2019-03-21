@@ -75,7 +75,7 @@
             this.startRequest();
 
             $.ajax({
-                url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId,
+                url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId + "?access_token=" + squid_api.model.login.get("accessToken"),
                 method: "PUT",
                 contentType: "text/json",
                 data: JSON.stringify(newSelection),
@@ -134,7 +134,7 @@
                     this.startRequest();
 
                     $.ajax({
-                        url: this.getSelectionsUrl(),
+                        url: this.getSelectionsUrl() + "?access_token=" + squid_api.model.login.get("accessToken"),
                         method: "POST",
                         contentType: "text/json",
                         data: JSON.stringify(newSelection),
@@ -227,7 +227,7 @@
                     this.startRequest();
 
                     $.ajax({
-                        url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId,
+                        url: this.getSelectionsUrl() + "/" + myBookmarkSelectionId + "?access_token=" + squid_api.model.login.get("accessToken"),
                         method: "DELETE",
                         headers: {"Authorization" : "Bearer " + squid_api.model.login.get("accessToken")}
                     }).done(function() {
