@@ -3220,22 +3220,27 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
         },
 
-        isFilteredFacet: function(elements, id) {
+        filteredFacetIndex: function(elements, id) {
         	if (elements === null) {
-        		return true;
+        		return null;
         	}
         	for (var i=0; i<elements.length; i++) {
-        		if (elements[i] === id) { return true; }
+        		if (elements[i] === id) { return i; }
         	}
-        	return false;
+        	return -1;
         },
 
         render : function() {
             var selFacets = [];
             var noData = true;
             var filteredFacets  = null;
+            var orderByConfig = false;
             if (squid_api && squid_api.model.config.get("chosenFacets")) {
             	filteredFacets = squid_api.model.config.get("chosenFacets");
+            	selFacets = Array.apply(null, Array(filteredFacets.length));
+            	if (typeof squid_api.model.config.get("orderByConfig") !== "undefined") {
+            		orderByConfig = squid_api.model.config.get("orderByConfig");
+            	}
             }
             if (this.model) {
                 var selection = this.model.get("selection");
@@ -3245,7 +3250,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         var facets = selection.facets;
                         for (i = 0; i < facets.length; i++) {
                             var facet = facets[i];
-                        	if (this.isFilteredFacet(filteredFacets, facet.id)) {
+                            var index = this.filteredFacetIndex(filteredFacets, facet.id);
+                            if (index === null) {
+                            	index = i;
+                            }
+                        	if (index !== -1) {
 	                            var selFacet = {
 	                                    "id" : facet.id,
 	                                    "name" : facet.name ? facet.name : facet.dimension.name,
@@ -3259,7 +3268,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
 	                                });
 	                            }
 	                            selFacet.available = (facet.dimension.type === "CATEGORICAL" || facet.dimension.type === "SEGMENTS" || selFacet.items.length > 0) && facet.dimension.valueType !== "DATE";
-	                            selFacets.push(selFacet);
+                        		if (orderByConfig === true) {
+                        			selFacets.splice(index, 1, selFacet);
+                        		} else {
+                        			selFacets.splice(i, 1, selFacet);
+                        		}
                         	}
                         }
                     }
