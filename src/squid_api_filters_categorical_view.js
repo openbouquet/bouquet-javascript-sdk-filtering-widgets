@@ -291,7 +291,7 @@
                 if (this.currentModel !== this.model) {
                     this.currentModel = this.model;
                     this.listenTo(this.currentModel, 'change', function() {
-                    	
+
                         // force facet fetch (because the selection has changed)
                     	// Do not relaunch a facet job when few attributes changed, no need & it generate extra calls
                         me.renderFacet(me.currentModel.hasChanged("statistics") === false && me.currentModel.hasChanged("id") === false && me.currentModel.hasChanged("oid") === false && me.currentModel.hasChanged("status") === false);
@@ -421,7 +421,7 @@
 				//T2726: must put back the call back to launch a search on keyeup
                 //This has been removed at a point, for an unknown reason
                 $(this.filterPanel).find("#searchbox").keyup(_.bind(this.search, this));
-                
+
                 $(this.filterPanel).find("li.button").on("click", function() {
                     if ($(me.filterPanel).dialog("isOpen")) {
                         $(me.filterPanel).dialog( "close" );
@@ -429,7 +429,7 @@
                         $(me.filterPanel).dialog( "open" );
                     }
                 });
-               
+
 				if (this.popup) {
                     if (buttonLabel) {
                         this.$el
@@ -674,7 +674,12 @@
             var selectedFacet = this.filterStore.get("facet");
             var itemIndex = this.filterStore.get("itemIndex");
             var refresh = false;
-            if (this.filterStore.hasChanged("pageIndex") || this.filterStore.hasChanged("oid") || this.filterStore.hasChanged("oid") || this.filterStore.hasChanged("search") || (this.filterStore.get("searchPrevious") === null && this.filterStore.get("search") === null)) {
+            if (this.filterStore.hasChanged("pageIndex") ||
+                this.filterStore.hasChanged("oid") ||
+                //this.filterStore.hasChanged("oid") || // Duplicate condition. Meaning something else?
+                this.filterStore.hasChanged("search") ||
+                (this.filterStore.get("searchPrevious") === null && this.filterStore.get("search") === null) ||
+                this.filterStore.get("search")) { // GMS-11179: It seems that, when searching refresh is always needed
             	refresh = true;
             }
             if (itemIndex >= this.filterStore.get("pageIndex") * this.filterStore.get("pageSize")) {
