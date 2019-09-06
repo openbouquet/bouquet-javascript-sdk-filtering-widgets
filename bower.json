@@ -1,31 +1,31 @@
 {
-  "name": "squid_api_filters_widget",
-  "version": "7.0.0",
-  "homepage": "https://github.com/openbouquet/bouquet-javascript-sdk-filtering-widgets",
-  "authors": [
-    "obalbous <oba@squid>"
-  ],
-  "main": ["dist/squid_api_filters-widget.js","dist/squid_api_filters-widgets.css"],
-  "license": "AGPL-3.0",
-  "private": true,
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "src",
-    "build",
-    "Gruntfile.js"
-  ],
-  "dependencies": {
-      "squid_api": "https://github.com/openbouquet/bouquet-javascript-sdk.git#7.0.8",
-      "handlebars": "~4.0.12",
-      "jquery-ui": "~1.12.1",
-      "bootstrap-multiselect":"*",
-      "bootstrap-daterangepicker":"https://github.com/squidsolutions/bootstrap-daterangepicker.git#master",
-      "d3": "5.7.0"
-    },
-  "resolutions": {
-    "bootstrap-daterangepicker": "master"
-  }
+	"name": "squid_api_filters_widget",
+	"version": "7.0.0",
+	"homepage": "https://github.com/openbouquet/bouquet-javascript-sdk-filtering-widgets",
+	"authors": [
+		"obalbous <oba@squid>"
+	],
+	"main": [
+		"dist/squid_api_filters-widget.js",
+		"dist/squid_api_filters-widgets.css"
+	],
+	"license": "AGPL-3.0",
+	"private": true,
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components",
+		"test",
+		"src",
+		"build",
+		"Gruntfile.js"
+	],
+	"dependencies": {
+		"squid_api": "https://github.com/openbouquet/bouquet-javascript-sdk.git#7.0.8",
+		"handlebars": "~4.0.12",
+		"jquery-ui": "~1.12.1",
+		"bootstrap-multiselect": "*",
+		"bootstrap-daterangepicker": "https://github.com/squidsolutions/bootstrap-daterangepicker.git#master",
+		"d3": "5.7.0"
+	}
 }
