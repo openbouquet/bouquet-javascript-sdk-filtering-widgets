@@ -27,5 +27,6 @@
   "applyLabel": "Ok",
   "cancelLabel": "Annuler",
   "fromLabel": "De",
-  "toLabel": "A"
+  "toLabel": "A",
+  "reset_filters_confirm":"Veuillez confirmer pour réinitialiser votre sélection"
 }

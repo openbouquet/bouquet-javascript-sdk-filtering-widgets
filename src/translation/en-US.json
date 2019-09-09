@@ -27,5 +27,6 @@
   "applyLabel": "Apply",
   "cancelLabel": "Cancel",
   "fromLabel": "From",
-  "toLabel": "To"
+  "toLabel": "To",
+  "reset_filters_confirm":"Are you sure you would like to reset filters?"
 }

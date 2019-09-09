@@ -55,27 +55,33 @@
                 var me = this;
                 var projectId = this.config.get("project");
                 var bookmarkId = this.config.get("bookmark");
-
-                // get the Bookmark
-                squid_api.getCustomer().then(function(customer) {
-                    customer.get("projects").load(projectId).then(function(project) {
-                        project.get("bookmarks").load(bookmarkId).done(function(bookmark) {
-                            var forcedConfig = {};
-                            var config = me.config.toJSON();
-                            // exclude the selection from re-setting the config
-                            for (var x in config) {
-                                if (x !== "selection") {
-                                    forcedConfig[x] = config[x];
+                var confirmUpdateMsg = "Are you sure you would like to reset filters?";
+                if (typeof $.i18n !== "undefined") {
+                	confirmUpdateMsg = $.i18n.t("reset_filters_confirm");
+                }
+                if (confirm(confirmUpdateMsg)) {
+                    // get the Bookmark
+                    squid_api.getCustomer().then(function(customer) {
+                        customer.get("projects").load(projectId).then(function(project) {
+                            project.get("bookmarks").load(bookmarkId).done(function(bookmark) {
+                                var forcedConfig = {};
+                                var config = me.config.toJSON();
+                                // exclude the selection from re-setting the config
+                                for (var x in config) {
+                                    if (x !== "selection") {
+                                        forcedConfig[x] = config[x];
+                                    }
                                 }
-                            }
-                            // set bookmark
-                            squid_api.setBookmark(bookmark, forcedConfig);
-                        }).fail(function(model, response, options) {
-                            console.error("bookmark fetch failed : " + bookmarkId);
+                                // set bookmark
+                                squid_api.setBookmark(bookmark, forcedConfig);
+                            }).fail(function(model, response, options) {
+                                console.error("bookmark fetch failed : " + bookmarkId);
+                            });
                         });
                     });
-                });
-            },
+                }
+
+             },
             "click .my-selections" : function() {
                 var me = this;
                 $.ajax({url: this.getSelectionsUrl() + "?access_token=" + squid_api.model.login.get("accessToken"),
