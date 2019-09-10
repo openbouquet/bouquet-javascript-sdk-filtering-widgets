@@ -19,7 +19,7 @@
   "myselections_confirm_delete":"Voulez vous supprimer la sélection '{{name}}'?",
   "myselections_confirm_update":"Voulez vous mettre à jour la sélection '{{name}}'?",
   "myselections_error_create":"La sélection '{{name}}' n'a pas été créée!",
-  "myselections_error_delete":"La séléction '{{name}}' n'a pas été supprimée!",
+  "myselections_error_delete":"La sélection '{{name}}' n'a pas été supprimée!",
   "myselections_error_update":"La sélection '{{name}}' n'a pas été mise à jour!",
   "myselections_success_create":"Selection '{{name}}' créée'",
   "myselections_success_delete":"Selection '{{name}}' supprimée",
