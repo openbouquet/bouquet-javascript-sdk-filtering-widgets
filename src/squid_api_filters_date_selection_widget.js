@@ -65,7 +65,7 @@
                 // add spinning class
                 this.$el.find(".refresh-facet i").addClass("fa-spin");
                 this.$el.find(".refresh-facet span").text("refreshing");
-                
+
                 // get facet members for period facet
                 squid_api.controller.facetjob.getFacetMembers(this.filters, periodId).done(function() {
                      me.render();
@@ -99,6 +99,10 @@
                 var facets = selection.facets;
                 if (facets) {
                     for (i=0; i<facets.length; i++) {
+                        if (!facets[i]) {
+                            continue;
+                        }
+
                         // obtain current facet from config if exists
                         if (configPeriod) {
                             if (configPeriod[domain]) {
@@ -121,6 +125,10 @@
                         var filtersFacets = filtersSelection.facets;
                         if (filtersFacets) {
                             for (ix=0; ix<filtersFacets.length; ix++) {
+                                if (!filtersFacets[ix]) {
+                                    continue;
+                                }
+
                                 if (filtersFacets[ix].id == facet.id) {
                                     if (! filtersFacets[ix].done && filtersFacets[ix].items) {
                                         if (filtersFacets[ix].items.length === 0) {
@@ -158,7 +166,7 @@
                             dates.compareEndDate = moment(compareItem.upperBound).utc();
                         }
                     }
-                   
+
                 }
 
                 // set view data
@@ -257,7 +265,7 @@
             // Build Date Picker
             var lang = navigator.language || navigator.userLanguage;
             moment.locale(lang);
-            
+
             var applyLabel= 'Apply',
             cancelLabel= 'Cancel',
             fromLabel= 'From',

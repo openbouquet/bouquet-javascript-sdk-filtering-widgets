@@ -141,6 +141,9 @@
                 var facets = selection[this.facetsAttribute];
                 if (facets) {
                     for (ix=0; ix<facets.length; ix++) {
+                        if (!facets[ix]) {
+                            continue;
+                        }
                         if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].selectedItems.length > 0 && facets[ix].selectedItems[0].lowerBound) {
                             if (facets[ix].selectedItems[0].lowerBound === range.lowerExpression && facets[ix].selectedItems[0].upperBound === range.upperExpression) {
                                 selected = true;
@@ -180,7 +183,7 @@
                 }
                 if (typeof range.i18n === "undefined") {
                 	range.i18n = range.name;
-                } else 
+                } else
                 this.jsonData.ranges.push(range);
             }
 
