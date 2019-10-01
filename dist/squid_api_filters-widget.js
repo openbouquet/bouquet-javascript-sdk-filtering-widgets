@@ -2263,6 +2263,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 var facets = selection[this.facetsAttribute];
                 if (facets) {
                     for (ix=0; ix<facets.length; ix++) {
+                        if (!facets[ix]) {
+                            continue;
+                        }
                         if (facets[ix].dimension.type === "CONTINUOUS" && facets[ix].selectedItems.length > 0 && facets[ix].selectedItems[0].lowerBound) {
                             if (facets[ix].selectedItems[0].lowerBound === range.lowerExpression && facets[ix].selectedItems[0].upperBound === range.upperExpression) {
                                 selected = true;
@@ -2302,7 +2305,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 }
                 if (typeof range.i18n === "undefined") {
                 	range.i18n = range.name;
-                } else 
+                } else
                 this.jsonData.ranges.push(range);
             }
 
@@ -2398,7 +2401,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 // add spinning class
                 this.$el.find(".refresh-facet i").addClass("fa-spin");
                 this.$el.find(".refresh-facet span").text("refreshing");
-                
+
                 // get facet members for period facet
                 squid_api.controller.facetjob.getFacetMembers(this.filters, periodId).done(function() {
                      me.render();
@@ -2432,6 +2435,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 var facets = selection.facets;
                 if (facets) {
                     for (i=0; i<facets.length; i++) {
+                        if (!facets[i]) {
+                            continue;
+                        }
+
                         // obtain current facet from config if exists
                         if (configPeriod) {
                             if (configPeriod[domain]) {
@@ -2454,6 +2461,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
                         var filtersFacets = filtersSelection.facets;
                         if (filtersFacets) {
                             for (ix=0; ix<filtersFacets.length; ix++) {
+                                if (!filtersFacets[ix]) {
+                                    continue;
+                                }
+
                                 if (filtersFacets[ix].id == facet.id) {
                                     if (! filtersFacets[ix].done && filtersFacets[ix].items) {
                                         if (filtersFacets[ix].items.length === 0) {
@@ -2491,7 +2502,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                             dates.compareEndDate = moment(compareItem.upperBound).utc();
                         }
                     }
-                   
+
                 }
 
                 // set view data
@@ -2590,7 +2601,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
             // Build Date Picker
             var lang = navigator.language || navigator.userLanguage;
             moment.locale(lang);
-            
+
             var applyLabel= 'Apply',
             cancelLabel= 'Cancel',
             fromLabel= 'From',
@@ -3047,6 +3058,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     // lookup segment facet
                     for (var fIdx = 0; fIdx < facets.length; fIdx++) {
                         var facet = facets[fIdx];
+                        if (!facet) {
+                            continue;
+                        }
                         if (facet.dimension.type == "SEGMENTS") {
                             // check if the segment is selected
                             segment = facet;

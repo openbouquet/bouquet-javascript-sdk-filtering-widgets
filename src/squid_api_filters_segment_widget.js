@@ -107,6 +107,9 @@
                     // lookup segment facet
                     for (var fIdx = 0; fIdx < facets.length; fIdx++) {
                         var facet = facets[fIdx];
+                        if (!facet) {
+                            continue;
+                        }
                         if (facet.dimension.type == "SEGMENTS") {
                             // check if the segment is selected
                             segment = facet;
