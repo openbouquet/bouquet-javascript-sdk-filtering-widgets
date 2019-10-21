@@ -93,7 +93,7 @@
                         for (i=0; i<facets.length; i++) {
                             var facet = facets[i];
                             if (facet.dimension.type == "CATEGORICAL" || facet.dimension.type == "SEGMENTS") {
-                                var selectedItems = facet.selectedItems;
+                                var selectedItems = facet.selectedItems || [];
                                 for (ix=0; ix<selectedItems.length; ix++) {
                                     if (this.initialFacet == facet.id || (!this.initialFacet && !this.initialDimension)) {
                                         noData = false;
