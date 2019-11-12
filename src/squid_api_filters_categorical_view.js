@@ -11,6 +11,7 @@
         panelButtons : true,
         filterPanel : null,
         filterSelected : null,
+        filterSelectedTemplate : null,
         nbPages : 10,
         buttonLabel : null,
         noFiltersMessage : "No Filter Selected",
@@ -48,6 +49,9 @@
             }
             if (options.filterSelected) {
                 this.filterSelected = options.filterSelected;
+            }
+            if (options.filterSelectedTemplate){
+                this.filterSelectedTemplate = options.filterSelectedTemplate;
             }
             if (! options.panelButtons) {
                 this.panelButtons = options.panelButtons;
@@ -388,6 +392,7 @@
                     view4 = new squid_api.view.CategoricalSelectedView({
                         el: $(this.filterPanel).find("#selected"),
                         model: this.currentModel,
+                        template: this.filterSelectedTemplate,
                         noDataMessage: this.noFiltersMessage,
                         initialFacet : this.initialFacet,
                         initialDimension : this.initialDimension,
@@ -400,6 +405,7 @@
                 view5 = new squid_api.view.CategoricalSelectedView({
                     el: this.filterSelected,
                     model: this.model,
+                    template: this.filterSelectedTemplate,
                     noDataMessage: this.noFiltersMessage,
                     initialFacet : this.initialFacet,
                     initialDimension : this.initialDimension,
