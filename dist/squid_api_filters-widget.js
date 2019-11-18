@@ -832,6 +832,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         facetList : null,
         avoidFacets : null,
         mandatory : null,
+        template : null,
 
         initialize : function(options) {
             if (!this.model) {
@@ -1092,6 +1093,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         panelButtons : true,
         filterPanel : null,
         filterSelected : null,
+        filterSelectedTemplate : null,
         nbPages : 10,
         buttonLabel : null,
         noFiltersMessage : "No Filter Selected",
@@ -1129,6 +1131,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
             }
             if (options.filterSelected) {
                 this.filterSelected = options.filterSelected;
+            }
+            if (options.filterSelectedTemplate){
+                this.filterSelectedTemplate = options.filterSelectedTemplate;
             }
             if (! options.panelButtons) {
                 this.panelButtons = options.panelButtons;
@@ -1469,6 +1474,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     view4 = new squid_api.view.CategoricalSelectedView({
                         el: $(this.filterPanel).find("#selected"),
                         model: this.currentModel,
+                        template: this.filterSelectedTemplate,
                         noDataMessage: this.noFiltersMessage,
                         initialFacet : this.initialFacet,
                         initialDimension : this.initialDimension,
@@ -1481,6 +1487,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 view5 = new squid_api.view.CategoricalSelectedView({
                     el: this.filterSelected,
                     model: this.model,
+                    template: this.filterSelectedTemplate,
                     noDataMessage: this.noFiltersMessage,
                     initialFacet : this.initialFacet,
                     initialDimension : this.initialDimension,

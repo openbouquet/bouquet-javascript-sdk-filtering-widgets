@@ -5,6 +5,7 @@
     var View = Backbone.View.extend({
 
         model : null,
+        template : null,
         filterStore : null,
         format : null,
         initialFacet : null,
@@ -12,6 +13,7 @@
         facetList : null,
         avoidFacets : null,
         mandatory : null,
+        
 
         initialize : function(options) {
             if (!this.model) {
