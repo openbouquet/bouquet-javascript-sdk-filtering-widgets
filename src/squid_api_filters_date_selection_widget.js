@@ -44,6 +44,9 @@
             } else {
                 this.datePickerPosition = "right";
             }
+            if(options.startDateFormat){
+                this.startDateFormat = options.startDateFormat;
+            }
             if (options.monthsOnlyDisplay) {
                 this.monthsOnlyDisplay = options.monthsOnlyDisplay;
             }
@@ -292,6 +295,13 @@
                 minDate : dates.minDate ? dates.minDate.format('YYYY-MM-DD') : moment().utc().subtract("50", "years").format("YYYY-MM-DD"),
                 maxDate : dates.maxDate ? dates.maxDate.format('YYYY-MM-DD') : moment().utc().format("YYYY-MM-DD"),
             });
+
+            if(this.startDateFormat){
+                this.$el.find(".widget").daterangepicker({
+                    startDateFormat : this.startDateFormat
+                })
+            }
+            
             // apply action
             this.$el.find("span").on('apply.daterangepicker', function(ev, picker) {
                 // Update Change Selection upon date widget close
