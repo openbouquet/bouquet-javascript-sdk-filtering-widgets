@@ -239,7 +239,7 @@
                 this.$el.removeClass("min-filter-height");
             }
 
-            // Trim spaces from Account Name ids
+            // Trim spaces from Account Name id
             $.each(updatedItems, function(index, item){
                 item.id = item.id.trim();
             });
