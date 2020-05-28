@@ -1,6 +1,6 @@
 {
 	"name": "squid_api_filters_widget",
-	"version": "7.1.4",
+	"version": "7.1.5",
 	"homepage": "https://github.com/openbouquet/bouquet-javascript-sdk-filtering-widgets",
 	"authors": [
 		"obalbous <oba@squid>"
