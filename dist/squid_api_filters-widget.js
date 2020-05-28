@@ -693,6 +693,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 "items" : updatedItems, "message" : message, "computingInProgress" : computingInProgress
             });
 
+            // Trim spaces from Account Name id
+            $.each(updatedItems, function(index, item){
+                item.id = item.id.trim();
+            });
+
             this.$el.html(html);
         }
 
