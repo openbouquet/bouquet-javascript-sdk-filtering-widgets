@@ -689,6 +689,11 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 this.$el.removeClass("min-filter-height");
             }
 
+            // Trim spaces from Account Name id
+            $.each(updatedItems, function(index, item){
+                item.id = item.id.trim();
+            });
+
             var html = this.template({
                 "items" : updatedItems, "message" : message, "computingInProgress" : computingInProgress
             });
@@ -825,6 +830,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
     var View = Backbone.View.extend({
 
         model : null,
+        template : null,
         filterStore : null,
         format : null,
         initialFacet : null,
@@ -832,7 +838,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         facetList : null,
         avoidFacets : null,
         mandatory : null,
-        template : null,
+        
 
         initialize : function(options) {
             if (!this.model) {
@@ -2387,6 +2393,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
             } else {
                 this.datePickerPosition = "right";
             }
+            if(options.startDateFormat){
+                this.startDateFormat = options.startDateFormat;
+            }
             if (options.monthsOnlyDisplay) {
                 this.monthsOnlyDisplay = options.monthsOnlyDisplay;
             }
@@ -2635,6 +2644,13 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 minDate : dates.minDate ? dates.minDate.format('YYYY-MM-DD') : moment().utc().subtract("50", "years").format("YYYY-MM-DD"),
                 maxDate : dates.maxDate ? dates.maxDate.format('YYYY-MM-DD') : moment().utc().format("YYYY-MM-DD"),
             });
+
+            if(this.startDateFormat){
+                this.$el.find(".widget").daterangepicker({
+                    startDateFormat : this.startDateFormat
+                });
+            }
+            
             // apply action
             this.$el.find("span").on('apply.daterangepicker', function(ev, picker) {
                 // Update Change Selection upon date widget close

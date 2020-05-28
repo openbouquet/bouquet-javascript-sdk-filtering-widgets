@@ -299,7 +299,7 @@
             if(this.startDateFormat){
                 this.$el.find(".widget").daterangepicker({
                     startDateFormat : this.startDateFormat
-                })
+                });
             }
             
             // apply action
