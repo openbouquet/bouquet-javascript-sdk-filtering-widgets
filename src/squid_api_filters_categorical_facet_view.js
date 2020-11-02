@@ -40,6 +40,9 @@
             if (options.noFiltersMessage) {
                 this.noFiltersMessage = options.noFiltersMessage;
             }
+            if (options.ignoredItems){
+                this.ignoredItems = options.ignoredItems;
+            }
             if (options.singleSelect) {
                 this.singleSelect = options.singleSelect;
             }
@@ -206,7 +209,10 @@
                                         break;
                                     }
                                 }
-                                updatedItems.push(obj);
+                                // Remove specific items from the facet view
+                                if(this.ignoredItems && (this.ignoredItems.indexOf(obj.value) > - 1) === false){
+                                    updatedItems.push(obj);
+                                }
                             }
                             var options = currentFacet.dimension.options;
                             if (Array.isArray(options)) {

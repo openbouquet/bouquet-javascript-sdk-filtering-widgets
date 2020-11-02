@@ -77,6 +77,9 @@
             if (options.singleSelect) {
                 this.singleSelect = options.singleSelect;
             }
+            if (options.ignoredItems){
+                this.ignoredItems = options.ignoredItems;
+            }
             if (options.facetList) {
                 this.facetList = options.facetList;
             }
@@ -347,6 +350,7 @@
                     model: this.filterStore,
                     template: this.facetViewTemplate,
                     filters: this.currentModel,
+                    ignoredItems: this.ignoredItems,
                     noFiltersMessage : this.noFiltersMessage,
                     singleSelect : this.singleSelect,
                     onChange : this.onChange

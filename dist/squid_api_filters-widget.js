@@ -481,6 +481,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
             if (options.noFiltersMessage) {
                 this.noFiltersMessage = options.noFiltersMessage;
             }
+            if (options.ignoredItems){
+                this.ignoredItems = options.ignoredItems;
+            }
             if (options.singleSelect) {
                 this.singleSelect = options.singleSelect;
             }
@@ -647,7 +650,10 @@ $.widget( "ui.dialog", $.ui.dialog, {
                                         break;
                                     }
                                 }
-                                updatedItems.push(obj);
+                                // Remove specific items from the facet view
+                                if(this.ignoredItems && (this.ignoredItems.indexOf(obj.value) > - 1) === false){
+                                    updatedItems.push(obj);
+                                }
                             }
                             var options = currentFacet.dimension.options;
                             if (Array.isArray(options)) {
@@ -1165,6 +1171,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
             if (options.singleSelect) {
                 this.singleSelect = options.singleSelect;
             }
+            if (options.ignoredItems){
+                this.ignoredItems = options.ignoredItems;
+            }
             if (options.facetList) {
                 this.facetList = options.facetList;
             }
@@ -1435,6 +1444,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     model: this.filterStore,
                     template: this.facetViewTemplate,
                     filters: this.currentModel,
+                    ignoredItems: this.ignoredItems,
                     noFiltersMessage : this.noFiltersMessage,
                     singleSelect : this.singleSelect,
                     onChange : this.onChange
