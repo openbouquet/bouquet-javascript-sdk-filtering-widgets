@@ -62,6 +62,9 @@
             if (options.buttonLabel) {
                 this.buttonLabel = options.buttonLabel;
             }
+            if (options.nbPages){
+                this.nbPages = options.nbPages;
+            }
             if (options.noFiltersMessage) {
                 this.noFiltersMessage = options.noFiltersMessage;
             }
@@ -134,7 +137,7 @@
                 // nb of items in a page
                 pageSize : 10,
                 // nb of pages to display
-                nbPages : 10,
+                nbPages : this.nbPages,
                 // current facet retrieved from API
                 facet : null,
                 // index id of the first item of facet
