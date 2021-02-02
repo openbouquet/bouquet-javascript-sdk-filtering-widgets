@@ -65,6 +65,9 @@
             if (options.nbPages){
                 this.nbPages = options.nbPages;
             }
+            if(options.maxResults){
+                this.maxResults = options.maxResults;
+            }
             if (options.noFiltersMessage) {
                 this.noFiltersMessage = options.noFiltersMessage;
             }
@@ -610,11 +613,18 @@
         renderFacet : function(fetch) {
             var me = this;
             if (this.currentModel.get("selection")) {
+                var maxResults;
                 var selectedFacetId = this.filterStore.get("selectedFilter");
                 var pageIndex = this.filterStore.get("pageIndex");
                 var pageSize = this.filterStore.get("pageSize");
                 var facet = this.filterStore.get("facet");
                 var nbPages = this.filterStore.get("nbPages");
+                if(this.maxResults){
+                    maxResults = this.maxResults;
+                }
+                else{
+                    maxResults = nbPages*pageSize;
+                }
 
                 // compute required index range
                 var startIndex = pageIndex * pageSize;
@@ -656,7 +666,7 @@
                         facetJob.addParameter("startIndex", startIndex);
                     }
                     if (pageSize) {
-                        facetJob.addParameter("maxResults", (nbPages * pageSize));
+                        facetJob.addParameter("maxResults", maxResults);
                     }
                     if (search) {
                         facetJob.addParameter("filter", search);
