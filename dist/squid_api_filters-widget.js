@@ -452,6 +452,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
         singleSelect : false,
         disabled : false,
         onChange : null,
+        ignoredItems: [],
 
         initialize : function(options) {
             if (options.format) {
