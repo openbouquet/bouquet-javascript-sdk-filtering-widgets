@@ -180,6 +180,13 @@
                 var startIndex = itemIndex -(pageIndex * pageSize);
                 var endIndex = startIndex + pageSize;
 
+                // Fix for the case that page is > 1 
+                // && faceItems < pageSize
+                if(facetItems.length <= pageSize){
+                    startIndex = 0;
+                    endIndex = pageSize;
+                }
+
                 var selectedFilter = this.model.get("selectedFilter");
                 var selection = this.filters.get("selection");
                 if (endIndex > facetItems.length) {
@@ -255,13 +262,13 @@
                 this.$el.removeClass("min-filter-height");
             }
 
-            var html = this.template({
-                "items" : updatedItems, "message" : message, "computingInProgress" : computingInProgress
-            });
-
             // Trim spaces from Account Name id
             $.each(updatedItems, function(index, item){
                 item.id = item.id.trim();
+            });
+
+            var html = this.template({
+                "items" : updatedItems, "message" : message, "computingInProgress" : computingInProgress
             });
 
             this.$el.html(html);
