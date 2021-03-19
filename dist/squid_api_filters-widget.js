@@ -2671,7 +2671,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 showDropdowns: true,
                 dateLimit: this.dateLimit,
                 startDate: dates.currentStartDate ? dates.currentStartDate.format('YYYY-MM-DD') : null,
-                endDate: dates.currentEndDate ? moment(dates.currentStartDate).utc().endOf('month').format('YYYY-MM-DD') : null,
+                endDate: dates.currentEndDate ? moment(dates.currentEndDate).utc().endOf('month').format('YYYY-MM-DD') : null,
                 minDate : dates.minDate ? dates.minDate.format('YYYY-MM-DD') : moment().utc().subtract("50", "years").format("YYYY-MM-DD"),
                 maxDate : dates.maxDate ? dates.maxDate.format('YYYY-MM-DD') : moment().utc().format("YYYY-MM-DD"),
             });
