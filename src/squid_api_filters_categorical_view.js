@@ -563,6 +563,30 @@
             "keyup" : function(event) {
                 this.search(event);
             },
+            "click #select-all-btn" : function(e){
+
+                // Get selected filter
+                var selection = this.model.get('selection');
+                var facets = selection.facets;
+                var selectedFilter = this.filterStore.get('selectedFilter');
+
+                for (var i=0; i<facets.length; i++) {
+                    var facet = facets[i];
+                    if (facet.id === selectedFilter) {
+                        var items = facet.items;
+                        var selectedItems = facet.selectedItems;
+                        if(items.length !== selectedItems.length ){
+                            facet.selectedItems = items;
+                        }
+                        else{
+                            facet.selectedItems = [];
+                        }
+                    }
+                }
+
+                squid_api.setConfigSelection(selection);
+
+            },
             "click .squid_api_filters_categorical_button": function(item) {
                 var className = 'opened';
 
