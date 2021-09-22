@@ -569,11 +569,13 @@
                 var selection = this.model.get('selection');
                 var facets = selection.facets;
                 var selectedFilter = this.filterStore.get('selectedFilter');
+                var selectedFacet = this.filterStore.get('facet');
+                var items = selectedFacet.get('items');
+
 
                 for (var i=0; i<facets.length; i++) {
                     var facet = facets[i];
                     if (facet.id === selectedFilter) {
-                        var items = facet.items;
                         var selectedItems = facet.selectedItems;
                         if(items.length !== selectedItems.length ){
                             facet.selectedItems = items;
