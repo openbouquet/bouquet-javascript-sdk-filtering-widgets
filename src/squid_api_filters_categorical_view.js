@@ -565,30 +565,28 @@
             },
             "click #select-all-btn" : function(e){
 
-                // Get selected filter
-                var selection = this.model.get('selection');
-                var facets = selection.facets;
-                var selectedFilter = this.filterStore.get('selectedFilter');
-                var selectedFacet = this.filterStore.get('facet');
-                var items = selectedFacet.get('items');
-
-                for (var i=0; i<facets.length; i++) {
-                    var facet = facets[i];
-                    if (facet.id === selectedFilter) {
-                        var selectedItems = selectedFacet.get('selectedItems');
-                        if(items.length !== selectedItems.length ){
-                            facet.selectedItems = items;
-                            selectedFacet.set('selectedItems', items);
-                        }
-                        else{
-                            facet.selectedItems = [];
-                            selectedFacet.set('selectedItems',[]);
-                        }
-                    }
-                }
-
-                squid_api.setConfigSelection(selection);
-                this.render();
+                 // Get selected filter
+                 var selection = this.model.get('selection');
+                 var facets = selection.facets;
+                 var selectedFilter = this.filterStore.get('selectedFilter');
+                 var selectedFacet = this.filterStore.get('facet');
+                 var items = selectedFacet.get('items');
+ 
+                 for (var i=0; i<facets.length; i++) {
+                     var facet = facets[i];
+                     if (facet.id === selectedFilter) {
+                         var selectedItems = facet.selectedItems;
+                         if(items.length !== selectedItems.length ){
+                             facet.selectedItems = items;
+                         }
+                         else{
+                             facet.selectedItems = [];
+                         }
+                     }
+                 }
+ 
+                 squid_api.setConfigSelection(selection);
+                 this.render();
 
             },
             "click .squid_api_filters_categorical_button": function(item) {
