@@ -572,21 +572,23 @@
                 var selectedFacet = this.filterStore.get('facet');
                 var items = selectedFacet.get('items');
 
-
                 for (var i=0; i<facets.length; i++) {
                     var facet = facets[i];
                     if (facet.id === selectedFilter) {
-                        var selectedItems = facet.selectedItems;
+                        var selectedItems = selectedFacet.get('selectedItems');
                         if(items.length !== selectedItems.length ){
                             facet.selectedItems = items;
+                            selectedFacet.set('selectedItems', items);
                         }
                         else{
                             facet.selectedItems = [];
+                            selectedFacet.set('selectedItems',[]);
                         }
                     }
                 }
 
                 squid_api.setConfigSelection(selection);
+                this.render();
 
             },
             "click .squid_api_filters_categorical_button": function(item) {
