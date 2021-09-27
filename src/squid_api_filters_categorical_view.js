@@ -575,13 +575,21 @@
                  for (var i=0; i<facets.length; i++) {
                      var facet = facets[i];
                      if (facet.id === selectedFilter) {
-                         var selectedItems = facet.selectedItems;
-                         if(items.length !== selectedItems.length ){
-                             squid_api.controller.facetjob.unSelectChildren(facets, selectedFacet, false);
-                             facet.selectedItems = items;
-                         }
+                         if(items.length !== facet.selectedItems.length ){
+                            facet.selectedItems = []; 
+                            items.forEach(function(item){
+                                  item.selected = true;
+                                  facet.selectedItems.push({
+                                      id: item.id,
+                                      selected: true,
+                                      type: item.type,
+                                      value: item.value
+                                  })
+                            })
+                            squid_api.controller.facetjob.unSelectChildren(facets, selectedFacet, false);
+                        }
                          else{
-                             selectedItems.forEach(function(item){
+                             facet.selectedItems.forEach(function(item){
                                 squid_api.controller.facetjob.unSelect(facets, selectedFilter, item.id);
                              });
                              facet.selectedItems = [];
@@ -589,6 +597,7 @@
                      }
                  }
 
+                 squid_api.model.filters.set('selection', selectionClone);
                  squid_api.setConfigSelection(selectionClone);
                  this.render();
 
