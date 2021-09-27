@@ -1682,6 +1682,9 @@ $.widget( "ui.dialog", $.ui.dialog, {
                              facet.selectedItems = items;
                          }
                          else{
+                             selectedItems.forEach(function(item){
+                                squid_api.controller.facetjob.unSelect(facets, selectedFilter, item.id);
+                             });
                              facet.selectedItems = [];
                          }
                      }
