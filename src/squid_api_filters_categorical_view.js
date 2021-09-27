@@ -566,17 +566,18 @@
             "click #select-all-btn" : function(e){
 
                  // Get selected filter
-                 var selection = this.model.get('selection');
-                 var facets = selection.facets;
+                 var selectionClone = $.extend(true, {}, squid_api.model.filters.get("selection"));
+                 var facets = selectionClone.facets;
                  var selectedFilter = this.filterStore.get('selectedFilter');
                  var selectedFacet = this.filterStore.get('facet');
                  var items = selectedFacet.get('items');
- 
+
                  for (var i=0; i<facets.length; i++) {
                      var facet = facets[i];
                      if (facet.id === selectedFilter) {
                          var selectedItems = facet.selectedItems;
                          if(items.length !== selectedItems.length ){
+                             squid_api.controller.facetjob.unSelectChildren(facets, selectedFacet, false);
                              facet.selectedItems = items;
                          }
                          else{
@@ -587,8 +588,8 @@
                          }
                      }
                  }
- 
-                 squid_api.setConfigSelection(selection);
+
+                 squid_api.setConfigSelection(selectionClone);
                  this.render();
 
             },
