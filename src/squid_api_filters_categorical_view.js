@@ -598,7 +598,7 @@
                  }
 
                  squid_api.model.filters.set('selection', selectionClone);
-                 squid_api.setConfigSelection(selectionClone);
+                //  squid_api.setConfigSelection(selectionClone);
                  this.render();
 
             },
