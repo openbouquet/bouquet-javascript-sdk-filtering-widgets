@@ -570,35 +570,38 @@
                  var facets = selectionClone.facets;
                  var selectedFilter = this.filterStore.get('selectedFilter');
                  var selectedFacet = this.filterStore.get('facet');
-                 var items = selectedFacet.get('items');
+                 var filterItems = selectedFacet.get('items');
+                 var selectedFilterItems = selectedFacet.get('selectedItems');
 
                  for (var i=0; i<facets.length; i++) {
                      var facet = facets[i];
                      if (facet.id === selectedFilter) {
-                         if(items.length !== facet.selectedItems.length ){
-                            facet.selectedItems = []; 
-                            items.forEach(function(item){
-                                  item.selected = true;
-                                  facet.selectedItems.push({
-                                      id: item.id,
-                                      selected: true,
-                                      type: item.type,
-                                      value: item.value
-                                  })
+
+                            facet.selectedItems = [];
+                            filterItems.forEach(function(item){
+                                    item.selected = true;
+                                    facet.selectedItems.push({
+                                        id: item.id,
+                                        selected: true,
+                                        type: item.type,
+                                        value: item.value
+                                    })
+                            })
+                            selectedFilterItems.forEach(function(item){
+                                item.selected = true;
+                                facet.selectedItems.push({
+                                    id: item.id,
+                                    selected: true,
+                                    type: item.type,
+                                    value:  item.value
+                                })
                             })
                             squid_api.controller.facetjob.unSelectChildren(facets, selectedFacet, false);
-                        }
-                         else{
-                             facet.selectedItems.forEach(function(item){
-                                squid_api.controller.facetjob.unSelect(facets, selectedFilter, item.id);
-                             });
-                             facet.selectedItems = [];
-                         }
-                     }
+                        
+                    }
                  }
-
                  squid_api.model.filters.set('selection', selectionClone);
-                //  squid_api.setConfigSelection(selectionClone);
+                 squid_api.setConfigSelection(selectionClone);
                  this.render();
 
             },
