@@ -565,44 +565,53 @@
             },
             "click #select-all-btn" : function(e){
 
-                 // Get selected filter
-                 var selectionClone = $.extend(true, {}, squid_api.model.filters.get("selection"));
-                 var facets = selectionClone.facets;
-                 var selectedFilter = this.filterStore.get('selectedFilter');
-                 var selectedFacet = this.filterStore.get('facet');
-                 var filterItems = selectedFacet.get('items');
-                 var selectedFilterItems = selectedFacet.get('selectedItems');
+                  // Get selected filter
+                  var selectionClone = $.extend(true, {}, squid_api.model.filters.get("selection"));
+                  var facets = selectionClone.facets;
+                  var selectedFilter = this.filterStore.get('selectedFilter');
+                  var selectedFacet = this.filterStore.get('facet');
+                  var filterItems = selectedFacet.get('items');
+                  var selectedFilterItems = selectedFacet.get('selectedItems');
 
-                 for (var i=0; i<facets.length; i++) {
-                     var facet = facets[i];
-                     if (facet.id === selectedFilter) {
-
-                            facet.selectedItems = [];
-                            filterItems.forEach(function(item){
-                                    item.selected = true;
-                                    facet.selectedItems.push({
-                                        id: item.id,
-                                        selected: true,
-                                        type: item.type,
-                                        value: item.value
-                                    })
+ 
+                  for (var i=0; i<facets.length; i++) {
+                      var facet = facets[i];
+                      if (facet.id === selectedFilter) {
+ 
+                        facet.selectedItems = [];
+                        filterItems.forEach(function(item){
+                                item.selected = true;
+                                facet.selectedItems.push({
+                                    id: item.id,
+                                    selected: true,
+                                    type: item.type,
+                                    value: item.value
+                                });
+                        });
+ 
+ 
+                        selectedFilterItems.forEach(function(item){
+                            var found = facet.selectedItems.find( function(el){
+                                return el.id === item.id;
                             })
-                            selectedFilterItems.forEach(function(item){
+                            if(!found){
                                 item.selected = true;
                                 facet.selectedItems.push({
                                     id: item.id,
                                     selected: true,
                                     type: item.type,
                                     value:  item.value
-                                })
-                            })
-                            squid_api.controller.facetjob.unSelectChildren(facets, selectedFacet, false);
-                        
-                    }
-                 }
-                 squid_api.model.filters.set('selection', selectionClone);
-                 squid_api.setConfigSelection(selectionClone);
-                 this.render();
+                                });
+                            }
+                        });
+
+                        squid_api.controller.facetjob.unSelectChildren(facets, selectedFacet, false);
+                         
+                     }
+                  }
+                  squid_api.model.filters.set('selection', selectionClone);
+                  squid_api.setConfigSelection(selectionClone);
+                  this.render();
 
             },
             "click .squid_api_filters_categorical_button": function(item) {
