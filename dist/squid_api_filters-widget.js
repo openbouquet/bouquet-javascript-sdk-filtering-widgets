@@ -1716,6 +1716,36 @@ $.widget( "ui.dialog", $.ui.dialog, {
                   this.render();
 
             },
+            "click #deselect-all-btn" : function(e){
+                // Get selected filter
+                var selectionClone = $.extend(true, {}, squid_api.model.filters.get("selection"));
+                var facets = selectionClone.facets;
+                var selectedFilter = this.filterStore.get('selectedFilter');
+                var selectedFacet = this.filterStore.get('facet');
+                var filterItems = selectedFacet.get('items');
+
+                for (var i=0; i<facets.length; i++) {
+                    var facet = facets[i];
+                    if (facet.id === selectedFilter) {
+
+                    filterItems.forEach(function(item){
+                        var filterIndex = facet.selectedItems.findIndex( function(el){
+                            return el.id === item.id;
+                        })
+                        if(filterIndex >= 0){
+                        facet.selectedItems.splice(filterIndex, 1);
+                        }
+                    });
+
+                    squid_api.controller.facetjob.unSelectChildren(facets, selectedFacet, false);
+                       
+                   }
+                }
+                squid_api.model.filters.set('selection', selectionClone);
+                squid_api.setConfigSelection(selectionClone);
+                this.render();
+            
+            },
             "click .squid_api_filters_categorical_button": function(item) {
                 var className = 'opened';
 
