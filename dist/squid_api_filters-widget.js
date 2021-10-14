@@ -4,9 +4,9 @@ this["squid_api"]["template"] = this["squid_api"]["template"] || {};
 this["squid_api"]["template"]["squid_api_filters_categorical_facet_view"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "	<ul class=\"squid-api-action\">\n"
+  return "	<ul class=\"squid-api-action\">\r\n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.items : depth0),{"name":"each","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "	</ul>\n";
+    + "	</ul>\r\n";
 },"2":function(container,depth0,helpers,partials,data) {
     var stack1;
 
@@ -26,9 +26,9 @@ this["squid_api"]["template"]["squid_api_filters_categorical_facet_view"] = Hand
     + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
     + "\" data-attr=\""
     + alias4(((helper = (helper = helpers.dataAttr || (depth0 != null ? depth0.dataAttr : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"dataAttr","hash":{},"data":data}) : helper)))
-    + "\">\n						<i class=\"fa fa-square-o\"></i><span>"
+    + "\">\r\n						<i class=\"fa fa-square-o\"></i><span>"
     + alias4(((helper = (helper = helpers.value || (depth0 != null ? depth0.value : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"value","hash":{},"data":data}) : helper)))
-    + "</span>\n					</li>\n";
+    + "</span>\r\n					</li>\r\n";
 },"6":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
@@ -40,21 +40,21 @@ this["squid_api"]["template"]["squid_api_filters_categorical_facet_view"] = Hand
     + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
     + "\" data-attr=\""
     + alias4(((helper = (helper = helpers.dataAttr || (depth0 != null ? depth0.dataAttr : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"dataAttr","hash":{},"data":data}) : helper)))
-    + "\">\n						<i class=\"fa fa-square-o\"></i><span>"
+    + "\">\r\n						<i class=\"fa fa-square-o\"></i><span>"
     + alias4(((helper = (helper = helpers.value || (depth0 != null ? depth0.value : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"value","hash":{},"data":data}) : helper)))
-    + "</span>\n					</li>\n";
+    + "</span>\r\n					</li>\r\n";
 },"8":function(container,depth0,helpers,partials,data) {
-    return "				<li></li>\n";
+    return "				<li></li>\r\n";
 },"10":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "	<span class='no-items'>\n"
+  return "	<span class='no-items'>\r\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.computingInProgress : depth0),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "		"
     + container.escapeExpression(((helper = (helper = helpers.message || (depth0 != null ? depth0.message : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"message","hash":{},"data":data}) : helper)))
-    + "\n	</span>\n";
+    + "\r\n	</span>\r\n";
 },"11":function(container,depth0,helpers,partials,data) {
-    return "			<span class=\"glyphicon glyphicon-refresh\"></span>\n";
+    return "			<span class=\"glyphicon glyphicon-refresh\"></span>\r\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
@@ -63,7 +63,7 @@ this["squid_api"]["template"]["squid_api_filters_categorical_facet_view"] = Hand
 },"useData":true});
 
 this["squid_api"]["template"]["squid_api_filters_categorical_paging_view"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
-    return "		<li class=\"previous\" data-id=\"prev\"><a href=\"#\"><i class=\"fa fa-arrow-left\"></i></a></li>\n";
+    return "		<li class=\"previous\" data-id=\"prev\"><a href=\"#\"><i class=\"fa fa-arrow-left\"></i></a></li>\r\n";
 },"3":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
@@ -73,19 +73,19 @@ this["squid_api"]["template"]["squid_api_filters_categorical_paging_view"] = Han
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.selected : depth0),{"name":"if","hash":{},"fn":container.program(4, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "><a  href=\"#\">"
     + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
-    + "</a></li>\n";
+    + "</a></li>\r\n";
 },"4":function(container,depth0,helpers,partials,data) {
     return " class=\"active\" ";
 },"6":function(container,depth0,helpers,partials,data) {
-    return "		<li class=\"next\"  data-id=\"next\"><a  href=\"#\"><i class=\"fa fa-arrow-right\"></i></a></li>\n";
+    return "		<li class=\"next\"  data-id=\"next\"><a  href=\"#\"><i class=\"fa fa-arrow-right\"></i></a></li>\r\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "<div class=\"pagination squid-api-action\">\n	<ul class=\"pagination\">\n"
+  return "<div class=\"pagination squid-api-action\">\r\n	<ul class=\"pagination\">\r\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.prev : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.pages : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.next : depth0),{"name":"if","hash":{},"fn":container.program(6, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "	</ul>\n</div>\n";
+    + "	</ul>\r\n</div>\r\n";
 },"useData":true});
 
 this["squid_api"]["template"]["squid_api_filters_categorical_selected_view"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
@@ -95,15 +95,15 @@ this["squid_api"]["template"]["squid_api_filters_categorical_selected_view"] = H
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.mandatory : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\">"
     + container.escapeExpression(((helper = (helper = helpers.noDataMessage || (depth0 != null ? depth0.noDataMessage : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"noDataMessage","hash":{},"data":data}) : helper)))
-    + "</label>\n";
+    + "</label>\r\n";
 },"2":function(container,depth0,helpers,partials,data) {
     return "warning fa fa-exclamation-circle";
 },"4":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "    <ul class=\"facets\" id=\"squid_api_filters_categorical_selected_view\">\n"
+  return "    <ul class=\"facets\" id=\"squid_api_filters_categorical_selected_view\">\r\n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.facets : depth0),{"name":"each","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "    </ul>\n";
+    + "    </ul>\r\n";
 },"5":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
 
@@ -111,17 +111,17 @@ this["squid_api"]["template"]["squid_api_filters_categorical_selected_view"] = H
     + alias4(((helper = (helper = helpers.facetItemId || (depth0 != null ? depth0.facetItemId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"facetItemId","hash":{},"data":data}) : helper)))
     + "\" attr-name=\""
     + alias4(((helper = (helper = helpers.facetNameId || (depth0 != null ? depth0.facetNameId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"facetNameId","hash":{},"data":data}) : helper)))
-    + "\">\n                <div class=\"facet-name\">\n                    "
+    + "\">\r\n                <div class=\"facet-name\">\r\n                    "
     + alias4(alias5((depth0 != null ? depth0.facetName : depth0), depth0))
-    + "\n                </div>\n                <div class=\"facet-value\">\n                    "
+    + "\r\n                </div>\r\n                <div class=\"facet-value\">\r\n                    "
     + alias4(alias5((depth0 != null ? depth0.facetItem : depth0), depth0))
-    + "\n                </div>\n                <div class=\"facet-remove\">\n                    <i class=\"glyphicon glyphicon-remove\"></i>\n                </div>\n            </li>\n";
+    + "\r\n                </div>\r\n                <div class=\"facet-remove\">\r\n                    <i class=\"glyphicon glyphicon-remove\"></i>\r\n                </div>\r\n            </li>\r\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "<div class=\"squid-api-filters-categorical-selected-view\">\n"
+  return "<div class=\"squid-api-filters-categorical-selected-view\">\r\n"
     + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.noData : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(4, data, 0),"data":data})) != null ? stack1 : "")
-    + "</div>\n\n";
+    + "</div>\r\n\r\n";
 },"useData":true});
 
 this["squid_api"]["template"]["squid_api_filters_categorical_view_hover_template"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
@@ -129,61 +129,61 @@ this["squid_api"]["template"]["squid_api_filters_categorical_view_hover_template
 
   return "        <b>"
     + container.escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
-    + "</b>\n        <ul>\n"
+    + "</b>\r\n        <ul>\r\n"
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.values : depth0),{"name":"each","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "        </ul>\n";
+    + "        </ul>\r\n";
 },"2":function(container,depth0,helpers,partials,data) {
     return "                <li> "
     + container.escapeExpression(container.lambda(depth0, depth0))
-    + " </li>\n";
+    + " </li>\r\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "<div class=\"squid-api-categorical-view-hover-view\">\n"
+  return "<div class=\"squid-api-categorical-view-hover-view\">\r\n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.items : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "</div>\n";
+    + "</div>\r\n";
 },"useData":true});
 
 this["squid_api"]["template"]["squid_api_filters_categorical_view"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "<div class=\"squid_api_filters-categorical-panel-view popup\">\n"
+  return "<div class=\"squid_api_filters-categorical-panel-view popup\">\r\n"
     + ((stack1 = helpers.unless.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.initialFacet : depth0),{"name":"unless","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "	<div id=\"search\">\n		<div class=\"input-group\">\n		      <span class=\"input-group-addon\">\n		        <i id=\"search-in-progress\" class=\"fa fa-refresh fa-spin hidden\"></i>\n		        <i id=\"search-not-in-progress\" class=\"fa fa-search\"></i>\n		      </span>\n			<input class=\"form-control\" id=\"searchbox\" type=\"search\" placeholder=\"Search for\">\n		</div>\n	</div>\n	<div id=\"filter-display-results\">\n	</div>\n	<div id=\"selected\">\n	</div>\n	<div id=\"close\">\n		<ul class=\"pagination\"><li class=\"active button\"><a href=\"#\" data-i18n=\"button-close\">Close</a></li><ul>\n	</div>\n	<div id=\"pagination-container\">\n</div>\n";
+    + "	<div id=\"search\">\r\n		<div class=\"input-group\">\r\n		      <span class=\"input-group-addon\">\r\n		        <i id=\"search-in-progress\" class=\"fa fa-refresh fa-spin hidden\"></i>\r\n		        <i id=\"search-not-in-progress\" class=\"fa fa-search\"></i>\r\n		      </span>\r\n			<input class=\"form-control\" id=\"searchbox\" type=\"search\" placeholder=\"Search for\">\r\n		</div>\r\n	</div>\r\n	<div id=\"filter-display-results\">\r\n	</div>\r\n	<div id=\"selected\">\r\n	</div>\r\n	<div id=\"close\">\r\n		<ul class=\"pagination\"><li class=\"active button\"><a href=\"#\" data-i18n=\"button-close\">Close</a></li><ul>\r\n	</div>\r\n	<div id=\"pagination-container\">\r\n</div>\r\n";
 },"2":function(container,depth0,helpers,partials,data) {
-    return "		<div id=\"filter-selection\">\n			<select class=\"btn btn-select-filter\" size=\"2\"></select>\n		</div>\n";
+    return "		<div id=\"filter-selection\">\r\n			<select class=\"btn btn-select-filter\" size=\"2\"></select>\r\n		</div>\r\n";
 },"4":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "<div class=\"panel panel-default filter-panel squid_api_filters-categorical-panel-view\">\n"
+  return "<div class=\"panel panel-default filter-panel squid_api_filters-categorical-panel-view\">\r\n"
     + ((stack1 = helpers.unless.call(alias1,(depth0 != null ? depth0["panel-buttons"] : depth0),{"name":"unless","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "	<div class=\"panel-body\">\n"
+    + "	<div class=\"panel-body\">\r\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0["panel-buttons"] : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.program(9, data, 0),"data":data})) != null ? stack1 : "")
-    + "			<div class=\"col-md-7\">\n"
+    + "			<div class=\"col-md-7\">\r\n"
     + ((stack1 = helpers.unless.call(alias1,(depth0 != null ? depth0.initialFacet : depth0),{"name":"unless","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "				<div id=\"search\">\n                  <div class=\"input-group\">\n                    <input class=\"form-control\" id=\"searchbox\" type=\"search\" placeholder=\"Search for\">\n                    <span class=\"input-group-addon\">\n                      <i class=\"fa fa-search\"></i>\n                    </span>\n                  </div>\n				</div>\n			</div>\n		</div>\n		<div class=\"row\">\n			<div class=\"col-md-7\">\n				<div id=\"filter-display-results\">\n				</div>\n			</div>\n			<div class=\"col-md-5\">\n				<div id=\"selected\">\n				</div>\n			</div>\n		</div>\n		<div class=\"row\">\n			<div id=\"pagination-container\">\n\n			</div>\n		</div>\n		<div class=\"row\">\n		<div class=\"col-md-4\">\n		</div>\n		<div class=\"col-md-8\">\n\n			</div>\n	</div>\n\n"
+    + "				<div id=\"search\">\r\n                  <div class=\"input-group\">\r\n                    <input class=\"form-control\" id=\"searchbox\" type=\"search\" placeholder=\"Search for\">\r\n                    <span class=\"input-group-addon\">\r\n                      <i class=\"fa fa-search\"></i>\r\n                    </span>\r\n                  </div>\r\n				</div>\r\n			</div>\r\n		</div>\r\n		<div class=\"row\">\r\n			<div class=\"col-md-7\">\r\n				<div id=\"filter-display-results\">\r\n				</div>\r\n			</div>\r\n			<div class=\"col-md-5\">\r\n				<div id=\"selected\">\r\n				</div>\r\n			</div>\r\n		</div>\r\n		<div class=\"row\">\r\n			<div id=\"pagination-container\">\r\n\r\n			</div>\r\n		</div>\r\n		<div class=\"row\">\r\n		<div class=\"col-md-4\">\r\n		</div>\r\n		<div class=\"col-md-8\">\r\n\r\n			</div>\r\n	</div>\r\n\r\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0["panel-buttons"] : depth0),{"name":"if","hash":{},"fn":container.program(13, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "</div>\n";
+    + "</div>\r\n";
 },"5":function(container,depth0,helpers,partials,data) {
     var helper;
 
-  return "	<div class=\"panel-heading\">\n		<button type=\"button\" class=\"close\" data-toggle=\"collapse\"\n			data-target=\""
+  return "	<div class=\"panel-heading\">\r\n		<button type=\"button\" class=\"close\" data-toggle=\"collapse\"\r\n			data-target=\""
     + container.escapeExpression(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"data-target","hash":{},"data":data}) : helper)))
-    + "\" data-clavier=\"true\" aria-hidden=\"true\">\n		</button>\n	</div>\n";
+    + "\" data-clavier=\"true\" aria-hidden=\"true\">\r\n		</button>\r\n	</div>\r\n";
 },"7":function(container,depth0,helpers,partials,data) {
-    return "			<div class=\"row\">\n";
+    return "			<div class=\"row\">\r\n";
 },"9":function(container,depth0,helpers,partials,data) {
-    return "			<div class=\"row no-padding\">\n";
+    return "			<div class=\"row no-padding\">\r\n";
 },"11":function(container,depth0,helpers,partials,data) {
-    return "					<div id=\"filter-selection\">\n						<select class=\"btn btn-select-filter\" size=\"2\"></select>\n					</div>\n";
+    return "					<div id=\"filter-selection\">\r\n						<select class=\"btn btn-select-filter\" size=\"2\"></select>\r\n					</div>\r\n";
 },"13":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "		<div class=\"panel-footer\">\n			<button type=\"button\" class=\"btn btn-primary apply-selection\" data-toggle=\"collapse\"\n				data-target=\""
+  return "		<div class=\"panel-footer\">\r\n			<button type=\"button\" class=\"btn btn-primary apply-selection\" data-toggle=\"collapse\"\r\n				data-target=\""
     + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
-    + "\" data-clavier=\"true\"	data-i18n=\"button-apply\">Apply</button>\n			<button type=\"button\" class=\"btn btn-default cancel-selection\" data-toggle=\"collapse\"\n				data-target=\""
+    + "\" data-clavier=\"true\"	data-i18n=\"button-apply\">Apply</button>\r\n			<button type=\"button\" class=\"btn btn-default cancel-selection\" data-toggle=\"collapse\"\r\n				data-target=\""
     + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
-    + "\" data-clavier=\"true\"	data-i18n=\"button-close\">Close</button>\n		</div>\n";
+    + "\" data-clavier=\"true\"	data-i18n=\"button-close\">Close</button>\r\n		</div>\r\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
@@ -262,13 +262,13 @@ this["squid_api"]["template"]["squid_api_filters_date_range_selection_widget"] =
     + alias4(((helper = (helper = helpers.i18n || (depth0 != null ? depth0.i18n : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"i18n","hash":{},"data":data}) : helper)))
     + "\">"
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
-    + "</option>\n";
+    + "</option>\r\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "<div class=\"squid-api-range-selection-widget\">\n    <select class=\"form-control\">\n        <option value='custom'>Custom</option>\n"
+  return "<div class=\"squid-api-range-selection-widget\">\r\n    <select class=\"form-control\">\r\n        <option value='custom'>Custom</option>\r\n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.ranges : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "    </select>\n</div>\n<span class=\"caret\"></span>\n";
+    + "    </select>\r\n</div>\r\n<span class=\"caret\"></span>\r\n";
 },"useData":true});
 
 this["squid_api"]["template"]["squid_api_filters_date_selection_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
@@ -302,25 +302,25 @@ this["squid_api"]["template"]["squid_api_filters_my_selections"] = Handlebars.te
 
   return "                <li class=\"list-group-item my-selection\" data-id=\""
     + alias1(container.lambda(((stack1 = (depth0 != null ? depth0.id : depth0)) != null ? stack1.myBookmarkSelectionId : stack1), depth0))
-    + "\">\n                    <span class=\"glyphicon glyphicon-edit selection-rename selection-view-control\" aria-hidden=\"true\"></span>\n                    <span class=\"my-selection-name selection-view-control\">"
+    + "\">\r\n                    <span class=\"glyphicon glyphicon-edit selection-rename selection-view-control\" aria-hidden=\"true\"></span>\r\n                    <span class=\"my-selection-name selection-view-control\">"
     + alias1(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"name","hash":{},"data":data}) : helper)))
-    + "</span>\n                    <span class=\"glyphicon glyphicon-trash selection-remove selection-view-control\" aria-hidden=\"true\"></span>\n                    <span class=\"glyphicon glyphicon-pencil selection-update selection-view-control\" aria-hidden=\"true\"></span>\n\n                    <span class=\"glyphicon glyphicon-ok selection-rename-ok selection-rename-control\" aria-hidden=\"true\" style=\"display:none;\"></span>\n                    <span class=\"glyphicon glyphicon-remove selection-rename-cancel selection-rename-control\" aria-hidden=\"true\" style=\"display:none;\"></span>\n                    <input class=\"my-selection-name-rename selection-rename-control\" type=\"text\" value=\""
+    + "</span>\r\n                    <span class=\"glyphicon glyphicon-trash selection-remove selection-view-control\" aria-hidden=\"true\"></span>\r\n                    <span class=\"glyphicon glyphicon-pencil selection-update selection-view-control\" aria-hidden=\"true\"></span>\r\n\r\n                    <span class=\"glyphicon glyphicon-ok selection-rename-ok selection-rename-control\" aria-hidden=\"true\" style=\"display:none;\"></span>\r\n                    <span class=\"glyphicon glyphicon-remove selection-rename-cancel selection-rename-control\" aria-hidden=\"true\" style=\"display:none;\"></span>\r\n                    <input class=\"my-selection-name-rename selection-rename-control\" type=\"text\" value=\""
     + alias1(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"name","hash":{},"data":data}) : helper)))
-    + "\" style=\"display:none;\">\n                </li>\n";
+    + "\" style=\"display:none;\">\r\n                </li>\r\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "<div class=\"modal-content\" id=\"myselection-modal\">\n    <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button>\n        <h4 class=\"modal-title\" data-i18n=\"myselections_title\">My Selections</h4>\n    </div>\n    <div class=\"modal-body\">\n        <div class=\"search input-group\" style=\"margin: 10px 0 10px 0\">\n            <span class=\"input-group-addon\">\n                <i id=\"selections-search-in-progress\" class=\"glyphicon glyphicon-refresh glyphicon-spin hidden\"></i>\n                <i id=\"selections-search-not-in-progress\" class=\"glyphicon glyphicon-search\"></i>\n            </span>\n            <input id=\"selections-searchbox\" class=\"form-control search\" data-i18n=\"[placeholder]filter_search\" value=\""
+  return "<div class=\"modal-content\" id=\"myselection-modal\">\r\n    <div class=\"modal-header\">\r\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button>\r\n        <h4 class=\"modal-title\" data-i18n=\"myselections_title\">My Selections</h4>\r\n    </div>\r\n    <div class=\"modal-body\">\r\n        <div class=\"search input-group\" style=\"margin: 10px 0 10px 0\">\r\n            <span class=\"input-group-addon\">\r\n                <i id=\"selections-search-in-progress\" class=\"glyphicon glyphicon-refresh glyphicon-spin hidden\"></i>\r\n                <i id=\"selections-search-not-in-progress\" class=\"glyphicon glyphicon-search\"></i>\r\n            </span>\r\n            <input id=\"selections-searchbox\" class=\"form-control search\" data-i18n=\"[placeholder]filter_search\" value=\""
     + alias4(((helper = (helper = helpers.searchTerm || (depth0 != null ? depth0.searchTerm : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"searchTerm","hash":{},"data":data}) : helper)))
-    + "\" type=\"text\" autofocus>\n        </div>\n        <div class=\"results min-filter-height filter-selections\">\n            <ul class=\"list-group\">\n"
+    + "\" type=\"text\" autofocus>\r\n        </div>\r\n        <div class=\"results min-filter-height filter-selections\">\r\n            <ul class=\"list-group\">\r\n"
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.selections : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "            </ul>\n        </div>\n        <div class=\"row\">\n            <div class=\"form-group col-md-9\">\n                <input type=\"text\" id=\"new-selection\" class=\"form-control\" placeholder=\""
+    + "            </ul>\r\n        </div>\r\n        <div class=\"row\">\r\n            <div class=\"form-group col-md-9\">\r\n                <input type=\"text\" id=\"new-selection\" class=\"form-control\" placeholder=\""
     + alias4(((helper = (helper = helpers.placeHolderNewName || (depth0 != null ? depth0.placeHolderNewName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"placeHolderNewName","hash":{},"data":data}) : helper)))
-    + "\">\n            </div>\n            <div class=\"col-md-3\">\n                <button id=\"create-selection\" type=\"button\" class=\"btn btn-default\" data-i18n=\"button_create\" disabled>Create</button>\n            </div>\n        </div>\n        <div class=\"row\" style=\"margin-left: 15px;\">"
+    + "\">\r\n            </div>\r\n            <div class=\"col-md-3\">\r\n                <button id=\"create-selection\" type=\"button\" class=\"btn btn-default\" data-i18n=\"button_create\" disabled>Create</button>\r\n            </div>\r\n        </div>\r\n        <div class=\"row\" style=\"margin-left: 15px;\">"
     + alias4(((helper = (helper = helpers.message || (depth0 != null ? depth0.message : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"message","hash":{},"data":data}) : helper)))
-    + "</div>\n        <div class=\"row\" style=\"margin-left: 15px;color:crimson\">"
+    + "</div>\r\n        <div class=\"row\" style=\"margin-left: 15px;color:crimson\">"
     + alias4(((helper = (helper = helpers.errorMessage || (depth0 != null ? depth0.errorMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"errorMessage","hash":{},"data":data}) : helper)))
-    + "</div>\n    </div>\n    <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\"  data-i18n=\"button_cancel\">Cancel</button>\n    </div>\n</div>\n";
+    + "</div>\r\n    </div>\r\n    <div class=\"modal-footer\">\r\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\"  data-i18n=\"button_cancel\">Cancel</button>\r\n    </div>\r\n</div>\r\n";
 },"useData":true});
 
 this["squid_api"]["template"]["squid_api_filters_segment_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
@@ -342,15 +342,15 @@ this["squid_api"]["template"]["squid_api_FiltersSelector"] = Handlebars.template
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.mandatory : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\">"
     + container.escapeExpression(((helper = (helper = helpers.noDataMessage || (depth0 != null ? depth0.noDataMessage : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"noDataMessage","hash":{},"data":data}) : helper)))
-    + "</label>\n";
+    + "</label>\r\n";
 },"2":function(container,depth0,helpers,partials,data) {
     return "warning fa fa-exclamation-circle";
 },"4":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "    <ul class=\"facets\">\n"
+  return "    <ul class=\"facets\">\r\n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.facets : depth0),{"name":"each","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "    </ul>\n";
+    + "    </ul>\r\n";
 },"5":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
@@ -358,13 +358,13 @@ this["squid_api"]["template"]["squid_api_FiltersSelector"] = Handlebars.template
     + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
     + "\" class=\"facet\" "
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.available : depth0),{"name":"if","hash":{},"fn":container.program(6, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ">\n                <div class=\"facet-name\">\n                    "
+    + ">\r\n                <div class=\"facet-name\">\r\n                    "
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
-    + "\n                </div>\n                <ul class=\"items\" data-id=\""
+    + "\r\n                </div>\r\n                <ul class=\"items\" data-id=\""
     + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
-    + "\">\n"
+    + "\">\r\n"
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.items : depth0),{"name":"each","hash":{},"fn":container.program(8, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                </ul>\n            </li>\n";
+    + "                </ul>\r\n            </li>\r\n";
 },"6":function(container,depth0,helpers,partials,data) {
     return " class=\"facet available\" ";
 },"8":function(container,depth0,helpers,partials,data) {
@@ -372,19 +372,19 @@ this["squid_api"]["template"]["squid_api_FiltersSelector"] = Handlebars.template
 
   return "                    <li data-id=\""
     + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
-    + "\" class=\"item\">\n                        <div class=\"facet-value\">\n                            "
+    + "\" class=\"item\">\r\n                        <div class=\"facet-value\">\r\n                            "
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
-    + "\n                        </div>\n                        <div class=\"facet-remove\">\n                            <i class=\"glyphicon glyphicon-remove\"></i>\n                        </div>\n                    </li>\n";
+    + "\r\n                        </div>\r\n                        <div class=\"facet-remove\">\r\n                            <i class=\"glyphicon glyphicon-remove\"></i>\r\n                        </div>\r\n                    </li>\r\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "<div class=\"squid-api-FiltersSelector\">\n"
+  return "<div class=\"squid-api-FiltersSelector\">\r\n"
     + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.noData : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(4, data, 0),"data":data})) != null ? stack1 : "")
-    + "</div>\n";
+    + "</div>\r\n";
 },"useData":true});
 
 this["squid_api"]["template"]["squid_api_selection_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"information\">All</div>\n";
+    return "<div class=\"information\">All</div>\r\n";
 },"3":function(container,depth0,helpers,partials,data) {
     var stack1;
 
@@ -392,17 +392,17 @@ this["squid_api"]["template"]["squid_api_selection_widget"] = Handlebars.templat
 },"4":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "<div class=\"item\" style=\"padding: 3px; display: inline-block;\">\n<table style=\"border:1px solid #DDD; border-collapse: separate; border-spacing: 3px;\">\n	<tr>\n		<td><span class=\"name\">"
+  return "<div class=\"item\" style=\"padding: 3px; display: inline-block;\">\r\n<table style=\"border:1px solid #DDD; border-collapse: separate; border-spacing: 3px;\">\r\n	<tr>\r\n		<td><span class=\"name\">"
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
-    + "</span></td>\n		<td><a href=\"#\" id=\""
+    + "</span></td>\r\n		<td><a href=\"#\" id=\""
     + alias4(((helper = (helper = helpers.index || (depth0 != null ? depth0.index : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"index","hash":{},"data":data}) : helper)))
-    + "\" class=\"clear-filter\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>\n	</tr>\n	<tr>\n		<td><span class=\"value\" style=\"color:#999;\">"
+    + "\" class=\"clear-filter\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>\r\n	</tr>\r\n	<tr>\r\n		<td><span class=\"value\" style=\"color:#999;\">"
     + alias4(((helper = (helper = helpers.value || (depth0 != null ? depth0.value : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"value","hash":{},"data":data}) : helper)))
-    + "</span></td>\n		<td></td>\n	</tr>\n</table>\n</div>\n";
+    + "</span></td>\r\n		<td></td>\r\n	</tr>\r\n</table>\r\n</div>\r\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "<div id=\"sq-selection-panel\">\n"
+  return "<div id=\"sq-selection-panel\">\r\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.empty : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.facets : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "</div>";
@@ -1682,20 +1682,22 @@ $.widget( "ui.dialog", $.ui.dialog, {
  
                         facet.selectedItems = [];
                         filterItems.forEach(function(item){
-                                item.selected = true;
+                            item.selected = true;
+                            if(item.id!==''){
                                 facet.selectedItems.push({
                                     id: item.id,
                                     selected: true,
                                     type: item.type,
                                     value: item.value
                                 });
+                            }
                         });
  
  
                         selectedFilterItems.forEach(function(item){
                             var found = facet.selectedItems.find( function(el){
                                 return el.id === item.id;
-                            })
+                            });
                             if(!found){
                                 item.selected = true;
                                 facet.selectedItems.push({
@@ -1731,7 +1733,7 @@ $.widget( "ui.dialog", $.ui.dialog, {
                     filterItems.forEach(function(item){
                         var filterIndex = facet.selectedItems.findIndex( function(el){
                             return el.id === item.id;
-                        })
+                        });
                         if(filterIndex >= 0){
                         facet.selectedItems.splice(filterIndex, 1);
                         }

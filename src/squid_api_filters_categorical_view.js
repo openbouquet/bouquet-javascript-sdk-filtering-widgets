@@ -580,20 +580,22 @@
  
                         facet.selectedItems = [];
                         filterItems.forEach(function(item){
-                                item.selected = true;
+                            item.selected = true;
+                            if(item.id!==''){
                                 facet.selectedItems.push({
                                     id: item.id,
                                     selected: true,
                                     type: item.type,
                                     value: item.value
                                 });
+                            }
                         });
  
  
                         selectedFilterItems.forEach(function(item){
                             var found = facet.selectedItems.find( function(el){
                                 return el.id === item.id;
-                            })
+                            });
                             if(!found){
                                 item.selected = true;
                                 facet.selectedItems.push({
@@ -629,7 +631,7 @@
                     filterItems.forEach(function(item){
                         var filterIndex = facet.selectedItems.findIndex( function(el){
                             return el.id === item.id;
-                        })
+                        });
                         if(filterIndex >= 0){
                         facet.selectedItems.splice(filterIndex, 1);
                         }
