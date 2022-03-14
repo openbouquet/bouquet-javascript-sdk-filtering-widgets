@@ -2985,14 +2985,26 @@ $.widget( "ui.dialog", $.ui.dialog, {
                 $(event.target).parent().find(".selection-rename-control").hide();
                 $(event.target).parent().find(".selection-rename-control").show();
 
+                var same_name = false;
                 var myBookmarkSelectionId = $(event.target).parent().data("id");
                 var name = $(event.target).parent().find(".my-selection-name-rename").val();
                 
-                var selection = $.grep(this.data.selections, function(elem) {
-                    return elem.id.myBookmarkSelectionId === myBookmarkSelectionId;
-                })[0].selection;
+                $.each(this.data.selections, function(key,value) { 
+                    if(value.name === name) {
+                        same_name = true;
+                        return;
+                    }
+                });
+                
+                if(!same_name){
+                    var selection = $.grep(this.data.selections, function(elem) {
+                        return elem.id.myBookmarkSelectionId === myBookmarkSelectionId;
+                    })[0].selection;
 
-                this.updateSelection(myBookmarkSelectionId, name, selection);            
+                    this.updateSelection(myBookmarkSelectionId, name, selection);
+                }else{
+                    alert("This name already exists. Please choose another one.");
+                }
             },
 
             "click .selection-rename-cancel" : function(event) {
