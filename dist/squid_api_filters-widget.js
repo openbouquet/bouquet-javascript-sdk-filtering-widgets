@@ -3008,6 +3008,8 @@ $.widget( "ui.dialog", $.ui.dialog, {
             },
 
             "click .selection-rename-cancel" : function(event) {
+                var name = $(event.target).parent().find(".my-selection-name ").text();
+                $(event.target).parent().find(".my-selection-name-rename").val(name);
                 $(event.target).parent().find(".selection-rename-control").hide();
                 $(event.target).parent().find(".selection-view-control").show();
             },
