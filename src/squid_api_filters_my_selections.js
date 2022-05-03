@@ -128,7 +128,9 @@
                 });
 
                 if (existingSelections.length > 0) {
-                    this.updateSelection(existingSelections[0].id.myBookmarkSelectionId, name, newSelection);
+                    //Task: https://atcsajira.atlassian.net/browse/OSPQMR-412
+                    alert("This name already exists. Please choose another one.");
+                    //this.updateSelection(existingSelections[0].id.myBookmarkSelectionId, name, newSelection);
                 }
                 else {
                     this.startRequest();
